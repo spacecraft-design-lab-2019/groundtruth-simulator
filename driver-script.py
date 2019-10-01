@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 30 18:27:25 2019
+Driver Script
 
-@author: walkerkehoe
+Initializes and runs groundtruth simulator.
+
+Pseudocode:
+    -initialize with starting position & velocity
+    
+    LOOP:
+        -calculate environment
+        -calculate forces and torques (dynamics)
+        -integrate (kinematics)
+        -obtain new position/velocity
+        
+        -model sensors with noise
+        
+        -FEED to controller
+        -take input from controller
+        -add noise
+        -account for control input in dynamics
 """
-
-#initial position and velocity
-#(2)
-#calculate environment
-#calculate force and torques (dynamics)
-#integrate (kinematics)
-#new position velocity (ground truth)
-
-#model sensors
-#add noise
-
-#FEED to controller
-#take input
-#add noise
-#back to (2)
