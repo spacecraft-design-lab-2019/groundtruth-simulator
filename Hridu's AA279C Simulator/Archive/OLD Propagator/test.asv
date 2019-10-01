@@ -1,0 +1,43 @@
+% ----------------------------------------------------
+% SLAB 2017 REU
+% Written by: Hridu Jain
+% Date: August 7, 2017
+% ----------------------------------------------------
+
+clc
+clear all
+close all
+
+Constants
+
+% Initial Parameters
+a = 10528;              % [km]
+e = 0.3256;
+i = 0.7854;             % [rad]
+Omega = 1.5708;         % [rad]
+omega = 0;              % [rad]
+M = 0;                  % [rad]
+
+J2 = 1.0826e-3;
+tolerance = 1e-6;
+
+% tstart = 0;
+% tstop = 86400;
+
+jd_start = datenum(2017, 03, 28, 03, 27, 15) + 1721058.5;
+jd_end   = datenum(2018, 03, 28, 03, 34, 47) + 1721058.5;
+
+E = calcEccentricAnomaly(M, e, tolerance);
+[r_initial, v_initial] = calcPositionAndVelocity(a, e, i, Omega, omega, E);
+state_initial = [r_initial; v_initial];
+
+sim('Propagator.slx')
+
+% Plotting on 3D Earth
+plotearth
+hold on
+x = state_out(:, 1)./6378;
+y = state_out(:, 2)./6378;
+z = state_out(:, 3)./6378;
+plot3(x, y, z, 'r')
+hold off
