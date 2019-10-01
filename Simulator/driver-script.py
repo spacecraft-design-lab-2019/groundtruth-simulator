@@ -21,3 +21,5 @@ Pseudocode:
         -add noise
         -account for control input in dynamics
 """
+
+# Run initialization script
