@@ -8,10 +8,10 @@ def calc_e_dot(e,w):
 
     Calculates derivative of euler angles.
     Input:
-    e: euler angles (radians) np.array[3x1][float64]
-    w: angular velocity (radians/s) [float64]
+    e: euler angle vector (radians) np.array[3x1][float64]
+    w: angular velocity vector (radians/s) np.array[3x1][float64]
     Output:
-    e_dot: rate of change of eular angles
+    e_dot: rate of change of eular angles np.array[1x3][float64]
     """
     #propagate actual dynamics
     tan_the = np.tan(e[1])
@@ -27,7 +27,7 @@ def calc_e_dot(e,w):
 
 #testing
 e = np.transpose(np.array([np.pi/4,np.pi/4,np.pi/4]))
-w = np.pi/4
+w = np.transpose(np.array([np.pi/4,np.pi/4,np.pi/4]))
 print(calc_e_dot(e,w))
 
 """
