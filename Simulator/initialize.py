@@ -67,7 +67,8 @@ def rk4_step(f, t0, x0, h):
     k4 = h * f(t0+h,    x0+k3)
     x1 = x0 + (k1 + 2*k2 + 2*k3 + k4)/6
     t1 = t0 + h
-    return t1, x1
+    #return t1, x1
+    return x1
 
 def calc_s_dot(t, s):
     con = -mu/(np.sqrt(s[0]**2 + s[1]**2 + s[2]**2)**3)
@@ -84,13 +85,24 @@ def driver(craft,t0,t1):
     integrator = integrate.ode(calc_s_dot).set_integrator("dopri5")
     integrator.set_initial_value(s, t0)
     for i in range(1, t.size):
-       y[i, :] = one_step_integration(y[i-1, :],integrator,t[i])
+       y[i, :] = one_step_integration(y[i-1, :],integrator,t[i]) #should it be t[i-1]?
     plt.plot(y[:,1], y[:,0])
     plt.show()
 
+#driver(SpacecraftParams(),0,3.156e+7)
 
-driver(SpacecraftParams(),0,3.156e+7)
+def driver_1(body,func,t0,t1,h):
+    s = np.concatenate((body.r,body.v),axis=0)
+    t = np.arange(t0,t1,h)
+    y = np.zeros((len(t),len(s)))
+    y[0, :] = s
+    for i in range(1,t.size):
+        y[i, :] = rk4_step(func,t[i-1],y[i-1,:],h)
 
+    plt.plot(y[:,1], y[:,0])
+    plt.show()
+
+driver_1(SpacecraftParams(),calc_s_dot,0,3.156e+7,10000)
 
 # Initial Spacecraft State Vector
 
