@@ -33,15 +33,23 @@ def driver(craft):
     s_dot = calc_s_dot(s,GM)
     quad()
 
-def attitude_integrator():
+def one_step_integrator(s,func,delta_t):
+    t0 = 0
+    y = np.zeros((1, len(s)))   # array for solution
+    r = integrate.ode(func).set_integrator("dopri5")
+    r.set_initial_value(s, t0)
+    y[0, :] = r.integrate(delta_t) # get one more value, add it to the array
+    if not r.successful():
+        raise RuntimeError("Could not integrate")
+    return y
+
+def calc_s_dot(t,s):
+    con = -mu/(np.sqrt(s[0]**2 + s[1]**2 + s[2]**2)**3)
+    return np.array([s[3],s[4],s[5],con*s[0],con*s[1],con*s[2]])
     
-    
-    
+
+
 def orbit_integrator:
-    
-    
-def calc_s_dot(s,GM):
-    return  np.concatenate((s[3:6],-GM*s[0:3]/np.linalg.norm(s[0:3])),axis=0)
 
 
 #testing SpacecraftParams
