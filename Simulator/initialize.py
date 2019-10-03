@@ -28,6 +28,39 @@ class SpacecraftParams():
         self.v = v
         self.q = q
 
+#testing SpacecraftParams
+s = SpacecraftParams()
+print(s.I)
+s.r = np.array([5,5,5])
+print(s.r)
+s.v[0] = 9
+print(s.v)
+
+########## integrator #################
+#this works but we need to change from a dummy function
+def vdp1(t, y):
+    return np.array([y[1], (1 - y[0]**2)*y[1] - y[0]])
+
+def integrat(s, inte, step):
+    return inte.integrate(step)
+t = np.linspace(0,2332800,2332800/10000)
+
+t0, t1 = 0, 20                # start and end
+t = np.linspace(t0, t1, 1000)  # the points of evaluation of solution
+y0 = [2, 0]                   # initial value
+y = np.zeros((len(t), len(y0)))   # array for solution
+y[0, :] = y0
+integrator = integrate.ode(vdp1).set_integrator("dopri5")
+integrator.set_initial_value(y0, t0)
+for i in range(1, t.size):
+   y[i, :] = integrat(y[i-1, :],integrator,t[i]) # get one more value, add it to the array
+
+plt.plot(t, y)
+plt.show()
+
+
+
+#this doesn't work--still debugging
 def driver(craft):
     s = np.concatenate((craft.r, craft.v), axis=0)
     s_dot = calc_s_dot(s,GM)
@@ -59,13 +92,7 @@ plt.plot(res[0],res[1])
 def orbit_integrator:
 
 
-#testing SpacecraftParams
-s = SpacecraftParams()
-print(s.I)
-s.r = np.array([5,5,5])
-print(s.r)
-s.v[0] = 9
-print(s.v)
+
 # Initial Spacecraft State Vector
 
 
