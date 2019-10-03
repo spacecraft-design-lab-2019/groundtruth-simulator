@@ -14,27 +14,23 @@ from scipy import integrate
 mu = 3.986e5
 
 # Simulation Parameters
+r_initial = np.array([363104000, 0, 0])
+v_initial = np.array([0, 0.033132, 0])
+q_initial = np.array([0, 0, 0, 1])
+w_initial = np.array([0, 0, 0])
+state_initial = np.r_[r_initial, q_initial, v_initial, w_initial]
+
 class SpacecraftParams():
     """
     A class to store all spacecraft parameters
     """
     def __init__(self,
-                I = np.array([[17,0,0],[0,18,0],[0,0,22]]),
-                r = np.array([363104000,0,0]),
-                v = np.array([0,0.033132,0]),
-                q = np.array([1,1,1,1])):
+                I = np.array([[17,0,0],[0,18,0],[0,0,22]])):
         self.I = I
-        self.r = r
-        self.v = v
-        self.q = q
 
 #testing SpacecraftParams
 s = SpacecraftParams()
 print(s.I)
-s.r = np.array([5,5,5])
-print(s.r)
-s.v[0] = 9
-print(s.v)
 
 ########## integrator #################
 def rk4_step(f, t0, x0, h):
