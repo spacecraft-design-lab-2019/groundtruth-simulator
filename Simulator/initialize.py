@@ -9,6 +9,9 @@ NOTE: based on \Reference\Hridu Old Simulator\Model Scripts\initialize.m
 """
 #Importing libraries
 import numpy as np
+from scipy.integrate import quad
+
+GM = 3.986e5
 
 # Simulation Parameters
 class SpacecraftParams():
@@ -18,10 +21,28 @@ class SpacecraftParams():
     def __init__(self,
                 I = np.array([[17,0,0],[0,18,0],[0,0,22]]),
                 r = np.array([1,1,1]),
-                v = np.array([1,1,1])):
+                v = np.array([1,1,1]),
+                q = np.array([1,1,1,1])):
         self.I = I
         self.r = r
         self.v = v
+        self.q = q
+
+def driver(craft):
+    s = np.concatenate((craft.r, craft.v), axis=0)
+    s_dot = calc_s_dot(s,GM)
+    quad()
+
+def attitude_integrator():
+    
+    
+    
+def orbit_integrator:
+    
+    
+def calc_s_dot(s,GM):
+    return  np.concatenate((s[3:6],-GM*s[0:3]/np.linalg.norm(s[0:3])),axis=0)
+
 
 #testing SpacecraftParams
 s = SpacecraftParams()
