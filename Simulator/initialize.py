@@ -40,10 +40,10 @@ print(s.v)
 def rk4_step(f, t0, x0, h):
     """
     Function: rk4_step
-        Uses rk4 to integrate a single step
+        Uses rk4 to integrate a single step. (vectorized)
         
     Inputs:
-        f:  function we are integrating
+        f:  derivative of state vector
         t0: initial time
         x0: initial state vector
         h:  step size (in seconds)
@@ -57,7 +57,7 @@ def rk4_step(f, t0, x0, h):
     k3 = h * f(t0+h/2,  x0+k2/2)
     k4 = h * f(t0+h,    x0+k3)
     x1 = x0 + (k1 + 2*k2 + 2*k3 + k4)/6
-    t1 = t0 + h    
+    t1 = t0 + h
     return t1, x1
 
 # I tried to plot a simple orbit (the moon around the earth)
