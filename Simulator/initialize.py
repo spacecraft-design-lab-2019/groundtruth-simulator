@@ -9,9 +9,9 @@ NOTE: based on \Reference\Hridu Old Simulator\Model Scripts\initialize.m
 """
 #Importing libraries
 import numpy as np
-from scipy.integrate import quad
+from scipy import integrate
 
-GM = 3.986e5
+mu = 3.986e5
 
 # Simulation Parameters
 class SpacecraftParams():
@@ -20,8 +20,8 @@ class SpacecraftParams():
     """
     def __init__(self,
                 I = np.array([[17,0,0],[0,18,0],[0,0,22]]),
-                r = np.array([1,1,1]),
-                v = np.array([1,1,1]),
+                r = np.array([363104000,0,0]),
+                v = np.array([0,0.033132,0]),
                 q = np.array([1,1,1,1])):
         self.I = I
         self.r = r
@@ -35,10 +35,9 @@ def driver(craft):
 
 def one_step_integrator(s,func,delta_t):
     t0 = 0
-    y = np.zeros((1, len(s)))   # array for solution
     r = integrate.ode(func).set_integrator("dopri5")
     r.set_initial_value(s, t0)
-    y[0, :] = r.integrate(delta_t) # get one more value, add it to the array
+    y = r.integrate(delta_t)
     if not r.successful():
         raise RuntimeError("Could not integrate")
     return y
@@ -46,8 +45,16 @@ def one_step_integrator(s,func,delta_t):
 def calc_s_dot(t,s):
     con = -mu/(np.sqrt(s[0]**2 + s[1]**2 + s[2]**2)**3)
     return np.array([s[3],s[4],s[5],con*s[0],con*s[1],con*s[2]])
-    
 
+
+t = np.linspace(0,2332800,2332800/10000)
+res = np.zeros((len(t), len(s)))
+res[0, :] = s
+for i in range(1, t.size):
+    s = one_step_integrator(s,calc_s_dot,2332800/10000)
+    res[i, :] = s
+
+plt.plot(res[0],res[1])
 
 def orbit_integrator:
 
