@@ -21,14 +21,14 @@ Pseudocode:
         -account for control input in dynamics
 """
 
-# Initialize Workspace and Variables
+#-------- Initialize Workspace and Variables ------------
 import numpy as np
 from initialize import *
 from rk4_step import rk4_step
 from calc_statedot import calc_statedot
 
 
-# Run Simulation
+#------------ Run Simulation -----------------------------
 t = np.arange(tspan[0], tspan[1]+tstep, tstep)
 state = np.zeros((np.shape(t)[0], np.shape(state_initial)[0]))
 
@@ -37,5 +37,5 @@ for idx in range(t.shape[0]):
     ti, state[idx+1, :] = rk4_step(calc_statedot, t[idx], state[idx, :], tstep)
 
 
-# Plot
-#-------can add plotting/analysis scripts here
+#-------------------- Plot------------------------------------
+# can add plotting/analysis scripts here

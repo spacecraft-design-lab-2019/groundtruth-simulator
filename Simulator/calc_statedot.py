@@ -25,4 +25,4 @@ def calc_statedot(t, s):
     # Build statedot
     statedot = np.zeros(np.shape(s))
     statedot[0:3] = s[7:10]
-    
+    return statedot
