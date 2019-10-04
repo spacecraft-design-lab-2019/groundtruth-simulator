@@ -24,8 +24,7 @@ Pseudocode:
 #-------- Initialize Workspace and Variables ------------
 import numpy as np
 from initialize import *
-from rk4_step import rk4_step
-from calc_statedot import calc_statedot
+from simulator import *
 
 
 #------------ Run Simulation -----------------------------
