@@ -83,14 +83,3 @@ class SpacecraftStructure:
 
 
 # Global Constants
-class SciConst:
-    """
-    A class to store global scientific contstants
-    """
-    def __init__(self,
-                 Re = 6378.1378366, #km, measured at equator
-                 mSun = 1.98855e30, #kg
-                 wEarth = 2*np.pi/86164.1):
-        self.Re = Re
-        self.mSun = mSun
-        self.wEarth = wEarth
