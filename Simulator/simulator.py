@@ -3,10 +3,11 @@ import numpy as np
 from kinematics import *
 from dynamics import *
 from initialize import *
+from sciConsts import *
 
 import sys #temporary for debugging
 
-GM = 3.986e5
+
 
 #-------------------------Simulator-------------------------------
 
