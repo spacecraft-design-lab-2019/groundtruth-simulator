@@ -29,20 +29,25 @@ import matplotlib.pyplot as plt
 
 
 #------------ Run Simulation -----------------------------
-t = np.arange(tspan[0], tspan[1]+tstep, tstep)
-state = np.zeros((np.shape(t)[0], np.shape(state_initial)[0]))
-state[0, :] = state_initial
+
+ISS = SpacecraftState()
+
+t = np.arange(ISS.t, tspan[1]+tstep, tstep)
+state_history = np.zeros((np.shape(t)[0], np.shape(ISS.state())[0]))
+state_history[0, :] = ISS.state()
 
 for idx in range(t.shape[0]-1):
     # Integrate
-    ti, state[idx+1, :] = rk4_step(calc_statedot, t[idx], state[idx, :], tstep)
-    
+    ISS = rk4_step(calc_statedot, ISS, tstep)
+    state_history[idx+1, :] = ISS.state()
+
     # Normalize the Quaternion Vector
-    state[idx+1, 3:7] = state[idx+1, 3:7]/np.linalg.norm(state[idx+1, 3:7])
+    state_history[idx+1, 3:7] = state_history[idx+1, 3:7]/np.linalg.norm(state_history[idx+1, 3:7])
 
 #-------------------- Plot------------------------------------
 # can add plotting/analysis scripts here
-plt.plot(state[:, 0], state[:, 1])
+plt.plot(state_history[:, 0], state_history[:, 1])
 plt.xlabel("X_ECI")
 plt.ylabel("Y_ECI")
 plt.grid()
+plt.show()
