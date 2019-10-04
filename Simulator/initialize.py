@@ -62,7 +62,8 @@ class SpacecraftStructure:
                  normVec3 = np.array([0,0,1]),
                  normVec4 = np.array([-1,0,0]),
                  normVec5 = np.array([0,-1,0]),
-                 normVec6 = np.array([0,0,-1])):
+                 normVec6 = np.array([0,0,-1]),
+                 cD = 2.3): #drag coefficient
         self.surfArea = surfArea
         self.normVec1 = normVec1
         self.normVec2 = normVec2
@@ -70,6 +71,7 @@ class SpacecraftStructure:
         self.normVec4 = normVec4
         self.normVec5 = normVec5
         self.normVec6 = normVec6
+        self.cD = cD
 
 # Magnetorquers
 
@@ -81,3 +83,14 @@ class SpacecraftStructure:
 
 
 # Global Constants
+class SciConst:
+    """
+    A class to store global scientific contstants
+    """
+    def __init__(self,
+                 Re = 6378.1378366, #km, measured at equator
+                 mSun = 1.98855e30, #kg
+                 wEarth = 2*np.pi/86164.1):
+        self.Re = Re
+        self.mSun = mSun
+        self.wEarth = wEarth
