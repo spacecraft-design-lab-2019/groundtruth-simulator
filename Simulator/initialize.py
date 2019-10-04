@@ -51,7 +51,25 @@ class SpacecraftState():
 
 
 # Structure of Spacecraft
-
+class SpacecraftStructure:
+    """
+    A class to store spacecraft structural poperties
+    """
+    def __init__(self,
+                 surfArea = np.array([.0025, 9.28e-5,1.024e-4,.003712]),
+                 normVec1 = np.array([1,0,0]),
+                 normVec2 = np.array([0,1,0]),
+                 normVec3 = np.array([0,0,1]),
+                 normVec4 = np.array([-1,0,0]),
+                 normVec5 = np.array([0,-1,0]),
+                 normVec6 = np.array([0,0,-1])):
+        self.surfArea = surfArea
+        self.normVec1 = normVec1
+        self.normVec2 = normVec2
+        self.normVec3 = normVec3
+        self.normVec4 = normVec4
+        self.normVec5 = normVec5
+        self.normVec6 = normVec6
 
 # Magnetorquers
 
