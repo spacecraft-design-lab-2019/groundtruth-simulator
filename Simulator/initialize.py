@@ -62,7 +62,8 @@ class SpacecraftStructure:
                  normVec3 = np.array([0,0,1]),
                  normVec4 = np.array([-1,0,0]),
                  normVec5 = np.array([0,-1,0]),
-                 normVec6 = np.array([0,0,-1])):
+                 normVec6 = np.array([0,0,-1]),
+                 cD = 2.3): #drag coefficient
         self.surfArea = surfArea
         self.normVec1 = normVec1
         self.normVec2 = normVec2
@@ -70,6 +71,7 @@ class SpacecraftStructure:
         self.normVec4 = normVec4
         self.normVec5 = normVec5
         self.normVec6 = normVec6
+        self.cD = cD
 
 # Magnetorquers
 
