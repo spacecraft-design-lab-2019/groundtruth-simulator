@@ -20,14 +20,13 @@ def rk4_step(f, x, h):
     Outputs:
         x1: updated state object
     """
-    test = SpacecraftState()
-    k1 = h * f(x.t,      x).state()
+    k1 = h * f(x.t,      x)
     x.update_state(x.state()+k1/2)
-    k2 = h * f(x.t+h/2,  x).state()
+    k2 = h * f(x.t+h/2,  x)
     x.update_state(x.state()+k2/2)
-    k3 = h * f(x.t+h/2,  x).state()
+    k3 = h * f(x.t+h/2,  x)
     x.update_state(x.state()+k3)
-    k4 = h * f(x.t+h,    x).state()
+    k4 = h * f(x.t+h,    x)
     x1 = x.state() + (k1 + 2*k2 + 2*k3 + k4)/6
     t1 = x.t + h
     x.t = t1
@@ -72,12 +71,12 @@ def calc_statedot(t, state):
 
 
     #---------------------Build Statedot------------------------------
-    statedot = SpacecraftState(state.I,state.v,q_dot,accel,w_dot,state.t)
+    #statedot = SpacecraftState(state.I,state.v,q_dot,accel,w_dot,state.t)
 
-    #statedot = np.zeros(np.shape(state))
-    #statedot[0:3]   = vel
-    #statedot[3:7]   = q_dot
-    #statedot[7:10]  = accel
-    #statedot[10:13] = w_dot
+    statedot = np.zeros(np.shape(state.state()))
+    statedot[0:3]   = state.v
+    statedot[3:7]   = q_dot
+    statedot[7:10]  = accel
+    statedot[10:13] = w_dot
 
     return statedot
