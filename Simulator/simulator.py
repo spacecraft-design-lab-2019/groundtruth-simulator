@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from kinematics import *
+from dynamics import *
 
 #-------------------------Simulator-------------------------------
 
@@ -42,8 +43,9 @@ def calc_statedot(t, state):
     
     # fix: get I and other spacecraft params into the function some other way
     I = np.array([[17,0,0],[0,18,0],[0,0,22]])
+    GM = 3.986e5
 
-    
+    pos = state[0:3]
     q   = state[3:7]
     vel = state[7:10]
     w   = state[10:13]
@@ -54,6 +56,7 @@ def calc_statedot(t, state):
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros((3,))
     accel = np.zeros((3,))
+    accel = accel + accelPointMass(pos, pos, GM)
     
     
     #---------------------Kinematics----------------------------------
@@ -69,8 +72,3 @@ def calc_statedot(t, state):
     statedot[10:13] = w_dot
     
     return statedot
-
-#
-#    # this is a dummy 
-#    con = -mu/(np.sqrt(s[0]**2 + s[1]**2 + s[2]**2)**3)
-#    return np.array([s[3],s[4],s[5],con*s[0],con*s[1],con*s[2]])

@@ -12,14 +12,14 @@ NOTE: based on \Reference\Hridu Old Simulator\Model Scripts\initialize.m
 import numpy as np
 
 # Simulation Parameters
-tspan = np.array([0, 5])    # [sec]
+tspan = np.array([0, 8640])    # [sec]
 tstep = .1                  # [sec] - 10 Hz
 
 
 # Initial Spacecraft State Vector
 # ------ can later use oe2eci to get starting r and v based on injection orbit
-r_initial = np.array([0,1.5e11,0])
-v_initial = np.array([30000,0,0])
+r_initial = np.array([6712880.93e-3,1038555.54e-3,-132667.04e-3])
+v_initial = np.array([-831.937369e-3,4688.525767e-3,-6004.570270e-3])
 q_initial = np.array([1, 0, 0, 0]) # scalar first
 w_initial = np.array([0, 0, 0])
 state_initial = np.r_[r_initial, q_initial, v_initial, w_initial]
@@ -48,5 +48,4 @@ class SpacecraftParams():
 
 
 # Global Constants
-mu = 6.67408e-11*2e30
 
