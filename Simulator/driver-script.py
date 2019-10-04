@@ -43,4 +43,6 @@ for idx in range(t.shape[0]-1):
 #-------------------- Plot------------------------------------
 # can add plotting/analysis scripts here
 plt.plot(state[:, 0], state[:, 1])
-plt.show()
+plt.xlabel("X_ECI")
+plt.ylabel("Y_ECI")
+plt.grid()
