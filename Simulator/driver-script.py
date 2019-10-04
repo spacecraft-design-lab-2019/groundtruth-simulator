@@ -35,7 +35,9 @@ state = np.zeros((np.shape(t)[0], np.shape(state_initial)[0]))
 for idx in range(t.shape[0]):
     # Integrate
     ti, state[idx+1, :] = rk4_step(calc_statedot, t[idx], state[idx, :], tstep)
-
+    
+    # Normalize the Quaternion Vector
+    state[idx+1, 3:7] = state[idx+1, 3:7]/np.linalg.norm(state[idx+1, 3:7])
 
 #-------------------- Plot------------------------------------
 # can add plotting/analysis scripts here
