@@ -20,7 +20,7 @@ tstep = .1                  # [sec] - 10 Hz
 # ------ can later use oe2eci to get starting r and v based on injection orbit
 r_initial = np.array([0,1.5e11,0])
 v_initial = np.array([30000,0,0])
-q_initial = np.array([0, 0, 0, 1])
+q_initial = np.array([1, 0, 0, 0]) # scalar first
 w_initial = np.array([0, 0, 0])
 state_initial = np.r_[r_initial, q_initial, v_initial, w_initial]
 
