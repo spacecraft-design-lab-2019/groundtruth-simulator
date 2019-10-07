@@ -2,18 +2,28 @@
 """
 Created on Thu Oct  3 14:24:20 2019
 
-@author: Kevin
 """
 import numpy as np
 #from numpy import linalg as LA
-def dragCalc(r,v,M,A,h0,rho0,H,Re,wEarth):
+def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz):
     R = np.linalg.norm(r)
     h = R - Re
+    
+    
+    #constants for calculating density
+    a = 4.436e-09;
+    b = -0.01895;
+    c = 4.895e-12;
+    d = -0.008471;
+    rho = a*exp(b*h) + c*exp(d*h) #based on JD-2008 model
+    
     vRel = np.cross(wEarth,r)
-    rho = rho0 * exp(-(h-h0)/H)
-    B = Cd*A/M
-    adrag = -0.5*B*rho*norm(vRel)^2 * vRel/norm(vRel)
-    return adrag
+    adrag = -0.5*rho*cD*A*norm(vRel)^2 * vRel/norm(vRel)
+    
+    #cp is center of pressure coordinate, cm is center of mass coorinate
+    #note cp and cm must be in Local Vertical/Local Horizontal Coords
+    mdrag = 0.5*rho*cD*A*norm(vRel)^2*np.array([cpx - cmx, 0, cpz - cmz]) 
+    return adrag, mdrag
     
 """
 function adrag = dragCalc(r,v)
