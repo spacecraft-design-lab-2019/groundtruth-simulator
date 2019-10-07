@@ -6,6 +6,7 @@
 %
 %--------------------------------------------------------------------------
 clc
+close all
 clear
 format long g
 
@@ -114,4 +115,19 @@ for i = 1:40
     RHO(i) = rho;
 end
 
-plot(sat3s,RHO)
+plot(sat3s,RHO,'o')
+% p = polyfit(sat3s,RHO,3)
+% hold on
+% plot(sat3s,p(1)*sat3s.^3 + p(2)*sat3s.^2 + p(3)*sat3s(3) + sat3s(4))
+f = fit(sat3s',RHO','exp2')
+a =   4.436e-09;
+b =    -0.01895;
+c =   4.895e-12;
+d =   -0.008471;
+
+hold on
+plot(sat3s,a*exp(b*sat3s) + c*exp(d*sat3s))
+
+title('Atmospheric Density over Altitude')
+xlabel('Altitude (km)')
+ylabel('Atmospheric Density (kg/m^3)')
