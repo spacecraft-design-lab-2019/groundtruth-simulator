@@ -24,7 +24,7 @@ Pseudocode:
 #-------- Initialize Workspace and Variables ------------
 import numpy as np
 from initialize import *
-from simulator import *
+from propagate_step import *
 import matplotlib.pyplot as plt
 
 

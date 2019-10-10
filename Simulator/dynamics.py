@@ -17,6 +17,7 @@ def accelPointMass(r_sat, r_body, GM):
 
 
 def accelHarmonic(state, R, n, m):
+    # -------- TO FIX: BELOW CODE IS 1-INDEXED ------------
 
     x = 0
     y = 0
