@@ -8,7 +8,6 @@ from sciConsts import *
 import sys #temporary for debugging
 
 
-
 #-------------------------Simulator-------------------------------
 
 def rk4_step(f, x, h):

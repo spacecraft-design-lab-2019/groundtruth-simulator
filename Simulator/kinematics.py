@@ -48,7 +48,8 @@ def calc_q_dot(q, w):
 def calc_w_dot(w, torque, I):
     """
     Function: calc_w_dot
-        Calculates the derivative of the angular velocity vector.
+        Calculates the derivative of the angular velocity vector using the
+        Euler equations for rigid body dynamics.
         
     Inputs:
         w: angular velocity (radians/s) np.array[3x1][float64]

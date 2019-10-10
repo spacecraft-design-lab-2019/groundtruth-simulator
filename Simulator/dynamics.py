@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-#---------------------------Dynamics---------------------------------
+
+#-------------------------Torques--------------------------------
+
+
+
+
+#-------------------------Forces---------------------------------
 
 def accelPointMass(r_sat, r_body, GM):
     #--------currently Earth gravity only assuming r_sat is in ECI
