@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-
-#-------------------------Torques--------------------------------
-
-
-
-
 #-------------------------Forces---------------------------------
 
 def accelPointMass(r_sat, r_body, GM):
@@ -14,6 +8,35 @@ def accelPointMass(r_sat, r_body, GM):
     #----------will eventually change to any body given r_body
     accel = -GM * r_sat / (np.linalg.norm(r_sat)**3)
     return accel
+
+
+#-------------------------Torques--------------------------------
+    
+def 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def accelHarmonic(state, R, n, m):
