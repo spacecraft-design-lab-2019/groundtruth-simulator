@@ -54,7 +54,9 @@ def calc_statedot(t, state):
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros((3,))
     accel = np.zeros((3,))
-    accel = accel + accelPointMass(state.r, state.r, GM) # Earth Gravity
+    
+    accel = accel + gravityPointMass(state.r, np.zeros((3,)), GM) # Earth Gravity
+    accel = accel + aeroDrag()
 
     #---------------------Kinematics----------------------------------
     q_dot = calc_q_dot(state.q, state.w)

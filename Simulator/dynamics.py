@@ -3,9 +3,9 @@ import numpy as np
 
 #-------------------------Forces---------------------------------
 
-def accelPointMass(r_sat, r_body, GM):
+def gravityPointMass(r_sat, r_body, GM):
     """
-    Function: accelPointMass
+    Function: gravityPointMass
         Calculates the gravitational force of a rigid spherical body.
         
     Inputs:
@@ -21,9 +21,9 @@ def accelPointMass(r_sat, r_body, GM):
     return accel
 
 
-def accelEarthJ2(r_sat, GM, J2, rEarth):
+def gravityEarthJ2(r_sat, GM, J2, rEarth):
     """
-    Function: accelEarthJ2
+    Function: gravityEarthJ2
     
     Inputs:
         r_sat: position vector of satellite in ECI
