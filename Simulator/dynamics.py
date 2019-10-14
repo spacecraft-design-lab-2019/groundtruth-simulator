@@ -9,6 +9,31 @@ def accelPointMass(r_sat, r_body, GM):
     accel = -GM * r_sat / (np.linalg.norm(r_sat)**3)
     return accel
 
+def accelEarthJ2(r_sat, GM, J2, rEarth):
+    """
+    Function: accelEarthJ2
+    
+    Inputs:
+        r_sat: position vector of satellite in ECI
+        GM: gravitational parameter of Earth
+        J2: constant representing non-spherical shape of Earth
+        rEarth: radius of the Earth
+    Outputs:
+        f: acceleration due to Earth
+        
+    Reference: AA 279A, Lecture 14, Slide 5
+    """
+    
+    z = r_sat[2]
+    r = np.linalg.norm(r_sat)
+    R = r_sat / r
+    
+    f = np.zeros((3,))
+    f = -0.5*GM*J2*rEarth**2 * (3/r**4 - 15*(z**2 / r**6)) * R
+    f[2] = f[2] + -0.5*GM*J2*rEarth**2 * (6 * (z / r**5))
+    
+    return f
+
 
 #-------------------------Torques--------------------------------
 
