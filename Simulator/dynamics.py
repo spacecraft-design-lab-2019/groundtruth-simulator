@@ -9,6 +9,7 @@ def accelPointMass(r_sat, r_body, GM):
     accel = -GM * r_sat / (np.linalg.norm(r_sat)**3)
     return accel
 
+
 def accelEarthJ2(r_sat, GM, J2, rEarth):
     """
     Function: accelEarthJ2
@@ -34,6 +35,16 @@ def accelEarthJ2(r_sat, GM, J2, rEarth):
     
     return f
 
+
+def aeroDrag():
+    """
+    Function: aeroDrag
+    
+    FILL THIS OUT
+    
+    """
+    
+    return np.zeros((3,))
 
 #-------------------------Torques--------------------------------
 
