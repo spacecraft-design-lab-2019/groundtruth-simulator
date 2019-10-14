@@ -35,17 +35,13 @@ def density_lookup(year,month,day,hour,altitude,glat,glon):
 #testing
 print(density_lookup(2019,10,6,12,500,90,90))
 
-def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz):
+def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz,year,month,day,hour,altitude,glat,glon):
     R = np.linalg.norm(r)
     h = R - Re
 
 
     #constants for calculating density
-    a = 4.436e-09;
-    b = -0.01895;
-    c = 4.895e-12;
-    d = -0.008471;
-    rho = a*exp(b*h) + c*exp(d*h) #based on JD-2008 model
+    rho = density_lookup(year,month,day,hour,altitude,glat,glon)
 
     vRel = np.cross(wEarth,r)
     adrag = -0.5*rho*cD*A*norm(vRel)^2 * vRel/norm(vRel)
