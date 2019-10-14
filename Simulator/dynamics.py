@@ -43,6 +43,11 @@ def gravityGradientTorque(r_sat, R_eci2principal, I, GM):
     return M
 
 
+
+#-------------------------------------------------------------
+#-------------------------BACKUP STUFF -----------------------
+#-------------------------------------------------------------
+
 def accelHarmonic(state, R, n, m):
     # -------- TO FIX: BELOW CODE IS 1-INDEXED ------------
 
