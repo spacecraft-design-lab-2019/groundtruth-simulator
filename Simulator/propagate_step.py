@@ -39,7 +39,7 @@ def rk4_step(f, x, h):
 def calc_statedot(t, state):
     """
     Function: state_dot
-        Calculates the derivative of the state vector
+        Calculates the derivative of the state vector.
 
     Inputs:
         t: the current time
@@ -49,12 +49,21 @@ def calc_statedot(t, state):
     """
 
     #-----------------Calculate Environment --------------------------
-
+    
 
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros((3,))
     accel = np.zeros((3,))
-    accel = accel + accelPointMass(state.r, state.r, GM) # Earth Gravity
+    
+    accel = accel + gravityPointMass(state.r, np.zeros((3,)), GM) # Earth Gravity
+    accel = accel + aeroDrag()
+    
+    #torque = torque + gravityGradientTorque(r_sat, R_eci2principal, I, GM)
+    
+    
+    #-------------------Implement Control Law-------------------------
+    
+    
 
     #---------------------Kinematics----------------------------------
     q_dot = calc_q_dot(state.q, state.w)

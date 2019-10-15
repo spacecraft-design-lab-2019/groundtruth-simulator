@@ -3,23 +3,98 @@ import numpy as np
 
 #-------------------------Forces---------------------------------
 
-def accelPointMass(r_sat, r_body, GM):
-    #--------currently Earth gravity only assuming r_sat is in ECI
-    #----------will eventually change to any body given r_body
-    accel = -GM * r_sat / (np.linalg.norm(r_sat)**3)
+def gravityPointMass(r_sat, r_body, GM):
+    """
+    Function: gravityPointMass
+        Calculates the gravitational force of a rigid spherical body.
+        
+    Inputs:
+        r_sat: position vector of the satellite in ECI
+        r_body: position vector of the attracting body in ECI
+        GM: gravitaional parameter of attracting body
+        
+    Outputs:
+        accel: acceleration due to gravity
+    """
+    
+    accel = -GM * (r_sat - r_body) / (np.linalg.norm(r_sat - r_body)**3)
     return accel
+
+
+def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
+    """
+    Function: gravityEarthJ2
+    
+    Inputs:
+        r_sat: position vector of satellite in ECI
+        GM: gravitational parameter of Earth
+        J2: constant representing non-spherical shape of Earth
+        rad_Earth: radius of the Earth
+    Outputs:
+        f: acceleration due to Earth
+        
+    Reference: AA 279A, Lecture 14, Slide 5
+    """
+    
+    z = r_sat[2]
+    r = np.linalg.norm(r_sat)
+    R = r_sat / r
+    
+    f = np.zeros((3,))
+    f = -0.5*GM*J2*rad_Earth**2 * (3/r**4 - 15*(z**2 / r**6)) * R
+    f[2] = f[2] + -0.5*GM*J2*rad_Earth**2 * (6 * (z / r**5))
+    
+    return f
+
+
+def aeroDrag():
+    """
+    Function: aeroDrag
+    
+    FILL THIS OUT
+    
+    """
+    
+    return np.zeros((3,))
 
 
 #-------------------------Torques--------------------------------
 
+def gravityGradientTorque(r_sat, R_eci2principal, I, GM):
+    """
+    Function: gravityGradientTorque
+
+    Inputs:
+        r_sat: position vector of satellite in ECI
+        R_eci2principal: rotation matrix from eci to principal axes
+        I: moment of inertia matrix (in principal axes) (diagonal)
+        GM: gravitational parameter of attracting body
+    Outputs:
+        M: moment due to gravity gradient
+    """
+
+    R = np.linalg.norm(r_sat)
+    c = R_eci2principal @ r_sat
+    
+    Ix = I[0,0]
+    Iy = I[1,1]
+    Iz = I[2,2]
+    cx = c[0]
+    cy = c[1]
+    cz = c[2]
+    
+    M = np.zeros((3,))
+    M[0] = 3*GM/R**3 * (Iz - Iy)*cy*cx
+    M[1] = 3*GM/R**3 * (Ix - Iz)*cz*cx
+    M[2] = 3*GM/R**3 * (Iy - Ix)*cx*cy
+    
+    return M
 
 
 
-
-
-
-
-
+#-------------------------------------------------------------
+#-------------------------BACKUP STUFF -----------------------
+#-------------------------------------------------------------
 
 def accelHarmonic(state, R, n, m):
     # -------- TO FIX: BELOW CODE IS 1-INDEXED ------------

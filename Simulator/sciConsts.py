@@ -18,6 +18,7 @@ GM = 3.986e5
 
 
 #Spherical Gravity
+## NOTE: the below xlsx file contains Gravity Coefficients for an asteroid, NOT Earth
 gravity_coefficients = pd.read_excel("lookups/GravityCoefficients.xlsx",header=None)
 order = 35
 degree = 35
