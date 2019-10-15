@@ -21,7 +21,7 @@ def gravityPointMass(r_sat, r_body, GM):
     return accel
 
 
-def gravityEarthJ2(r_sat, GM, J2, rEarth):
+def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
     """
     Function: gravityEarthJ2
     
@@ -29,7 +29,7 @@ def gravityEarthJ2(r_sat, GM, J2, rEarth):
         r_sat: position vector of satellite in ECI
         GM: gravitational parameter of Earth
         J2: constant representing non-spherical shape of Earth
-        rEarth: radius of the Earth
+        rad_Earth: radius of the Earth
     Outputs:
         f: acceleration due to Earth
         
@@ -41,8 +41,8 @@ def gravityEarthJ2(r_sat, GM, J2, rEarth):
     R = r_sat / r
     
     f = np.zeros((3,))
-    f = -0.5*GM*J2*rEarth**2 * (3/r**4 - 15*(z**2 / r**6)) * R
-    f[2] = f[2] + -0.5*GM*J2*rEarth**2 * (6 * (z / r**5))
+    f = -0.5*GM*J2*rad_Earth**2 * (3/r**4 - 15*(z**2 / r**6)) * R
+    f[2] = f[2] + -0.5*GM*J2*rad_Earth**2 * (6 * (z / r**5))
     
     return f
 
@@ -56,6 +56,7 @@ def aeroDrag():
     """
     
     return np.zeros((3,))
+
 
 #-------------------------Torques--------------------------------
 
