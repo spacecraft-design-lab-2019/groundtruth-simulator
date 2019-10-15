@@ -59,7 +59,11 @@ def calc_statedot(t, state):
     accel = accel + aeroDrag()
     
     #torque = torque + gravityGradientTorque(r_sat, R_eci2principal, I, GM)
-
+    
+    
+    #-------------------Implement Control Law-------------------------
+    
+    
 
     #---------------------Kinematics----------------------------------
     q_dot = calc_q_dot(state.q, state.w)
