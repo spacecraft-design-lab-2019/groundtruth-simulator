@@ -103,3 +103,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 Simulator/lookups/EGM2008_to2190_TideFree
+Archive/lookups/EGM2008_to2190_TideFree
