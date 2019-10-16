@@ -2,6 +2,7 @@
 import numpy as np
 import msise00
 from datetime import datetime
+
 #-------------------------Forces---------------------------------
 
 def gravityPointMass(r_sat, r_body, GM):
@@ -71,6 +72,7 @@ def density_lookup(year,month,day,hour,altitude,glat,glon):
     rho = atmos.Total.values[0].item()
     return rho
 
+
 def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz,year,month,day,hour,altitude,glat,glon):
     R = np.linalg.norm(r)
     h = R - Re
@@ -119,3 +121,4 @@ def gravityGradientTorque(r_sat, R_eci2principal, I, GM):
     M[2] = 3*GM/R**3 * (Iy - Ix)*cx*cy
     
     return M
+
