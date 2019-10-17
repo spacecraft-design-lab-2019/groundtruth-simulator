@@ -58,7 +58,7 @@ def calc_statedot(t, state):
     accel = accel + gravityPointMass(state.r, np.zeros((3,)), GM) # Earth Gravity
 #    accel = accel + aeroDrag()
     
-    torque = torque + gravityGradientTorque(state.r, np.zeros((3,3)), state.I, GM)
+    torque = torque + gravityGradientTorque(state.r, state.I, GM)
     
     
     #-------------------Implement Control Law-------------------------
