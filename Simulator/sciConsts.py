@@ -5,8 +5,8 @@ import os
 
 #directory
 dir_path = os.path.dirname(os.path.realpath(__file__))
-
 mSun = 1.98855e30 #kg
+GM = 3.986e5
 
 
 class Earth():
@@ -29,7 +29,7 @@ class Moon():
     """
     A class to store Moon parameters
     """
-        def __init__(self,
+    def __init__(self,
                 R = 1738, #Equatorial Radius, km
                 mass = 7.3483e22, #kg
                 SMA = 38400, #semimajor axis, km
