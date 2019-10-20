@@ -49,30 +49,6 @@ def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
     return f
 
 
-def density_lookup(year,month,day,hour,altitude,glat,glon):
-    """
-    Function: density_lookup
-
-    Gets atmospheric density using MSISE-00 atmospheric model.
-    Must have https://pypi.org/project/msise00/ library installed.
-
-    Inputs:
-        year
-        month
-        day
-        hour
-        altitude (km)
-        glat: geodetic latitude
-        glon: geodetic longitude
-
-    Outputs:
-        rho: atmospheric density (kg/m^3)
-    """
-    atmos = msise00.run(time=datetime(year, month, day, hour), altkm=altitude, glat=glat, glon=glon)
-    rho = atmos.Total.values[0].item()
-    return rho
-
-
 def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz,year,month,day,hour,altitude,glat,glon):
     #constants for calculating density
     rho = density_lookup(year,month,day,hour,altitude,glat,glon)
@@ -84,6 +60,7 @@ def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz,year,month,day,hour,altitude,gla
     #note cp and cm must be in Local Vertical/Local Horizontal Coords
     mdrag = 0.5*rho*cD*A*np.linalg.norm(vRel)^2*np.array([cpx - cmx, 0, cpz - cmz])
     return adrag, mdrag
+
 
 #-------------------------Torques--------------------------------
 
@@ -100,3 +77,4 @@ def gravityGradientTorque(r_sat, I, GM):
     """
 
     return (3*GM / ((r_sat.T @ r_sat)**5/2)) * np.cross(r_sat, I @ r_sat)
+

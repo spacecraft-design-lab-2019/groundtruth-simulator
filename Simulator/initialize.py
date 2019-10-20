@@ -5,15 +5,19 @@ Initialization Script
 Sets simulation parameters and initializes spacecraft. Run by driver-script
 before beginning simulation.
 
-NOTE: based on \Reference\Hridu Old Simulator\Model Scripts\initialize.m
 """
+
+#-------------------------Setup---------------------------------
 
 # Importing libraries
 import numpy as np
 
 # Simulation Parameters
 tspan = np.array([0, 8640])    # [sec]
-tstep = .1                  # [sec] - 10 Hz
+tstep = .1                     # [sec] - 10 Hz
+
+
+#-----------------------Spacecraft---------------------------------
 
 # Mass Properties of Spacecraft
 class SpacecraftState():
@@ -40,18 +44,12 @@ class SpacecraftState():
         self.q = new_state[3:7]
         self.v = new_state[7:10]
         self.w = new_state[10:13]
-
-# Initial Spacecraft State Vector
-# ------ can later use oe2eci to get starting r and v based on injection orbit
-
-#ISS = SpacecraftState()
-#state_initial = ISS.state()
-#print(state_initial)
-#np.r_[ISS.r, ISS.q, ISS.v, ISS.w]
+    def normalize_quat(self):
+        self.q = self.q/np.linalg.norm(self.q)
 
 
 # Structure of Spacecraft
-class SpacecraftStructure:
+class SpacecraftStructure():
     """
     A class to store spacecraft structural poperties
     """
@@ -72,6 +70,42 @@ class SpacecraftStructure:
         self.normVec5 = normVec5
         self.normVec6 = normVec6
         self.cD = cD
+
+
+#-------------------------Environment---------------------------------
+
+class Environment():
+    """
+    A class to store environment constants / lookup functions.
+    """
+    def __init__(self):
+
+
+
+
+    def density_lookup(year,month,day,hour,altitude,glat,glon):
+        """
+        Function: density_lookup
+
+        Gets atmospheric density using MSISE-00 atmospheric model.
+        Must have https://pypi.org/project/msise00/ library installed.
+
+        Inputs:
+            year
+            month
+            day
+            hour
+            altitude (km)
+            glat: geodetic latitude
+            glon: geodetic longitude
+
+        Outputs:
+            rho: atmospheric density (kg/m^3)
+        """
+        atmos = msise00.run(time=datetime(year, month, day, hour), altkm=altitude, glat=glat, glon=glon)
+        rho = atmos.Total.values[0].item()
+        return rho
+
 
 # Magnetorquers
 

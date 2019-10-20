@@ -21,16 +21,17 @@ Pseudocode:
         -account for control input in dynamics
 """
 
-#-------- Initialize Workspace and Variables ------------
+#------------ Initialize Workspace and Variables ------------
 import numpy as np
 from initialize import *
 from propagate_step import *
 import matplotlib.pyplot as plt
 
 
-#------------ Run Simulation -----------------------------
+#------------------ Run Simulation -----------------------------
 
 ISS = SpacecraftState()
+world = Environment()
 
 t = np.arange(ISS.t, tspan[1]+tstep, tstep)
 state_history = np.zeros((np.shape(t)[0], np.shape(ISS.state())[0]))
@@ -39,13 +40,16 @@ state_history[0, :] = ISS.state()
 for idx in range(t.shape[0]-1):
     # Integrate
     ISS = rk4_step(calc_statedot, ISS, tstep)
-    state_history[idx+1, :] = ISS.state()
 
     # Normalize the Quaternion Vector
-    state_history[idx+1, 3:7] = state_history[idx+1, 3:7]/np.linalg.norm(state_history[idx+1, 3:7])
+    ISS.normalize_quat();
+
+    # Save to History
+    state_history[idx+1, :] = ISS.state()
+
 
 #-------------------- Plot------------------------------------
-# can add plotting/analysis scripts here
+
 plt.plot(state_history[:, 0], state_history[:, 1])
 plt.xlabel("X_ECI")
 plt.ylabel("Y_ECI")
