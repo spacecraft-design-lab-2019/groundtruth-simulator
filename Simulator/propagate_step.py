@@ -5,12 +5,9 @@ from dynamics import *
 from initialize import *
 from sciConsts import *
 
-import sys #temporary for debugging
-
-
 #-------------------------Simulator-------------------------------
 
-def rk4_step(f, x, h):
+def rk4_step(f, state, environment, h):
     """
     Function: rk4_step
         Uses rk4 to integrate a single step. (vectorized)
@@ -22,21 +19,42 @@ def rk4_step(f, x, h):
     Outputs:
         x1: updated state object
     """
-    k1 = h * f(x.t,      x)
-    x.update_state(x.state()+k1/2)
-    k2 = h * f(x.t+h/2,  x)
+    k1 = h * f(state, environment)
+
+    x2 = copy(state).update_state(k1/2, h/2)
+    k2 = h * f(x2, environment)
+
+    x3 = copy(state).update_state(k2/2, h/2)
+    k3 = h * f(x3, environment)
+
+    x4 = copy(state).update_state(k3, h)
+    k4 = h * f(x4, environment)
+
+    xf = copy(state).update_state((k1 + 2*k2 + 2*k3 + k4)/6, h)
+
+
+
+
+
+
+
+    x1 = copy(x).update_state(x.state()+k1/2)
+
     x.update_state(x.state()+k2/2)
+
     k3 = h * f(x.t+h/2,  x)
     x.update_state(x.state()+k3)
+
     k4 = h * f(x.t+h,    x)
     x1 = x.state() + (k1 + 2*k2 + 2*k3 + k4)/6
+
     t1 = x.t + h
     x.t = t1
     x.update_state(x1)
     return x
 
 
-def calc_statedot(t, state):
+def calc_statedot(state, environment):
     """
     Function: state_dot
         Calculates the derivative of the state vector.

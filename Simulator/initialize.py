@@ -11,6 +11,7 @@ before beginning simulation.
 
 # Importing libraries
 import numpy as np
+import msise00
 
 # Simulation Parameters
 tspan = np.array([0, 8640])    # [sec]
@@ -19,7 +20,10 @@ tstep = .1                     # [sec] - 10 Hz
 
 #-----------------------Spacecraft---------------------------------
 
-# Mass Properties of Spacecraft
+
+
+
+
 class SpacecraftState():
     """
     A class to store all spacecraft parameters
@@ -37,15 +41,35 @@ class SpacecraftState():
         self.v = v
         self.w = w
         self.t = t
+
     def state(self):
         return np.r_[self.r, self.q, self.v, self.w]
-    def update_state(self,new_state):
+
+    def set_state(self,new_state, t):
         self.r = new_state[0:3]
         self.q = new_state[3:7]
         self.v = new_state[7:10]
         self.w = new_state[10:13]
+        self.t = t
+        return self
+
+    def update_state(self, state_dot, dt):
+        self.r = self.r + state_dot[0:3]
+        self.q = self.q + state_dot[3:7]
+        self.v = self.v + state_dot[7:10]
+        self.w = self.w + state_dot[10:13]
+        self.t = self.t + dt
+        return self
+
+    def propogate_state(self, dself, dt):
+        x = copy(self)
+        x.update_state(self, self+dself, self.tdt)
+
     def normalize_quat(self):
         self.q = self.q/np.linalg.norm(self.q)
+
+    def __add__(self, other):
+        
 
 
 # Structure of Spacecraft
@@ -79,7 +103,7 @@ class Environment():
     A class to store environment constants / lookup functions.
     """
     def __init__(self):
-
+        self.earth = Earth()
 
 
 
@@ -106,6 +130,11 @@ class Environment():
         rho = atmos.Total.values[0].item()
         return rho
 
+
+
+
+
+#--------------OTHER STUFF --------------------------
 
 # Magnetorquers
 

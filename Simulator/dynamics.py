@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-#import msise00
 from datetime import datetime
 
 #-------------------------Forces---------------------------------

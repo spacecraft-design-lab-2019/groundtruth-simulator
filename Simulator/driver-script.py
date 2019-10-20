@@ -30,22 +30,22 @@ import matplotlib.pyplot as plt
 
 #------------------ Run Simulation -----------------------------
 
-ISS = SpacecraftState()
+magnes = SpacecraftState()
 world = Environment()
 
-t = np.arange(ISS.t, tspan[1]+tstep, tstep)
-state_history = np.zeros((np.shape(t)[0], np.shape(ISS.state())[0]))
-state_history[0, :] = ISS.state()
+t = np.arange(magnes.t, tspan[1]+tstep, tstep)
+state_history = np.zeros((np.shape(t)[0], np.shape(magnes.state())[0]))
+state_history[0, :] = magnes.state()
 
 for idx in range(t.shape[0]-1):
     # Integrate
-    ISS = rk4_step(calc_statedot, ISS, tstep)
+    magnes = rk4_step(calc_statedot, magnes, world, tstep)
 
     # Normalize the Quaternion Vector
-    ISS.normalize_quat();
+    magnes.normalize_quat();
 
     # Save to History
-    state_history[idx+1, :] = ISS.state()
+    state_history[idx+1, :] = magnes.state()
 
 
 #-------------------- Plot------------------------------------
