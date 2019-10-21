@@ -30,6 +30,46 @@ class SpacecraftStructure():
         self.normVec5 = normVec5
         self.normVec6 = normVec6
         self.cD = cD
+        self.faces = self.make_faces()
+
+    def aerodrag(self, rho, vRel):
+        """
+        vRel must be in the body frame
+        """
+        F = np.zeros(3)
+        M = np.zeros(3)
+        for face in self.faces:
+            f, m = aerodrag(face, rho, vRel)
+            F += f
+            M += m
+        return F, M
+
+
+class Face():
+    def __init__(self, N, A, c, spacecraft):
+        self.N = N/np.norm(N)
+        self.A = A
+        self.c = c # vector from COM to CP of face.
+        self.spacecraft = spacecraft
+
+    def wetted_area(self, v):
+        """
+        Compute the effective area of a face relative to a vector v where
+        v is defined to point outwards from the face.
+        """
+        a = (v/np.norm(v)) @ self.N
+        if a <= 0:
+            return 0
+        else:
+            return a * self.A
+
+    def aerodrag(self, rho, vRel):
+        vmag = np.norm(vRel)
+        A = self.wetted_area(vRel)
+
+        drag_acc = -0.5*rho*self.spacecraft.cD*A*vmag * vRel
+        drag_M = cross(self.c, drag_acc);
+        return drag_acc, drag_M
 
 
 #-------------------------Environment---------------------------------
