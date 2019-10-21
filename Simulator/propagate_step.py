@@ -47,21 +47,21 @@ def calc_statedot(t, state, environment, structure):
 
 
     #-----------------Calculate Environment --------------------------
-    
+
 
     #----------------Calculate Accelerations/Torques------------------
-    torque = np.zeros((3,))
-    accel = np.zeros((3,))
-    
-    accel = accel + gravityPointMass(r, np.zeros((3,)), environment.earth.GM)
+    torque = np.zeros(3)
+    accel = np.zeros(3)
+
+    accel = accel + gravityPointMass(r, np.zeros(3), environment.earth.GM)
     accel = accel + gravityEarthJ2(r, environment.earth.GM, environment.earth.J2, environment.earth.radius)
 
     torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
-    
-    
+
+
     #-------------------Implement Control Law-------------------------
-    
-    
+
+
 
     #---------------------Kinematics----------------------------------
     q_dot = calc_q_dot(q, w)

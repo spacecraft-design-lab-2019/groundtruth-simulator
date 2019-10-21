@@ -2,7 +2,7 @@
 import numpy as np
 import msise00
 import julian
-import conversions as con
+import conversions as conv
 
 #--------------------Spacecraft Structure----------------------------
 
@@ -59,8 +59,8 @@ class Environment():
         Outputs:
             rho: atmospheric density (kg/m^3)
         """
-        r_ECEF = con.ECI_to_ECEF(r_ECI, GMST)
-        glat, glong, alt = con.ECEF_to_LLA(r_ECEF, rad_Earth)
+        r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
+        glat, glong, alt = conv.ECEF_to_LLA(r_ECEF, rad_Earth)
         dt = julian.from_jd(mjd, fmt='mjd')
         atmos = msise00.run(time=dt, altkm=alt, glat=glat, glong=glong)
         rho = atmos.Total.values[0].item()
@@ -77,7 +77,7 @@ class Earth():
                 mass = 5.9742e24, #kg
                 SMA = 149598023, #semimajor axis, km
                 J2 = 1.0826e-3, # J2 constant
-                GM = 3.986e5): #gravitational param, km^3/s^2            
+                GM = 3.986e5): #gravitational param, km^3/s^2
         self.radius = radius
         self.w = w
         self.mass = mass
@@ -101,7 +101,7 @@ class Earth():
 #                 R = 1738, #Equatorial Radius, km
 #                 mass = 7.3483e22, #kg
 #                 SMA = 38400, #semimajor axis, km
-#                 GM = 4902.799): #gravitational param, km^3/s^2            
+#                 GM = 4902.799): #gravitational param, km^3/s^2
 #         self.R = R
 #         self.mass = mass
 #         self.SMA = SMA
