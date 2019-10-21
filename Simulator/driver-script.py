@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 
 #------------------ Run Simulation -----------------------------
 
-world = Environment()
+world = Environment(mjd_start=mjd_start)
 struct = SpacecraftStructure()
 
 t = np.arange(0, tspan[1]+tstep, tstep)

@@ -53,10 +53,18 @@ def calc_statedot(t, state, environment, structure):
     torque = np.zeros(3)
     accel = np.zeros(3)
 
+    GMST = 0 # <------ NEED TO CREATE LOOKUP FOR THIS
+    A = 1 # <------- NEED TO ADD THIS TO STRUCTURE
+
+    adrag, mdrag = dragCalc(r, v, GMST, mjd, structure.cD, A, cmx, cmz, cpx, cpz):
+
+
     accel = accel + gravityPointMass(r, np.zeros(3), environment.earth.GM)
     accel = accel + gravityEarthJ2(r, environment.earth.GM, environment.earth.J2, environment.earth.radius)
+    accel = accel + adrag
 
     torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
+    torque = torque + mdrag
 
 
     #-------------------Implement Control Law-------------------------

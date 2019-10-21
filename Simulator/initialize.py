@@ -15,6 +15,7 @@ import numpy as np
 # Simulation Parameters
 tspan = np.array([0, 864])    # [sec]
 tstep = .1                     # [sec] - 10 Hz
+mjd_start = 58777.740671
 
 
 # Initial Spacecraft State

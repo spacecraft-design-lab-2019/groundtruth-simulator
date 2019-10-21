@@ -37,7 +37,8 @@ class Environment():
     """
     A class to store environment constants / lookup functions.
     """
-    def __init__(self):
+    def __init__(self, mjd_start = 58777.740671):
+        self.mjd_start = mjd_start
         self.earth = Earth()
 
     def density_lookup(r_ECI, GMST, mjd, rad_Earth):
@@ -84,6 +85,11 @@ class Earth():
         self.SMA = SMA
         self.J2 = J2
         self.GM = GM
+
+    def GMST(mjd):
+        # Reference: AA 279A Lecture 6, Slide 3
+        d = mjd - 51544.5
+        return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
 
 
 #--------------OTHER STUFF --------------------------
