@@ -53,8 +53,7 @@ def calc_statedot(t, state, environment, structure):
     torque = np.zeros(3)
     accel = np.zeros(3)
 
-    adrag, mdrag = dragCalc(r_ECI, v_ECI, mjd, environment, structure)
-
+    adrag, mdrag = dragCalc(state, mjd, environment, structure)
 
     accel = accel + gravityPointMass(r, environment.earth.GM)
     accel = accel + gravityEarthJ2(r, environment.earth)

@@ -47,7 +47,11 @@ def gravityEarthJ2(r_sat, earth):
     return f
 
 
-def dragCalc(r_ECI, v_ECI, mjd, environment, structure):
+def dragCalc(state, mjd, environment, structure):
+
+    r_ECI = state[0:3]
+    v_ECI = state[7:10]
+    q = state[3:7] # <------we may need this???
 
     GMST = environment.earth.GMST(mjd)
     rho = environment.density_lookup(r_ECI, GMST, mjd)
