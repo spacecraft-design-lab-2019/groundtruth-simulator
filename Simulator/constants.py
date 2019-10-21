@@ -3,6 +3,7 @@ import numpy as np
 import msise00
 import julian
 import conversions as conv
+import math
 
 #--------------------Spacecraft Structure----------------------------
 

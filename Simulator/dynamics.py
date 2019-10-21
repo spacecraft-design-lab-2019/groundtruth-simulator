@@ -56,7 +56,7 @@ def dragCalc(state, mjd, environment, structure):
     GMST = environment.earth.GMST(mjd)
     rho = environment.density_lookup(r_ECI, GMST, mjd)
 
-    vRel = np.cross(environment.earth.w, r_ECI)
+    vRel = v_ECI - np.cross(environment.earth.w, r_ECI)
     A = 0 # <----------- NEED TO CALCULATE CROSS-SECTIONAL AREA BASED ON ATTITUDE
     cpx = 0 
     cmx = 0 # <--------THESE NEED TO BE DEFINED (likely in structure)
