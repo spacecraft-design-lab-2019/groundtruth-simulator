@@ -2,7 +2,6 @@
 import numpy as np
 from kinematics import *
 from dynamics import *
-# from constants import *
 
 #-------------------------Simulator-------------------------------
 
@@ -54,13 +53,11 @@ def calc_statedot(t, state, environment, structure):
     torque = np.zeros(3)
     accel = np.zeros(3)
 
-    A = 1 # <------- NEED TO ADD THIS TO STRUCTURE
-
-    adrag, mdrag = dragCalc(r, v, environment.earth.GMST(mjd), mjd, structure.cD, A, cmx, cmz, cpx, cpz):
+    adrag, mdrag = dragCalc(r_ECI, v_ECI, mjd, environment, structure)
 
 
-    accel = accel + gravityPointMass(r, np.zeros(3), environment.earth.GM)
-    accel = accel + gravityEarthJ2(r, environment.earth.GM, environment.earth.J2, environment.earth.radius)
+    accel = accel + gravityPointMass(r, environment.earth.GM)
+    accel = accel + gravityEarthJ2(r, environment.earth)
     accel = accel + adrag
 
     torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)

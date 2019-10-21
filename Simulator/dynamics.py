@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import constants as CONST
-
 
 #-------------------------Forces---------------------------------
 
-def gravityPointMass(r_sat, r_body, GM):
+def gravityPointMass(r_sat, GM, r_body=np.zeros((3,))):
     """
     Function: gravityPointMass
         Calculates the gravitational force of a rigid spherical body.
@@ -23,7 +21,7 @@ def gravityPointMass(r_sat, r_body, GM):
     return accel
 
 
-def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
+def gravityEarthJ2(r_sat, earth):
     """
     Function: gravityEarthJ2
 
@@ -43,24 +41,27 @@ def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
     R = r_sat / r
 
     f = np.zeros(3)
-    f = -0.5*GM*J2*rad_Earth**2 * (3/r**4 - 15*(z**2 / r**6)) * R
-    f[2] = f[2] + -0.5*GM*J2*rad_Earth**2 * (6 * (z / r**5))
+    f = -0.5*earth.GM*earth.J2*earth.radius**2 * (3/r**4 - 15*(z**2 / r**6)) * R
+    f[2] = f[2] + -0.5*earth.GM*earth.J2*earth.radius**2 * (6 * (z / r**5))
 
     return f
 
 
-def dragCalc(r_ECI,v_ECI,GMST, mjd, cD,A,cmx,cmz,cpx,cpz):
-    #constants for calculating density
+def dragCalc(r_ECI, v_ECI, mjd, environment, structure):
 
-    rho = CONST.Environment.density_lookup(r_ECI, GMST, mjd, CONST.Earth.radius)
-    vRel = np.cross(CONST.Earth.w, r_ECI)
-    adrag = -0.5*rho*cD*A*np.linalg.norm(vRel)^2 * vRel/np.linalg.norm(vRel)
+    GMST = environment.earth.GMST(mjd)
+    rho = environment.density_lookup(r_ECI, GMST, mjd)
 
-    #cp is center of pressure coordinate, cm is center of mass coorinate
-    #note cp and cm must be in Local Vertical/Local Horizontal Coords
-    A = CONST.SpacecraftStructure.surfArea
-    cD = CONST.SpacecraftStructure.cD
-    mdrag = 0.5*rho*cD*A*np.linalg.norm(vRel)^2*np.array([cpx - cmx, 0, cpz - cmz])
+    vRel = np.cross(environment.earth.w, r_ECI)
+    A = 0 # <----------- NEED TO CALCULATE CROSS-SECTIONAL AREA BASED ON ATTITUDE
+    cpx = 0 
+    cmx = 0 # <--------THESE NEED TO BE DEFINED (likely in structure)
+    cpz = 0
+    cmz = 0
+
+    adrag = -0.5*rho*structure.cD*A*np.linalg.norm(vRel)^2 * vRel/np.linalg.norm(vRel)
+    mdrag = 0.5*rho*structure.cD*A*np.linalg.norm(vRel)^2 * np.array([cpx - cmx, 0, cpz - cmz])
+
     return adrag, mdrag
 
 

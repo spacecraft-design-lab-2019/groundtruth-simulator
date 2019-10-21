@@ -41,7 +41,7 @@ class Environment():
         self.mjd_start = mjd_start
         self.earth = Earth()
 
-    def density_lookup(r_ECI, GMST, mjd, rad_Earth):
+    def density_lookup(self, r_ECI, GMST, mjd):
         """
         Function: density_lookup
 
@@ -61,7 +61,7 @@ class Environment():
             rho: atmospheric density (kg/m^3)
         """
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
-        glat, glong, alt = conv.ECEF_to_LLA(r_ECEF, rad_Earth)
+        glat, glong, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
         dt = julian.from_jd(mjd, fmt='mjd')
         atmos = msise00.run(time=dt, altkm=alt, glat=glat, glong=glong)
         rho = atmos.Total.values[0].item()
