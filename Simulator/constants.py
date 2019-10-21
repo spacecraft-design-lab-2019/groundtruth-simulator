@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-# import msise00
-
+import msise00
+import julian
+import conversions as con
 
 #--------------------Spacecraft Structure----------------------------
 
@@ -39,7 +40,7 @@ class Environment():
     def __init__(self):
         self.earth = Earth()
 
-    def density_lookup(year,month,day,hour,altitude,glat,glon):
+    def density_lookup(r_ECI, GMST, mjd, rad_Earth):
         """
         Function: density_lookup
 
@@ -58,7 +59,10 @@ class Environment():
         Outputs:
             rho: atmospheric density (kg/m^3)
         """
-        atmos = msise00.run(time=datetime(year, month, day, hour), altkm=altitude, glat=glat, glon=glon)
+        r_ECEF = con.ECI_to_ECEF(r_ECI, GMST)
+        glat, glong, alt = con.ECEF_to_LLA(r_ECEF, rad_Earth)
+        dt = julian.from_jd(mjd, fmt='mjd')
+        atmos = msise00.run(time=dt, altkm=alt, glat=glat, glong=glong)
         rho = atmos.Total.values[0].item()
         return rho
 

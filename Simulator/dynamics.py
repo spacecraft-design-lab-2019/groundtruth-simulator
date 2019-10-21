@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import constants as con
+
 
 #-------------------------Forces---------------------------------
 
@@ -47,15 +49,17 @@ def gravityEarthJ2(r_sat, GM, J2, rad_Earth):
     return f
 
 
-def dragCalc(r,v,cD,A,Re,wEarth,cmx,cmz,cpx,cpz,year,month,day,hour,altitude,glat,glon):
+def dragCalc(r_ECI,v_ECI,GMST, mjd, cD,A,cmx,cmz,cpx,cpz):
     #constants for calculating density
-    rho = density_lookup(year,month,day,hour,altitude,glat,glon)
-
-    vRel = np.cross(wEarth,r)
+    
+    rho = con.Environment.density_lookup(r_ECI, GMST, mjd, con.Earth.radius)
+    vRel = np.cross(con.Earth.w, r_ECI)
     adrag = -0.5*rho*cD*A*np.linalg.norm(vRel)^2 * vRel/np.linalg.norm(vRel)
 
     #cp is center of pressure coordinate, cm is center of mass coorinate
     #note cp and cm must be in Local Vertical/Local Horizontal Coords
+    A = con.SpacecraftStructure.surfArea
+    cD = con.SpacecraftStructure.cD
     mdrag = 0.5*rho*cD*A*np.linalg.norm(vRel)^2*np.array([cpx - cmx, 0, cpz - cmz])
     return adrag, mdrag
 

@@ -3,7 +3,7 @@ import numpy as np
 
 #--------------------Conversions-----------------------------
 
-def ECI_to_ECEF(r_ECI, GMST)
+def ECI_to_ECEF(r_ECI, GMST):
     """
     Function: ECI_to_ECEF
         Converts position vector in ECI to ECEF.
