@@ -63,8 +63,8 @@ def dragCalc(state, mjd, environment, structure):
     cpz = 0
     cmz = 0
 
-    adrag = -0.5*rho*structure.cD*A*np.linalg.norm(vRel)^2 * vRel/np.linalg.norm(vRel)
-    mdrag = 0.5*rho*structure.cD*A*np.linalg.norm(vRel)^2 * np.array([cpx - cmx, 0, cpz - cmz]) # <-------- WHY NO Y COMPONENT
+    adrag = -0.5*rho*structure.cD*A*np.linalg.norm(vRel)**2 * vRel/np.linalg.norm(vRel)
+    mdrag = 0.5*rho*structure.cD*A*np.linalg.norm(vRel)**2 * np.array([cpx - cmx, 0, cpz - cmz]) # <-------- WHY NO Y COMPONENT
 
     return adrag, mdrag
 
