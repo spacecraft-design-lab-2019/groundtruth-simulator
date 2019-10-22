@@ -13,49 +13,53 @@ class SpacecraftStructure():
     """
     def __init__(self,
                  I = np.array([[17,0,0],[0,18,0],[0,0,22]]),
-                 surfArea = np.array([.0025, 9.28e-5,1.024e-4,.003712]),
-                 normVec1 = np.array([1,0,0]),
-                 normVec2 = np.array([0,1,0]),
-                 normVec3 = np.array([0,0,1]),
-                 normVec4 = np.array([-1,0,0]),
-                 normVec5 = np.array([0,-1,0]),
-                 normVec6 = np.array([0,0,-1]),
                  cD = 2.3): #drag coefficient
         self.I = I
-        self.surfArea = surfArea
-        self.normVec1 = normVec1
-        self.normVec2 = normVec2
-        self.normVec3 = normVec3
-        self.normVec4 = normVec4
-        self.normVec5 = normVec5
-        self.normVec6 = normVec6
         self.cD = cD
         self.faces = self.make_faces()
+        # self.surfArea = sum(f.A for f in faces)
 
     def aerodrag(self, rho, vRel):
         """
-        Return acceleration (F) and angular acceleraton (M) due to atmospheric drag
+        Return drag force (F) and moment (M) due to atmospheric drag
          - rho is the local atmospheric density.
          - vRel is velocity relative to the atmosphere. Must be in the body frame.
         """
         F = np.zeros(3)
         M = np.zeros(3)
+
         for face in self.faces:
             f, m = aerodrag(face, rho, vRel)
             F += f
             M += m
-        return F, M
+        return self.cD*F, self.cD*M
 
     def make_faces(self):
-        return [Face(np.array([1,0,0]), (50/1000)**2, np.array([25/1000,0,0]))]
+        L = 0.05 # 50 mm sidelength
+        c_len = L/2 # distance from center to a face
+        A_main = L**2
+        A_long = 0.064 * 0.058 # area of the special face
+
+        return [
+                Face(unit('x'),  A_main, c_len*unit('x')),
+                Face(unit('y'),  A_main, c_len*unit('y')),
+                Face(unit('z'),  A_main, c_len*unit('z')),
+                Face(-unit('x'), A_main, -c_len*unit('x')),
+                Face(-unit('y'), A_long, -c_len*unit('y')),
+                Face(-unit('z'), A_main, -c_len*unit('z')),
+                # special annular faces. NOTE: these only face +y. The -y is taken care of by an extra-big face at (5)
+                Face(unit('y'), 0.004*0.064, np.array([0.027, -0.025, 0])),
+                Face(unit('y'), 0.004*0.064, np.array([-0.027, -0.025, 0])),
+                Face(unit('y'), 0.007*0.050, np.array([0, -0.025, 0.0285])),
+                Face(unit('y'), 0.007*0.050, np.array([0, -0.025, -0.0285]))
+                ]
 
 
 class Face():
-    def __init__(self, N, A, c, spacecraft):
+    def __init__(self, N, A, c):
         self.N = N/np.norm(N)
         self.A = A
         self.c = c # vector from COM to CP of face.
-        self.spacecraft = spacecraft
 
     def wetted_area(self, v):
         """
@@ -63,10 +67,7 @@ class Face():
         v is defined to point outwards from the face.
         """
         a = (v/np.norm(v)) @ self.N
-        if a <= 0:
-            return 0
-        else:
-            return a * self.A
+        return max(a, 0) * self.A
 
     def aerodrag(self, rho, vRel):
         """
@@ -75,7 +76,7 @@ class Face():
         vmag = np.norm(vRel)
         A = self.wetted_area(vRel)
 
-        drag_acc = -0.5*rho*self.spacecraft.cD*A*vmag * vRel
+        drag_acc = -0.5*rho*A*vmag * vRel
         drag_M = cross(self.c, drag_acc);
         return drag_acc, drag_M
 
@@ -161,3 +162,21 @@ class Earth():
 #         self.mass = mass
 #         self.SMA = SMA
 #         self.GM = GM
+
+def unit(ax):
+    """
+    make a unit vector from int or str input (1,2,3) / ('x', 'y', 'z')
+    """
+    if isinstance(ax, str):
+        if ax == 'x':
+            ax = 1
+        elif ax == 'y':
+            ax = 2
+        elif ax == 'z':
+            ax = 3
+        else:
+            raise(Exception("invalid unit axis input {}".format(ax)))
+
+    N = np.zeros(3)
+    N[ax] = 1
+    return N
