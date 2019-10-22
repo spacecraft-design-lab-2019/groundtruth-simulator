@@ -34,7 +34,9 @@ class SpacecraftStructure():
 
     def aerodrag(self, rho, vRel):
         """
-        vRel must be in the body frame
+        Return acceleration (F) and angular acceleraton (M) due to atmospheric drag
+         - rho is the local atmospheric density.
+         - vRel is velocity relative to the atmosphere. Must be in the body frame.
         """
         F = np.zeros(3)
         M = np.zeros(3)
@@ -67,6 +69,9 @@ class Face():
             return a * self.A
 
     def aerodrag(self, rho, vRel):
+        """
+        See SpacecraftStruct.aerodrag()
+        """
         vmag = np.norm(vRel)
         A = self.wetted_area(vRel)
 
