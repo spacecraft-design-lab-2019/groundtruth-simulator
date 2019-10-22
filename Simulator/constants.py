@@ -40,18 +40,21 @@ class SpacecraftStructure():
         A_main = L**2
         A_long = 0.064 * 0.058 # area of the special face
 
+        X = unit('x')
+        Y = unit('y')
+        Z = unit('z')
         return [
-                Face(unit('x'),  A_main, c_len*unit('x')),
-                Face(unit('y'),  A_main, c_len*unit('y')),
-                Face(unit('z'),  A_main, c_len*unit('z')),
-                Face(-unit('x'), A_main, -c_len*unit('x')),
-                Face(-unit('y'), A_long, -c_len*unit('y')),
-                Face(-unit('z'), A_main, -c_len*unit('z')),
+                Face(X,  A_main, c_len*X),
+                Face(Y,  A_main, c_len*Y),
+                Face(Z,  A_main, c_len*Z),
+                Face(-X, A_main, -c_len*X),
+                Face(-Y, A_long, -c_len*Y),
+                Face(-Z, A_main, -c_len*Z),
                 # special annular faces. NOTE: these only face +y. The -y is taken care of by an extra-big face at (5)
-                Face(unit('y'), 0.004*0.064, np.array([0.027, -0.025, 0])),
-                Face(unit('y'), 0.004*0.064, np.array([-0.027, -0.025, 0])),
-                Face(unit('y'), 0.007*0.050, np.array([0, -0.025, 0.0285])),
-                Face(unit('y'), 0.007*0.050, np.array([0, -0.025, -0.0285]))
+                Face(Y, 0.004*0.064, np.array([0.027, -0.025, 0])),
+                Face(Y, 0.004*0.064, np.array([-0.027, -0.025, 0])),
+                Face(Y, 0.007*0.050, np.array([0, -0.025, 0.0285])),
+                Face(Y, 0.007*0.050, np.array([0, -0.025, -0.0285]))
                 ]
 
 
