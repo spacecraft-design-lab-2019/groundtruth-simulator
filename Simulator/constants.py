@@ -44,6 +44,9 @@ class SpacecraftStructure():
             M += m
         return F, M
 
+    def make_faces(self):
+        return [Face(np.array([1,0,0]), (50/1000)**2, np.array([25/1000,0,0]))]
+
 
 class Face():
     def __init__(self, N, A, c, spacecraft):
