@@ -8,10 +8,13 @@ class Sensor():
     To specify the error model, see the parameter `errormodel` and the LinearErrorModel class.
     NOTE, we may have to implement other error models to account for temp-dependence and whatever else.
 
-    Example Usage:
+    - dim = dimension of values the sensor returns
+    - errormodel - the actual model used to "jitter" the measurement. Defaults to identity via the default LinearErrorModel.
+    - name - optional name for the sensor
 
-    S = Sensor(errormodel = LinearErrorModel(T = np.eye(3), b = np.ones(3), noisecov = 0.0005))
-    S.measure(np.zeros(3)) -> returns e.g.: array([0.99649388, 0.9849549 , 1.04930531])
+    Example Usage:
+        S = Sensor(errormodel = LinearErrorModel.withDim(3, cov = 0.0005))
+        S.measure(np.zeros(3)) -> returns e.g.: array([0.99649388, 0.9849549 , 1.04930531])
     """
     def __init__(self, dim = 3, errormodel = None, name = None):
         if errormodel == None:
@@ -27,23 +30,38 @@ class Sensor():
 
 class LinearErrorModel():
     """
-    class that handles a linear error model of the form:
-        Tx + b + N
+    Class that handles a linear error model of the form: Tx + b + W
+
+    T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
+    b - bias vector
+    cov - covariance of the white noise `W`. May be scalar or matrix valued.
+
+    In addition to the regular constructor, may also be initialized with:
+    LinearErrorModel.withDim(dim = N, [optional_args])
     """
-    def __init__(self, T=np.zeros((3,3)), b=np.zeros(3), noisecov=0):
+    def __init__(self, T=np.zeros((3,3)), b=np.zeros(3), cov=0):
         """
-        T - the "T" matrix in the error model
+        T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
+        b - bias vector
+        cov - covariance of the noise. May be scalar or matrix valued.
         """
         assert T.shape[0] == T.shape[1], "T is not square."
         assert b.shape[0] == T.shape[0], "b is not compatible with T"
 
         self.T = T
         self.b = b
-        self.cov = noisecov # TODO do this properly
+        self.cov = cov
 
     @classmethod
-    def withDim(cls, N = 3):
-        return cls(T = np.zeros((N, N)), b = np.zeros(N))
+    def withDim(cls, N = 3, T = None, b = None, cov = None):
+        M = cls(T = np.zeros((N, N)), b = np.zeros(N))
+        if T != None:
+            M.T = T
+        if b != None:
+            M.b = b
+        if cov != None:
+            M.cov = cov
+        return M
 
     def measure(self, x):
         """
