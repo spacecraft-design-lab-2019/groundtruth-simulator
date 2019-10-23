@@ -13,7 +13,7 @@ class Sensor():
     - name - optional name for the sensor
 
     Example Usage:
-        S = Sensor(errormodel = LinearErrorModel.withDim(3, cov = 0.0005))
+        S = Sensor(errormodel = LinearErrorModel.withDim(3, b = np.ones(3), cov = 0.0005))
         S.measure(np.zeros(3)) -> returns e.g.: array([0.99649388, 0.9849549 , 1.04930531])
     """
     def __init__(self, dim = 3, errormodel = None, name = None):
@@ -54,14 +54,12 @@ class LinearErrorModel():
 
     @classmethod
     def withDim(cls, N = 3, T = None, b = None, cov = None):
-        M = cls(T = np.zeros((N, N)), b = np.zeros(N))
-        if T != None:
-            M.T = T
-        if b != None:
-            M.b = b
-        if cov != None:
-            M.cov = cov
-        return M
+
+        T = np.zeros((N, N)) if T is None else T
+        b = np.zeros(N) if b is None else b
+        cov = 0 if cov is None else cov
+
+        return cls(T, b, cov)
 
     def measure(self, x):
         """
