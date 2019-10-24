@@ -89,7 +89,7 @@ def quat(v):
         raise(Exception("can't make a quaternion out of: {}".format(v)))
 
 def conj(q):
-    q = copy(q)
+    q = np.copy(q)
     q[0] = -q[0]
     return q
 

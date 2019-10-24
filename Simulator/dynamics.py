@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
+from conversions import *
 #-------------------------Forces---------------------------------
 
 def gravityPointMass(r_sat, GM, r_body=np.zeros((3,))):
@@ -49,24 +49,18 @@ def gravityEarthJ2(r_sat, earth):
 
 def dragCalc(state, mjd, environment, structure):
 
-    r_ECI = state[0:3]
-    v_ECI = state[7:10]
-    q = state[3:7] # <------we may need this???
+    # in ECI:
+    r = state[0:3]
+    v = state[7:10]
+    # q is body to ECI
+    q = state[3:7]
 
-    GMST = environment.earth.GMST(mjd)
-    rho = environment.density_lookup(r_ECI, GMST, mjd)
+    rho = environment.density_lookup(r, environment.earth.GMST(mjd), mjd)
 
-    vRel = v_ECI - np.cross(environment.earth.w, r_ECI)
-    A = 0 # <----------- NEED TO CALCULATE CROSS-SECTIONAL AREA BASED ON ATTITUDE
-    cpx = 0 
-    cmx = 0 # <--------THESE NEED TO BE DEFINED (likely in structure)
-    cpz = 0
-    cmz = 0
+    vRel = v - np.cross(environment.earth.w, r)
+    vRel_body = quatrot(conj(q), vRel) # get from inertial to body
 
-    adrag = -0.5*rho*structure.cD*A*np.linalg.norm(vRel)**2 * vRel/np.linalg.norm(vRel)
-    mdrag = 0.5*rho*structure.cD*A*np.linalg.norm(vRel)**2 * np.array([cpx - cmx, 0, cpz - cmz]) # <-------- WHY NO Y COMPONENT
-
-    return adrag, mdrag
+    return structure.aerodrag(rho, vRel_body)
 
 
 #-------------------------Torques--------------------------------
