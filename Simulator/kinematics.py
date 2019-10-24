@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
+from conversions import skew
 #---------------------------Kinematics---------------------------------
 
 def calc_q_dot(q, w):
     """
     Function: calc_q_dot
         Calculates the derivative of the quaternion vector.
-    
+
     Inputs:
         q: quaternion vector np.array[4x1][float64]
         w: angular velocity (radians/s) np.array[3x1][float64]
@@ -26,29 +26,14 @@ def calc_w_dot(w, torque, I):
     Function: calc_w_dot
         Calculates the derivative of the angular velocity vector using the
         Euler equations for rigid body dynamics.
-        
+
     Inputs:
         w: angular velocity (radians/s) np.array[3x1][float64]
         torque: applied torque (Nm) np.array[3x1][float54]
     Ouputs:
         w_dot: derivative of angular velocity (rad/s/s) np.array[3x1][float64]
     """
-    
+
     w_dot = np.linalg.solve(I, np.dot(skew(w), np.dot(I, w)) - torque)
     return w_dot
-    
-
-def skew(v):
-    """
-    Function: skew
-        Calculates the skew matrix for cross-product calculation
-        
-    Inputs:
-        
-    """
-    S = np.array([[0, -v[2], v[1]],
-                 [v[2], 0, -v[0]],
-                 [-v[1], v[0], 0]])
-    return S
-
 
