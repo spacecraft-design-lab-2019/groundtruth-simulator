@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from conversions import *
-#-------------------------Forces---------------------------------
+#-------------------------Dynamics---------------------------------
 
 def gravityPointMass(r_sat, GM, r_body=np.zeros((3,))):
     """
@@ -62,8 +62,6 @@ def dragCalc(state, mjd, environment, structure):
 
     return structure.aerodrag(rho, vRel_body)
 
-
-#-------------------------Torques--------------------------------
 
 def gravityGradientTorque(r_sat, I, GM):
     """

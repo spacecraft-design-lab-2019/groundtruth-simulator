@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-#--------------------Conversions-----------------------------
+#--------------------Coordinate Frames--------------------------
 
 def ECI_to_ECEF(r_ECI, GMST):
     """
@@ -46,6 +46,8 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
     return lat, long, alt
 
 
+#--------------------Miscellaneous-----------------------------
+
 def skew(v):
     """
     Function: skew
@@ -58,6 +60,9 @@ def skew(v):
                  [v[2], 0, -v[0]],
                  [-v[1], v[0], 0]])
     return S
+
+
+#--------------------Quaternions-----------------------------
 
 def L(q):
     s = q[0]
@@ -78,6 +83,7 @@ def R(q):
     lower = np.column_stack([v, s*I3 - skew(v)])
     return  np.row_stack([upper, lower])
 
+
 def quat(v):
     N = np.linalg.norm(v)
     assert N > 0, "Norm of v is 0. Can't make a quaternion out of this! Got {}".format(v)
@@ -88,10 +94,12 @@ def quat(v):
     else:
         raise(Exception("can't make a quaternion out of: {}".format(v)))
 
+
 def conj(q):
     q = np.copy(q)
     q[0] = -q[0]
     return q
+
 
 def quatrot(q1, q2):
     if len(q2) == 3:
