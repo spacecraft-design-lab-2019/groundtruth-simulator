@@ -40,14 +40,18 @@ line2 = ('2 25544  51.6449  54.3108 0006382 201.3316 303.7490 15.50231045196128'
 
 
 # Simulation Parameters
-tstart = datetime(2019, 10, 30, 00, 00, 00)
+tstart = datetime(2019, 12, 30, 00, 00, 00)
 tspan = np.array([0, 8640])    # [sec]
 tstep = .1                     # [sec] - 10 Hz
 
 
 # Setup SGP4
+def sgp4_prog(S, t, microsecond = False):
+    s = t.second + t.microsecond/1e6 if microsecond else t.second
+    return S.propagate(t.year, t.month, t.day, t.hour, t.minute, s)
+
 ISS_sgp4 = twoline2rv(line1, line2, wgs84)
-r_i, v_i = ISS_sgp4.propagate(tstart.year, tstart.month, tstart.day, tstart.hour, tstart.minute, tstart.second)
+r_i, v_i = sgp4_prog(ISS_sgp4, tstart)
 
 
 # Initial Spacecraft State
@@ -71,19 +75,21 @@ state_history[0, :] = state_i
 state_history_sgp4[0, :] = np.r_[r_i, v_i]
 
 
-
 #------------------ Run Simulation -----------------------------
 
+update = lambda t, state: calc_statedot(t, state, world, struct)
 for idx in range(t.shape[0]-1):
     # Propagate
-    state_history[idx+1, :] = rk4_step(lambda t, state: calc_statedot(t, state, world, struct), t[idx], state_history[idx, :], tstep)
+    state_history[idx+1, :] = rk4_step(update, t[idx], state_history[idx, :], tstep)
 
     # Normalize the Quaternion Vector
     state_history[idx+1, 3:7] = state_history[idx+1, 3:7]/np.linalg.norm(state_history[idx+1, 3:7])
 
     # SGP4
-    dt = t_start + timedelta(seconds=t[idx])
-    state_history_sgp4[idx+1, :] = np.array(ISS_sgp4.propagate(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second + dt.microsecond/1e6))
+    dt = tstart + timedelta(seconds=t[idx])
+    # for live feedback:
+    print(dt)
+    state_history_sgp4[idx+1, :] = np.array(sgp4_prog(ISS_sgp4, dt, microsecond = True)).flatten()
 
 
 #-------------------- Plot------------------------------------

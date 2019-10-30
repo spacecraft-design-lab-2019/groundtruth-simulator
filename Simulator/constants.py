@@ -29,7 +29,7 @@ class SpacecraftStructure():
         M = np.zeros(3)
 
         for face in self.faces:
-            f, m = aerodrag(face, rho, vRel)
+            f, m = face.aerodrag(rho, vRel)
             F += f
             M += m
         return self.cD*F, self.cD*M
@@ -80,7 +80,7 @@ class Face():
         A = self.wetted_area(vRel)
 
         drag_acc = -0.5*rho*A*vmag * vRel
-        drag_M = cross(self.c, drag_acc);
+        drag_M = np.cross(self.c, drag_acc);
         return drag_acc, drag_M
 
 
@@ -127,8 +127,8 @@ class Earth():
     A class to store Earth parameters
     """
     def __init__(self,
-                radius = 6378.1378366, #Earth Equatorial Radius
-                w = 2*np.pi/86164.1, #orbital speed earth
+                radius = 6378.1378366, # Earth Equatorial Radius
+                w = np.array([0, 0, 2*np.pi/86164.1]), # rotation rate vector of earth (in J2000, rotation is aligned with z-axis)
                 mass = 5.9742e24, #kg
                 SMA = 149598023, #semimajor axis, km
                 J2 = 1.0826e-3, # J2 constant
