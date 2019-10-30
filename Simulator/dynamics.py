@@ -55,7 +55,7 @@ def dragCalc(state, mjd, environment, structure):
     # q is body to ECI
     q = state[3:7]
 
-    rho = environment.density_lookup(r, environment.earth.GMST(mjd), mjd)
+    rho = environment.density_lookup(r, GMST(mjd), mjd)
 
     vRel = v - np.cross(environment.earth.w, r)
     vRel_body = quatrot(conj(q), vRel) # get from inertial to body

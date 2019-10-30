@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import math
 
 #--------------------Coordinate Frames--------------------------
 
@@ -45,7 +46,6 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
 
     return lat, long, alt
 
-
 #--------------------Miscellaneous-----------------------------
 
 def skew(v):
@@ -61,6 +61,11 @@ def skew(v):
                  [-v[1], v[0], 0]])
     return S
 
+
+def GMST(mjd):
+    # Reference: AA 279A Lecture 6, Slide 3
+    d = mjd - 51544.5
+    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
 
 #--------------------Quaternions-----------------------------
 

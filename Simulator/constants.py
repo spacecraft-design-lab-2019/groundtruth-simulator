@@ -60,7 +60,7 @@ class SpacecraftStructure():
 
 class Face():
     def __init__(self, N, A, c):
-        self.N = N/np.norm(N)
+        self.N = N/np.linalg.norm(N)
         self.A = A
         self.c = c # vector from COM to CP of face.
 
@@ -69,14 +69,14 @@ class Face():
         Compute the effective area of a face relative to a vector v where
         v is defined to point outwards from the face.
         """
-        a = (v/np.norm(v)) @ self.N
+        a = (v/np.linalg.norm(v)) @ self.N
         return max(a, 0) * self.A
 
     def aerodrag(self, rho, vRel):
         """
         See SpacecraftStruct.aerodrag()
         """
-        vmag = np.norm(vRel)
+        vmag = np.linalg.norm(vRel)
         A = self.wetted_area(vRel)
 
         drag_acc = -0.5*rho*A*vmag * vRel
@@ -114,9 +114,10 @@ class Environment():
             rho: atmospheric density (kg/m^3)
         """
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
-        glat, glong, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
-        dt = julian.from_jd(mjd, fmt='mjd')
-        atmos = msise00.run(time=dt, altkm=alt, glat=glat, glong=glong)
+        glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
+        t = julian.from_jd(mjd, fmt='mjd')
+
+        atmos = msise00.run(time=t, altkm=alt, glat=glat, glon=glon)
         rho = atmos.Total.values[0].item()
         return rho
 
@@ -138,12 +139,6 @@ class Earth():
         self.SMA = SMA
         self.J2 = J2
         self.GM = GM
-
-    def GMST(mjd):
-        # Reference: AA 279A Lecture 6, Slide 3
-        d = mjd - 51544.5
-        return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
-
 
 #--------------OTHER STUFF --------------------------
 
@@ -168,15 +163,15 @@ class Earth():
 
 def unit(ax):
     """
-    make a unit vector from int or str input (1,2,3) / ('x', 'y', 'z')
+    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
     """
     if isinstance(ax, str):
         if ax == 'x':
-            ax = 1
+            ax = 0
         elif ax == 'y':
-            ax = 2
+            ax = 1
         elif ax == 'z':
-            ax = 3
+            ax = 2
         else:
             raise(Exception("invalid unit axis input {}".format(ax)))
 
