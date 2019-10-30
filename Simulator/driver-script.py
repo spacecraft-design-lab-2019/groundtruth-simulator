@@ -63,33 +63,34 @@ state_i = np.r_[r_i, q_i, v_i, w_i]
 # Environment
 mjd_start = julian.to_jd(tstart, 'mjd')
 world = Environment(mjd_start=mjd_start)
-struct = SpacecraftStructure()
+spacecraft = SpacecraftStructure()
 
 
 # Initialize Variables
-t = np.arange(0, tspan[1]+tstep, tstep)
-state_history = np.zeros((np.shape(t)[0], np.shape(state_i)[0]))
-state_history_sgp4 = np.zeros((np.shape(t)[0], 6))
+T = np.arange(0, tspan[1]+tstep, tstep)
+state_history = np.zeros((np.shape(T)[0], np.shape(state_i)[0]))
+state_history_sgp4 = np.zeros((np.shape(T)[0], 6))
 
 state_history[0, :] = state_i
 state_history_sgp4[0, :] = np.r_[r_i, v_i]
 
 
+update_f = lambda t, state: calc_statedot(t, state, world, spacecraft)
+
 #------------------ Run Simulation -----------------------------
 
-update = lambda t, state: calc_statedot(t, state, world, struct)
-for idx in range(t.shape[0]-1):
+for i, elapsed_t in enumerate(T[0:-1]):
     # Propagate
-    state_history[idx+1, :] = rk4_step(update, t[idx], state_history[idx, :], tstep)
+    state_history[i+1, :] = rk4_step(update_f, elapsed_t, state_history[i, :], tstep)
 
     # Normalize the Quaternion Vector
-    state_history[idx+1, 3:7] = state_history[idx+1, 3:7]/np.linalg.norm(state_history[idx+1, 3:7])
+    state_history[i+1, 3:7] = state_history[i+1, 3:7]/np.linalg.norm(state_history[i+1, 3:7])
 
     # SGP4
-    dt = tstart + timedelta(seconds=t[idx])
+    t = tstart + timedelta(seconds=elapsed_t)
     # for live feedback:
-    print(dt)
-    state_history_sgp4[idx+1, :] = np.array(sgp4_prog(ISS_sgp4, dt, microsecond = True)).flatten()
+    print(f'{i}/{T.shape[0]}, t:{t}')
+    state_history_sgp4[i+1, :] = np.array(sgp4_prog(ISS_sgp4, t, microsecond = True)).flatten()
 
 
 #-------------------- Plot------------------------------------
@@ -102,15 +103,15 @@ plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(t, state_history[:, 3:7])
+plt.plot(T, state_history[:, 3:7])
 plt.xlabel('time')
 plt.ylabel('quaternions')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(t, abs(state_history[:, 0:3] - state_history_sgp4[:, 0:3]))
-plt.plot(t, abs(state_history[:, 7:10] - state_history_sgp4[:, 3:6]), hold='on')
+plt.plot(T, abs(state_history[:, 0:3] - state_history_sgp4[:, 0:3]))
+plt.plot(T, abs(state_history[:, 7:10] - state_history_sgp4[:, 3:6]), hold='on')
 plt.xlabel('time')
 plt.ylabel('error')
 plt.suptitle('Error against SGP4')
