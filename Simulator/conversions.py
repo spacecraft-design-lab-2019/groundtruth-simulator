@@ -90,14 +90,10 @@ def R(q):
 
 
 def quat(v):
+    assert len(v) == 4, f"can't make a quaternion out of: {v}"
     N = np.linalg.norm(v)
-    assert N > 0, "Norm of v is 0. Can't make a quaternion out of this! Got {}".format(v)
-    if len(v) == 3:
-        return np.append(0, v) / N
-    elif len(v) == 4:
-        return v / N
-    else:
-        raise(Exception("can't make a quaternion out of: {}".format(v)))
+    assert N > 0, "Norm of input is 0. Can't make a quaternion out of this! Got {}".format(v)
+    return v / N
 
 
 def conj(q):
@@ -107,10 +103,10 @@ def conj(q):
 
 
 def quatrot(q1, q2):
+    vector = False
     if len(q2) == 3:
+        q2 = np.append(0, q2)
         vector = True
-    q1 = quat(q1)
-    q2 = quat(q2)
 
     rotated = L(q1).T @ R(q1) @ q2
 
