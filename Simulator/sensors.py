@@ -6,6 +6,8 @@ Integration of Sensor Model
 import numpy as np
 from numpy import pi
 from sensormodels import *
+from sun_model import *
+from numpy import linalg as LA
 
 
 def getTmatrix(scaleF, caSense):
@@ -14,13 +16,32 @@ def getTmatrix(scaleF, caSense):
     np.fill_diagonal(misalign, 0)
     T = np.dot(scaleFmat,misalign)
     return T
-    
-#Define Gyro
-scaleF = 0.0002
-caSense = 0.02
-T =  getTmatrix(scaleF, caSense) 
-gyro = Sensor(errormodel = LinearErrorModel.withDim(3, b = np.ones(3), cov = 0.0005))
-X = gyro.measure(np.ones(3))
-print(X)
-    
+
+def sunVector(rsat,jdate):
+    earth2sun = sun1(jdate)
+    rsun = (earth2sun - rsat)/LA.norm(earth2sun - rsat)
+    return rsun
+
+#Gyro Function
+def gyroModel(X, scaleF = 0.002, caSense = 0.02):
+    Tmat =  getTmatrix(scaleF, caSense) 
+    gyro = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = np.ones(3), cov = 0.0005))
+    return gyro.measure(X)
+
+#Sun Sensor Function
+def sunSenseModel(X, jdate, scaleF = 0, caSense = 0.02,):
+    Tmat =  getTmatrix(scaleF, caSense) 
+    sunSense = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = np.ones(3), cov = 0.0005))
+    X = sunVector(X,jdate)
+    return sunSense.measure(X)
+
+
+#Test Code    
+X = np.ones(3)
+print(gyroModel(X, scaleF = 0.002, caSense = 0.02))
+#print(X)
+
+print(sunVector(np.ones(3),1929))
+
+
 

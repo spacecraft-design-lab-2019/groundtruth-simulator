@@ -104,6 +104,6 @@ def sun1(jdate):
     rsun[2] = rsm * np.sin(decl);
     
     return rsun
-
-rsun = sun1(1929)
-print(rsun)
+#
+#rsun = sun1(1929)
+#print(rsun)
