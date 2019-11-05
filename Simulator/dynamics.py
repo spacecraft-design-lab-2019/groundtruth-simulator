@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from conversions import *
+from numpy import linalg as LA
+from constants import *
 #-------------------------Dynamics---------------------------------
 
 def gravityPointMass(r_sat, GM, r_body=np.zeros((3,))):
@@ -55,7 +57,14 @@ def dragCalc(state, mjd, environment, structure):
     # q is body to ECI
     q = state[3:7]
 
-    rho = environment.density_lookup(r, GMST(mjd), mjd)
+#    rho = environment.density_lookup(r, GMST(mjd), mjd)
+    #drag equation fit coefficients
+    a = 4.436e-09
+    b = -0.01895
+    c = 4.895e-12
+    d = -0.008471
+    R = LA.norm(r) - Earth.radius
+    rho = a*np.exp(b*R) + c*np.exp(d*R)
 
     vRel = v - np.cross(environment.earth.w, r)
     vRel_body = quatrot(conj(q), vRel) # get from inertial to body

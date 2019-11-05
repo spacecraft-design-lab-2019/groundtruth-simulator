@@ -2,7 +2,7 @@
 %
 %     TEST CASE FOR RUNNING JB2008
 % 
-% Last modified:   2018/01/27   M. Mahooti
+% Last modified:   2019/11/04  K. Crispie
 %
 %--------------------------------------------------------------------------
 clc
@@ -124,9 +124,10 @@ a = 4.436e-09;
 b = -0.01895;
 c = 4.895e-12;
 d = -0.008471;
+rho = a*exp(b*sat3s) + c*exp(d*sat3s);
 
 hold on
-plot(sat3s,a*exp(b*sat3s) + c*exp(d*sat3s))
+plot(sat3s,rho)
 
 title('Atmospheric Density over Altitude')
 xlabel('Altitude (km)')
