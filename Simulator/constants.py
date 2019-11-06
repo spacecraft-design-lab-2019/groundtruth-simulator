@@ -4,6 +4,7 @@ import msise00
 import julian
 import conversions as conv
 import math
+import pyIGRF
 
 #--------------------Spacecraft Structure----------------------------
 
@@ -120,6 +121,29 @@ class Environment():
         atmos = msise00.run(time=t, altkm=alt, glat=glat, glon=glon)
         rho = atmos.Total.values[0].item()
         return rho
+
+    def magfield_lookup(self, r_ECI, GMST, mjd):
+        """
+        Function: magfield_lookup
+
+        Gets magnetic field vector using IGRF-12 model.
+        Must have https://pypi.org/project/pyIGRF/ library installed.
+
+        Inputs:
+            year
+            altitude (km)
+            glat: geodetic latitude
+            glon: geodetic longitude
+        Ouputs:
+            B_NED: magnetic field vector in North/East/Down
+        """
+        r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
+        glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
+        year = julian.from_jd(mjd, fmt='mjd').year
+
+        field = pyIGRF.igrf_value(glat, glon, alt, year)
+        B_NED = np.array([field[3], field[4], field[5]])
+        return B_NED
 
 
 class Earth():
