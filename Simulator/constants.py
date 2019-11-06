@@ -134,6 +134,8 @@ class Environment():
             altitude (km)
             glat: geodetic latitude
             glon: geodetic longitude
+        Ouputs:
+            B_NED: magnetic field vector in North/East/Down
         """
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
