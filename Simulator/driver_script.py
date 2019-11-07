@@ -46,12 +46,7 @@ tstep = .1                     # [sec] - 10 Hz
 
 
 # Setup SGP4
-def sgp4_prog(S, t, microsecond = False):
-    s = t.second + t.microsecond/1e6 if microsecond else t.second
-    return S.propagate(t.year, t.month, t.day, t.hour, t.minute, s)
-
-ISS_sgp4 = twoline2rv(line1, line2, wgs84)
-r_i, v_i = sgp4_prog(ISS_sgp4, tstart)
+r_i, v_i = sgp4_step(line1, line2, tstart)
 
 
 # Initial Spacecraft State

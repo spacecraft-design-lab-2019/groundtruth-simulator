@@ -2,8 +2,30 @@
 import numpy as np
 from kinematics import *
 from dynamics import *
+from sgp4.earth_gravity import wgs84
+from sgp4.io import twoline2rv
+
 
 #-------------------------Simulator-------------------------------
+
+def sgp4_step(line1, line2, dt, model=wgs84):
+    """
+    Function: sgp4_step
+        Returns position and velocity in ECI from SGP4 propagation.
+
+    Inputs:
+        line1:  first line of TLE (string)
+        line2:  second line of TLE (string)
+        dt:     time to propagate to (datetime)
+        model:  Earth gravity model to use (default=wgs84)
+    Outputs:
+        rECI:   position in ECI
+        vECI:   velocity in ECI
+    """
+    sgp4 = twoline2rv(line1, line2, model)
+    sec = t.second + t.microsecond/1e6 if microsecond else t.second
+    return sgp4.propagate(t.year, t.month, t.day, t.hour, t.minute, sec)
+
 
 def rk4_step(f, t, state, h):
     """
