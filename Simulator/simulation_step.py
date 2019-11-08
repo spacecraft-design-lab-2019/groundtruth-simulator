@@ -2,6 +2,9 @@
 
 import numpy as np
 import sim_config as config
+from constants import *
+from propagate_step import *
+
 
 def simulation_step(cmd, sim_prev):
 	"""
