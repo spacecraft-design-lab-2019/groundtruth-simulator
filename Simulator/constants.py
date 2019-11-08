@@ -91,11 +91,11 @@ class Environment():
     """
     A class to store environment constants / lookup functions.
     """
-    def __init__(self, mjd_start = 58777.740671):
-        self.mjd_start = mjd_start
+    def __init__(self, datetime):
+        self.datetime = datetime
         self.earth = Earth()
 
-    def density_lookup(self, r_ECI, GMST, mjd):
+    def density_lookup(self, r_ECI, GMST):
         """
         Function: density_lookup
 
@@ -116,13 +116,12 @@ class Environment():
         """
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
-        t = julian.from_jd(mjd, fmt='mjd')
 
-        atmos = msise00.run(time=t, altkm=alt, glat=glat, glon=glon)
+        atmos = msise00.run(time=self.datetime, altkm=alt, glat=glat, glon=glon)
         rho = atmos.Total.values[0].item()
         return rho
 
-    def magfield_lookup(self, r_ECI, GMST, mjd):
+    def magfield_lookup(self, r_ECI, GMST):
         """
         Function: magfield_lookup
 
@@ -139,7 +138,7 @@ class Environment():
         """
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
-        year = julian.from_jd(mjd, fmt='mjd').year
+        year = self.datetime.year
 
         field = pyIGRF.igrf_value(glat, glon, alt, year)
         B_NED = np.array([field[3], field[4], field[5]])
