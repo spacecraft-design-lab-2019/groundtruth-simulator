@@ -12,9 +12,7 @@ class SpacecraftStructure():
     """
     A class to store spacecraft structural poperties
     """
-    def __init__(self,
-                 I = np.array([[17,0,0],[0,18,0],[0,0,22]]),
-                 cD = 2.3): #drag coefficient
+    def __init__(self, I, cD=2.3):
         self.I = I
         self.cD = cD
         self.faces = self.make_faces()
