@@ -31,7 +31,7 @@ def simulation_step(cmd, sim_prev):
 
 
 	#------------------------ Propagate Dynamics --------------------
-	update_f = lambda t, state: calc_statedot(t, state, world_i, spacecraft)
+	update_f = lambda t, state: calc_statedot(t, state, cmd, world_i, spacecraft)
 	state = rk4_step(update_f, t_i, state_i, config.tstep)
 
 

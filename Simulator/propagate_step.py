@@ -49,14 +49,15 @@ def rk4_step(f, t, state, h):
     return state + (k1 + 2*k2 + 2*k3 + k4)/6
 
 
-def calc_statedot(t, state, environment, structure):
+def calc_statedot(t, state, cmd, environment, structure):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
 
     Inputs:
-        t:      the current time
-        state:  the current state object
+        t:      current time
+        state:  current state object
+        cmd:    controller input
     Outputs:
         state_dot: the derivative of the state vector
     """
@@ -86,7 +87,8 @@ def calc_statedot(t, state, environment, structure):
 
 
     #-------------------Implement Control Law-------------------------
-
+    # TO-DO: implement control
+    torque = torque + cmd;
 
 
     #---------------------Kinematics----------------------------------
