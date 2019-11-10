@@ -23,8 +23,8 @@ def sgp4_step(line1, line2, dt, model=wgs84):
         vECI:   velocity in ECI
     """
     sgp4 = twoline2rv(line1, line2, model)
-    sec = t.second + t.microsecond/1e6 if microsecond else t.second
-    return sgp4.propagate(t.year, t.month, t.day, t.hour, t.minute, sec)
+    sec = dt.second + dt.microsecond/1e6
+    return sgp4.propagate(dt.year, dt.month, dt.day, dt.hour, dt.minute, sec)
 
 
 def rk4_step(f, t, state, h):
@@ -69,8 +69,7 @@ def calc_statedot(t, state, cmd, environment, structure):
 
 
     #-----------------Calculate Environment --------------------------
-    mjd = environment.mjd_start + t/(24*60*60)
-
+    
 
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)

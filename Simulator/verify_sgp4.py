@@ -13,16 +13,17 @@ from propagate_step import sgp4_step
 # Initialize / Setup Workspace
 tspan = np.array([0, 8640])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
-state_history = np.zeros((np.shape(T)[0], np.shape(state_i)[0]))
-state_history_sgp4 = np.zeros((np.shape(T)[0], 6))
 
 
 # Initial State Vector
 r_i, v_i = sgp4_step(line1, line2, tstart)
 state_i = np.r_[r_i, q_i, v_i, w_i]
+state_history = np.zeros((np.shape(T)[0], np.shape(state_i)[0]))
+state_history_sgp4 = np.zeros((np.shape(T)[0], 6))
 state_history[0, :] = state_i
 state_history_sgp4[0, :] = np.r_[r_i, v_i]
-sim_state = {'state': state_i, 't': t}
+sim_state = {'state': state_i, 't': tstart}
+
 
 
 # Propagate
