@@ -23,14 +23,14 @@ def simulation_step(cmd, sim_prev=None):
 	#------------------ Initialize/Setup Workspace ------------------	
 	# if we are at the first iteration
 	if sim_prev == None:
-		r_i, v_i = sgp4_step(line1, line2, tstart)
+		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
 		state_i = np.r_[r_i, config.q_i, v_i, config.w_i]
 		t_i = config.tstart
 
 	# get previous state (groundtruth)
 	else:
-		state_i = sim_prev.state
-		t_i = sim_prev.t
+		state_i = sim_prev['state']
+		t_i = sim_prev['t']
 
 	# environment + spacecraft classes
 	world_i = Environment(t_i)
@@ -40,15 +40,16 @@ def simulation_step(cmd, sim_prev=None):
 	#------------------------ Propagate Dynamics --------------------
 	update_f = lambda t, state: calc_statedot(t, state, cmd, world_i, spacecraft)
 	state = rk4_step(update_f, t_i, state_i, config.tstep)
+	t = t_i + datetime.timedelta(seconds=config.tstep)
 
 
 	#------------------------ Spoof Sensors -------------------------
 	# TO-DO: use sensor classes to spoof sensors based on updated world and state
-	world = Environment(t_i + datetime.timedelta(seconds=config.tstep))
+	world = Environment(t)
 	sensors = []
 
 	#------------------------ Export Data -------------------------
 	# TO-DO: output desired variables to text file for later plotting/analysis
-	sim_new = []
+	sim_new = {'state': state, 't': t}
 
 	return sensors, sim_new
