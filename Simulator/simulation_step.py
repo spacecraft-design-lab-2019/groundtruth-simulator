@@ -6,7 +6,7 @@ from constants import *
 from propagate_step import *
 
 
-def simulation_step(cmd, sim_prev):
+def simulation_step(cmd, sim_prev=None):
 	"""
 	Function: simulation_step
 		Propagates dynamics & models sensors for single step
@@ -20,11 +20,18 @@ def simulation_step(cmd, sim_prev):
 		sim_new:	new state of simulation
 	"""
 
-	#------------------ Initialize/Setup Workspace ------------------
+	#------------------ Initialize/Setup Workspace ------------------	
+	# if we are at the first iteration
+	if sim_prev == None:
+		r_i, v_i = sgp4_step(line1, line2, tstart)
+		state_i = np.r_[r_i, config.q_i, v_i, config.w_i]
+		t_i = config.tstart
+
 	# get previous state (groundtruth)
-	state_i = sim_prev.state
-	t_i = sim_prev.t
-	
+	else:
+		state_i = sim_prev.state
+		t_i = sim_prev.t
+
 	# environment + spacecraft classes
 	world_i = Environment(t_i)
 	spacecraft = SpacecraftStructure(config.I)
