@@ -13,7 +13,7 @@ from propagate_step import sgp4_step
 
 
 #----------------Initialize / Setup Workspace------------------
-tspan = np.array([0, 8640])    # [sec]
+tspan = np.array([0, 86400])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
 
