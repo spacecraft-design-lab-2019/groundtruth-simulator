@@ -13,7 +13,7 @@ from propagate_step import sgp4_step
 
 
 #----------------Initialize / Setup Workspace------------------
-tspan = np.array([0, 86400])    # [sec]
+tspan = np.array([0, 864])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
 
@@ -40,6 +40,7 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	state_history_sgp4[i+1, :] = np.array(sgp4_step(line1, line2, sim_state['t'])).reshape((6,))
 
 	print(i)
+	# print(state_history[i+1, 3:7])
 
 
 #------------------------Plot-----------------------------
@@ -64,6 +65,12 @@ plt.figure()
 plt.plot(state_history[:,0], state_history[:,1])
 plt.xlabel('X_ECI')
 plt.ylabel('Y_ECI')
+plt.grid()
+
+plt.figure()
+plt.plot(T/3600, state_history[:,3:7])
+plt.xlabel('time [hr]')
+plt.ylabel('quaternions')
 plt.grid()
 
 
