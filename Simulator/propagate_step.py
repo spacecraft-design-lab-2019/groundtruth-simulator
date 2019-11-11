@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import datetime
 from kinematics import *
 from dynamics import *
+from constants import Environment
 from sgp4.earth_gravity import wgs84
 from sgp4.io import twoline2rv
 
@@ -41,15 +43,18 @@ def rk4_step(f, t, state, h):
         x1: updated state object
     """
 
-    k1 = h * f(t,       state)
-    k2 = h * f(t + h/2, state + k1/2)
-    k3 = h * f(t + h/2, state + k2/2)
-    k4 = h * f(t + h,   state)
+    t1 = t + datetime.timedelta(seconds=h/2)
+    t2 = t + datetime.timedelta(seconds=h)
+
+    k1 = h * f(t,  state)
+    k2 = h * f(t1, state + k1/2)
+    k3 = h * f(t1, state + k2/2)
+    k4 = h * f(t2, state)
 
     return state + (k1 + 2*k2 + 2*k3 + k4)/6
 
 
-def calc_statedot(t, state, cmd, environment, structure):
+def calc_statedot(t, state, cmd, structure):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
@@ -69,25 +74,26 @@ def calc_statedot(t, state, cmd, environment, structure):
 
 
     #-----------------Calculate Environment --------------------------
-    
+    environment = Environment(t)
+
 
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)
     accel = np.zeros(3)
 
-    adrag, mdrag = dragCalc(state, mjd, environment, structure)
+    # adrag, mdrag = dragCalc(state, environment, structure)
 
     accel = accel + gravityPointMass(r, environment.earth.GM)
-    accel = accel + gravityEarthJ2(r, environment.earth)
-    accel = accel + adrag
+    # accel = accel + gravityEarthJ2(r, environment.earth)
+    # accel = accel + adrag
 
-    torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
-    torque = torque + mdrag
+    # torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
+    # torque = torque + mdrag
 
 
     #-------------------Implement Control Law-------------------------
     # TO-DO: implement control
-    torque = torque + cmd;
+    # torque = torque + cmd;
 
 
     #---------------------Kinematics----------------------------------

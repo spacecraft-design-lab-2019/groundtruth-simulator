@@ -32,13 +32,12 @@ def simulation_step(cmd, sim_prev=None):
 		state_i = sim_prev['state']
 		t_i = sim_prev['t']
 
-	# environment + spacecraft classes
-	world_i = Environment(t_i)
+	# spacecraft class
 	spacecraft = SpacecraftStructure(config.I)
 
 
 	#------------------------ Propagate Dynamics --------------------
-	update_f = lambda t, state: calc_statedot(t, state, cmd, world_i, spacecraft)
+	update_f = lambda t, state: calc_statedot(t, state, cmd, spacecraft)
 	state = rk4_step(update_f, t_i, state_i, config.tstep)
 	t = t_i + datetime.timedelta(seconds=config.tstep)
 

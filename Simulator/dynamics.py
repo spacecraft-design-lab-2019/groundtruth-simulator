@@ -49,7 +49,7 @@ def gravityEarthJ2(r_sat, earth):
     return f
 
 
-def dragCalc(state, mjd, environment, structure):
+def dragCalc(state, environment, structure):
 
     # in ECI:
     r = state[0:3]
@@ -63,7 +63,7 @@ def dragCalc(state, mjd, environment, structure):
     b = -0.01895
     c = 4.895e-12
     d = -0.008471
-    R = LA.norm(r) - Earth.radius
+    R = LA.norm(r) - environment.earth.radius
     rho = a*np.exp(b*R) + c*np.exp(d*R)
 
     vRel = v - np.cross(environment.earth.w, r)
