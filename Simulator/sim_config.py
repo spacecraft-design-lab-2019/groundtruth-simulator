@@ -19,5 +19,6 @@ w_i = np.array([.1, .5, -.3])
 
 
 # Spacecraft Properties
-I = np.array([[17,0,0],[0,18,0],[0,0,22]]) 
+I = np.array([[17,0,0],[0,18,0],[0,0,22]])
+mass = 1.0 # kg
 

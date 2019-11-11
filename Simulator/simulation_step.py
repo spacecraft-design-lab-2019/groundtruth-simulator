@@ -33,7 +33,7 @@ def simulation_step(cmd, sim_prev=None):
 		t_i = sim_prev['t']
 
 	# spacecraft class
-	spacecraft = SpacecraftStructure(config.I)
+	spacecraft = SpacecraftStructure(config.I, mass=config.mass)
 
 
 	#------------------------ Propagate Dynamics --------------------
