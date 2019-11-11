@@ -98,17 +98,12 @@ class Environment():
         """
         Function: density_lookup
 
-        Gets atmospheric density using MSISE-00 atmospheric model.
-        Must have https://pypi.org/project/msise00/ library installed.
+        Gets atmospheric density using various models.
+        For MSISE-00 atmospheric model, must have https://pypi.org/project/msise00/ library installed.
 
         Inputs:
-            year
-            month
-            day
-            hour
-            altitude (km)
-            glat: geodetic latitude
-            glon: geodetic longitude
+            r_ECI:  position vector in ECI frame
+            model:  parameter to select type of model (default="exponential")
 
         Outputs:
             rho: atmospheric density (kg/m^3)
@@ -118,7 +113,16 @@ class Environment():
             rho_0 = 1.225e9
             h = np.linalg.norm(r_ECI)
             H = 10.0
-            rho = rho_0*np.exp(-(h-self.earth.radius)/H)
+            rho = rho_0 * np.exp(-(h-self.earth.radius)/H)
+
+        elif model == "exponential_2":
+            #drag equation fit coefficients
+            a = 4.436e-09
+            b = -0.01895
+            c = 4.895e-12
+            d = -0.008471
+            R = np.linalg.norm(r_ECI) - self.earth.radius
+            rho = a*np.exp(b*R) + c*np.exp(d*R)
 
         elif model == "msise00":
             mjd = julian.to_jd(self.datetime, fmt='mjd')
