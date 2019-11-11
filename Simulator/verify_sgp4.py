@@ -12,12 +12,12 @@ from simulation_step import simulation_step
 from propagate_step import sgp4_step
 
 
-# Initialize / Setup Workspace
+#----------------Initialize / Setup Workspace------------------
 tspan = np.array([0, 8640])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
 
-# Initial State Vector
+#---------------------Initial State Vector---------------------
 r_i, v_i = sgp4_step(line1, line2, tstart)
 # pdb.set_trace()
 state_i = np.r_[r_i, q_i, v_i, w_i]
@@ -29,7 +29,7 @@ sim_state = {'state': state_i, 't': tstart}
 
 
 
-# Propagate
+#---------------------Propagate---------------------------
 for i, elapsed_t in enumerate(T[0:-1]):
 
 	# Simulator
@@ -42,7 +42,7 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	print(i)
 
 
-# Plot
+#------------------------Plot-----------------------------
 plt.figure()
 plt.plot(T/3600, np.linalg.norm(state_history[:, 0:3] - state_history_sgp4[:, 0:3], axis=1), label="position [km]")
 plt.plot(T/3600, 1e3*np.linalg.norm(state_history[:, 7:10] - state_history_sgp4[:, 3:6], axis=1), label="velocity [m/s]")
