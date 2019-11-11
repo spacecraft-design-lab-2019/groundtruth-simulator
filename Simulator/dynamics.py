@@ -50,48 +50,48 @@ def gravityEarthJ2(r_sat, earth):
     return f
 
 
-def dragCalc(state, environment, structure):
-
-    A = 0.01
-    M = 1.0
-    Cd = 2.3
-    B = Cd*A/M
-
-    p0 = 1.225e9
-    h = np.linalg.norm(state[0:3])
-    h0 = 6378.137
-    H = 10.0
-    p = p0*np.exp(-(h-h0)/H)
-
-    wEarth = np.array([0, 0, 2*np.pi/86400])
-    vRel = state[3:6] - np.cross(wEarth, state[0:3])
-
-    adrag = -0.5*B*p*np.linalg.norm(vRel) * vRel
-    mdrag = np.zeros(3)
-
-    return adrag, mdrag
-
 # def dragCalc(state, environment, structure):
 
-#     # in ECI:
-#     r = state[0:3]
-#     v = state[7:10]
-#     # q is body to ECI
-#     q = state[3:7]
+#     A = 0.01
+#     M = 1.0
+#     Cd = 2.3
+#     B = Cd*A/M
 
-# #    rho = environment.density_lookup(r, GMST(mjd), mjd)
-#     #drag equation fit coefficients
-#     a = 4.436e-09
-#     b = -0.01895
-#     c = 4.895e-12
-#     d = -0.008471
-#     R = LA.norm(r) - environment.earth.radius
-#     rho = a*np.exp(b*R) + c*np.exp(d*R)
+#     p0 = 1.225e9
+#     h = np.linalg.norm(state[0:3])
+#     h0 = 6378.137
+#     H = 10.0
+#     p = p0*np.exp(-(h-h0)/H)
 
-#     vRel = v - np.cross(environment.earth.w, r)
-#     vRel_body = quatrot(conj(q), vRel) # get from inertial to body
+#     wEarth = np.array([0, 0, 2*np.pi/86400])
+#     vRel = state[3:6] - np.cross(wEarth, state[0:3])
 
-#     return structure.aerodrag(rho, vRel_body)
+#     adrag = -0.5*B*p*np.linalg.norm(vRel) * vRel
+#     mdrag = np.zeros(3)
+
+#     return adrag, mdrag
+
+def dragCalc(state, environment, structure):
+
+    # in ECI:
+    r = state[0:3]
+    v = state[7:10]
+    # q is body to ECI
+    q = state[3:7]
+
+#    rho = environment.density_lookup(r, GMST(mjd), mjd)
+    #drag equation fit coefficients
+    a = 4.436e-09
+    b = -0.01895
+    c = 4.895e-12
+    d = -0.008471
+    R = LA.norm(r) - environment.earth.radius
+    rho = a*np.exp(b*R) + c*np.exp(d*R)
+
+    vRel = v - np.cross(environment.earth.w, r)
+    vRel_body = quatrot(conj(q), vRel) # get from inertial to body
+
+    return structure.aerodrag(rho, vRel_body)
 
 
 def gravityGradientTorque(r_sat, I, GM):
