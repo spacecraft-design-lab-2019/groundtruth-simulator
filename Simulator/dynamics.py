@@ -61,14 +61,15 @@ def dragCalc(state, environment, structure):
     vRel_body = quatrot(conj(q), vRel) # get from inertial to body
 
     # Simplified model - assumes constant wetted areas:
-    A = 0.01
-    B = structure.cD*A/structure.mass
-    adrag = -0.5*B*rho*np.linalg.norm(vRel) * vRel
-    mdrag = np.zeros(3)
+    # A = 0.01
+    # B = structure.cD*A/structure.mass
+    # adrag = -0.5*B*rho*np.linalg.norm(vRel) * vRel
+    # mdrag = np.zeros(3)
     # pdb.set_trace()
-    return adrag, mdrag
+    # return adrag, mdrag
 
-    # return structure.aerodrag(rho, vRel_body)
+    adrag, mdrag = structure.aerodrag(rho, vRel_body)
+    return quatrot(q, adrag), quatrot(q, mdrag)
 
 
 def gravityGradientTorque(r_sat, I, GM):
