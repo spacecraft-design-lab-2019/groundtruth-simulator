@@ -12,9 +12,10 @@ class SpacecraftStructure():
     """
     A class to store spacecraft structural poperties
     """
-    def __init__(self, I, cD=2.3):
+    def __init__(self, I, cD=2.3, mass=1.0):
         self.I = I
         self.cD = cD
+        self.mass = mass # kg
         self.faces = self.make_faces()
         # self.surfArea = sum(f.A for f in faces)
 
@@ -31,7 +32,7 @@ class SpacecraftStructure():
             f, m = face.aerodrag(rho, vRel)
             F += f
             M += m
-        return self.cD*F, self.cD*M
+        return self.cD/self.mass*F, self.cD/self.mass*M
 
     def make_faces(self):
         L = 0.05 # 50 mm sidelength
@@ -93,7 +94,7 @@ class Environment():
         self.datetime = datetime
         self.earth = Earth()
 
-    def density_lookup(self, r_ECI, GMST):
+    def density_lookup(self, r_ECI, model="exponential"):
         """
         Function: density_lookup
 
@@ -112,11 +113,22 @@ class Environment():
         Outputs:
             rho: atmospheric density (kg/m^3)
         """
-        r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
-        glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
 
-        atmos = msise00.run(time=self.datetime, altkm=alt, glat=glat, glon=glon)
-        rho = atmos.Total.values[0].item()
+        if model == "exponential":
+            rho_0 = 1.225e9
+            h = np.linalg.norm(r_ECI)
+            H = 10.0
+            rho = rho_0*np.exp(-(h-self.earth.radius)/H)
+
+        elif model == "msise00":
+            mjd = julian.to_jd(self.datetime, fmt='mjd')
+            GMST = conv.mjd_2_GMST(mjd)
+            r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
+            glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
+
+            atmos = msise00.run(time=self.datetime, altkm=alt, glat=glat, glon=glon)
+            rho = atmos.Total.values[0].item()
+
         return rho
 
     def magfield_lookup(self, r_ECI, GMST):
