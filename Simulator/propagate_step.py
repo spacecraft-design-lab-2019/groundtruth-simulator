@@ -51,7 +51,10 @@ def rk4_step(f, t, state, h):
     k3 = h * f(t1, state + k2/2.0)
     k4 = h * f(t2, state + k3)
 
-    return state + (k1 + 2.0*k2 + 2.0*k3 + k4)/6.0
+    x1 = state + (k1 + 2.0*k2 + 2.0*k3 + k4)/6.0
+    x1[3:7] = x1[3:7] / np.linalg.norm(x1[3:7]) # normalize the quaternion vector
+
+    return x1
 
 
 def calc_statedot(t, state, cmd, structure):
