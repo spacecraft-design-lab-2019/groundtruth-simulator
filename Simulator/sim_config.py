@@ -5,13 +5,13 @@ from datetime import datetime
 
 #------------------- Configuration Parameters -------------------
 
-# Seed Initial Position/Velocity with TLE
-line1 = ('1 25544U 98067A   19302.69799672  .00001237  00000-0  29468-4 0  9996')
-line2 = ('2 25544  51.6449  54.3108 0006382 201.3316 303.7490 15.50231045196128')
+# Seed Initial Position/Velocity with TLE - BEESAT-1
+line1 = ('1 35933U 09051C   19315.45643387  .00000096  00000-0  32767-4 0  9991')
+line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102')
 
 # Simulation Parameters
 tstart = datetime(2019, 12, 30, 00, 00, 00)
-tstep = .1                     # [sec] - 10 Hz
+tstep = 1                     # [sec] - 10 Hz
 
 # Initial Spacecraft Attitude
 q_i = np.array([1, 0, 0, 0])
