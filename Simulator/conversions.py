@@ -62,7 +62,7 @@ def skew(v):
     return S
 
 
-def GMST(mjd):
+def mjd_2_GMST(mjd):
     # Reference: AA 279A Lecture 6, Slide 3
     d = mjd - 51544.5
     return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
