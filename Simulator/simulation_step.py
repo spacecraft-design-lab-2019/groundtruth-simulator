@@ -19,7 +19,7 @@ def simulation_step(cmd, sim_prev=None):
 
 	Outputs:
 		sensors: 	spoofed sensor measurements
-		sim_new:	new state of simulation
+		sim_new:	new state of simulation, dictionary.
 	"""
 
 	#------------------ Initialize/Setup Workspace ------------------	
