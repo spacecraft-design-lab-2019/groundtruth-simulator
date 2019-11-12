@@ -47,10 +47,16 @@ def simulation_step(cmd, sim_prev=None):
 	#------------------------ Spoof Sensors -------------------------
 	# TO-DO: use sensor classes to spoof sensors based on updated world and state
 	world = Environment(t)
-	B_ECI = environment.magfield_lookup(state[0:3])
-	B_body = conv.quatrot(state[3:7], B_ECI)
-	sensors = sense.magnetometerModel(B_body)
 
+
+	B_ECI = world.magfield_lookup(state[0:3])
+	B_body = conv.quatrot(state[3:7], B_ECI)
+	B_body_noise = sense.magnetometerModel(B_body)
+
+	w_body = conv.quatrot(state[3:7], state[10:13])
+	w_body_noise = sense.gyroModel(w_body)
+	sensors = np.r_[B_body_noise w_body_noise]
+	
 
 	#------------------------ Export Data -------------------------
 	# TO-DO: output desired variables to text file for later plotting/analysis

@@ -12,8 +12,8 @@ http://www.mathworks.com/matlabcentral/fileexchange/39703-cowells-method-for-ear
 
 import numpy as np
 import math
-import pylab as pl
-import sys
+# import pylab as pl
+# import sys
 
 #start equations from computing solar position from code by David Eagle
 def r2r (x):
