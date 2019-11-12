@@ -135,7 +135,7 @@ class Environment():
 
         return rho
 
-    def magfield_lookup(self, r_ECI, GMST):
+    def magfield_lookup(self, r_ECI):
         """
         Function: magfield_lookup
 
@@ -150,6 +150,8 @@ class Environment():
         Ouputs:
             B_NED: magnetic field vector in North/East/Down
         """
+        mjd = julian.to_jd(self.datetime, fmt='mjd')
+        GMST = conv.mjd_2_GMST(mjd)
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
         year = self.datetime.year

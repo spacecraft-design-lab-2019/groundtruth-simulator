@@ -98,7 +98,8 @@ def calc_statedot(t, state, cmd, structure):
 
     #-------------------Implement Control Law-------------------------
     # TO-DO: implement control
-    # torque = torque + cmd;
+    B = environment.magfield_lookup(r)
+    torque = torque + np.cross(cmd, B);
 
 
     #---------------------Kinematics----------------------------------

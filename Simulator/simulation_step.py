@@ -2,8 +2,10 @@
 
 import numpy as np
 import sim_config as config
+import conversions as conv
 from constants import *
 from propagate_step import *
+import sensors as sense
 
 
 def simulation_step(cmd, sim_prev=None):
@@ -45,7 +47,10 @@ def simulation_step(cmd, sim_prev=None):
 	#------------------------ Spoof Sensors -------------------------
 	# TO-DO: use sensor classes to spoof sensors based on updated world and state
 	world = Environment(t)
-	sensors = []
+	B_ECI = environment.magfield_lookup(state[0:3])
+	B_body = conv.quatrot(state[3:7], B_ECI)
+	sensors = sense.magnetometerModel(B_body)
+
 
 	#------------------------ Export Data -------------------------
 	# TO-DO: output desired variables to text file for later plotting/analysis

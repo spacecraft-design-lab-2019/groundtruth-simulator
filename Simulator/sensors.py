@@ -64,13 +64,26 @@ def sunSenseModel(X, jdate, scaleF = 0, caSense = 0.02):
     sunSense = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = np.ones(3), cov = 0.0005))
     return sunSense.measure(X)
 
+#Magnetometer Function
+def magnetometerModel(X, scaleF = .02, caSense = 0.02):
+    """
+    Inputs: 
+        X: 3-vector for position/attitude
+        scaleF: Scale Factor value for magnetometer
+        caSense: Cross-axis sensitivity value for magnetometer
+    Output:
+        measurement model in 3-vector form
+    """
+    Tmat =  getTmatrix(scaleF, caSense) 
+    magnetometer = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = 4e5*np.ones(3), cov = 0.0005))
+    return magnetometer.measure(X)
 
-#Test Code    
-X = np.ones(3)
-print(gyroModel(X, scaleF = 0.002, caSense = 0.02))
-#print(X)
+# #Test Code    
+# X = np.ones(3)
+# print(gyroModel(X, scaleF = 0.002, caSense = 0.02))
+# #print(X)
 
-print(sunVector(np.ones(3),1929))
+# print(sunVector(np.ones(3),1929))
 
 
 
