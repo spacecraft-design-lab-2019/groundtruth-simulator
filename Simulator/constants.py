@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import msise00
+# import msise00
 import julian
 import conversions as conv
 import math
