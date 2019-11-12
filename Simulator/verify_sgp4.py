@@ -73,5 +73,10 @@ plt.xlabel('time [hr]')
 plt.ylabel('quaternions')
 plt.grid()
 
+plt.figure()
+plt.plot(T/3600, state_history[:,10:13])
+plt.xlabel('time [hr]')
+plt.ylabel('angular velocity [rad/s]')
+plt.grid()
 
 plt.show()

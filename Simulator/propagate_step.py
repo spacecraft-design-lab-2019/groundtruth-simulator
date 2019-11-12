@@ -90,8 +90,8 @@ def calc_statedot(t, state, cmd, structure):
     accel = accel + gravityEarthJ2(r, environment.earth)
     accel = accel + adrag
 
-    # torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
-    # torque = torque + mdrag
+    torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
+    torque = torque + mdrag
 
 
     #-------------------Implement Control Law-------------------------
