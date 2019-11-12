@@ -93,6 +93,8 @@ def calc_statedot(t, state, cmd, structure):
     torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
     torque = torque + mdrag
 
+    # TO-DO: if control is off, add torque due to magnetic moment
+
 
     #-------------------Implement Control Law-------------------------
     # TO-DO: implement control

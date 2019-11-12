@@ -94,7 +94,7 @@ class Environment():
         self.datetime = datetime
         self.earth = Earth()
 
-    def density_lookup(self, r_ECI, model="exponential"):
+    def density_lookup(self, r_ECI, model="exponential_2"):
         """
         Function: density_lookup
 

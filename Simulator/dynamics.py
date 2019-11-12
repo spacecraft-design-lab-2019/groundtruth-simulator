@@ -55,12 +55,12 @@ def dragCalc(state, environment, structure):
     v = state[7:10]
     q = state[3:7]
 
-    rho = environment.density_lookup(r, model="exponential")
+    rho = environment.density_lookup(r)
 
     vRel = v - np.cross(environment.earth.w, r)
     vRel_body = quatrot(conj(q), vRel) # get from inertial to body
 
-    # Simplified model - assumes constant wetted areas:
+    # Simplified model - assumes constant wetted area:
     # A = 0.01
     # B = structure.cD*A/structure.mass
     # adrag = -0.5*B*rho*np.linalg.norm(vRel) * vRel

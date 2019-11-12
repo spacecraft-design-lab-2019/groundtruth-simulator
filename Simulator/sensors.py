@@ -51,7 +51,7 @@ def gyroModel(X, scaleF = 0.002, caSense = 0.02):
     return gyro.measure(X)
 
 #Sun Sensor Function
-def sunSenseModel(X, jdate, scaleF = 0, caSense = 0.02,):
+def sunSenseModel(X, jdate, scaleF = 0, caSense = 0.02):
     """
     Inputs: 
         X: 3-vector for position/attitude
