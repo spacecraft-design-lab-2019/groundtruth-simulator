@@ -63,8 +63,8 @@ def calc_statedot(t, state, cmd, structure):
         Calculates the derivative of the state vector.
 
     Inputs:
-        t:      current time
-        state:  current state object
+        t:      current time, seconds?
+        state:  current state object,
         cmd:    controller input
     Outputs:
         state_dot: the derivative of the state vector
@@ -99,6 +99,7 @@ def calc_statedot(t, state, cmd, structure):
     #-------------------Implement Control Law-------------------------
     # TO-DO: implement control
     B = environment.magfield_lookup(r)
+
     torque = torque + np.cross(cmd, B);
 
 
