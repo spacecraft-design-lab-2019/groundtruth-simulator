@@ -20,6 +20,11 @@ def simulation_step(cmd, sim_prev=None):
 	Outputs:
 		sensors: 	spoofed sensor measurements
 		sim_new:	new state of simulation, dictionary.
+
+	Comments:
+		-Simulation state format: [ r [km], q [], v [km/s], w [rad/s] ] (13x1 np array)
+		-r & v are in ECI coordinates, q is the transformation from body to ECI, and w is given in the body frame
+		-
 	"""
 
 	#------------------ Initialize/Setup Workspace ------------------	
@@ -43,18 +48,29 @@ def simulation_step(cmd, sim_prev=None):
 	state = rk4_step(update_f, t_i, state_i, config.tstep)
 	t = t_i + datetime.timedelta(seconds=config.tstep)
 
-
-	#------------------------ Spoof Sensors -------------------------
-	# TO-DO: use sensor classes to spoof sensors based on updated world and state
+	#------------------------ Extract true values -------------------
+	# TODO: change so that we don't create a new environment object every step. Add "increment_time" method and pass environment
+	# into/out of this simulation step function
 	world = Environment(t)
 
+	B_NED = world.magfield_lookup(state[0:3])
 
-	B_ECI = world.magfield_lookup(state[0:3])
+	# TODO: Add conversion from NED to ECI
+
+
 	B_body = conv.quatrot(state[3:7], B_ECI)
-	B_body_noise = B_body 	# sense.magnetometerModel(B_body)
-
 	w_body = conv.quatrot(state[3:7], state[10:13])
-	w_body_noise = w_body 	# sense.gyroModel(w_body)
+
+	#------------------------ Spoof Sensors -------------------------
+	# TODO: use sensor classes to spoof sensors based on updated world and state
+
+	# Uncomment 2nd line to include sensor models
+	B_body_noise = B_body
+	# B_body_noise = sense.magnetometerModel(B_body)
+
+	# Uncomment 2nd line to include sensor models
+	w_body_noise = w_body
+	# w_body_noise = sense.gyroModel(w_body)
 	sensors = np.r_[B_body_noise, w_body_noise]
 
 	#------------------------ Export Data -------------------------
