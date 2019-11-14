@@ -3,6 +3,8 @@ import numpy as np
 import math
 
 #--------------------Coordinate Frames--------------------------
+# TODO: Add conversion to/from NED (for use with pyIGRF)
+
 
 def ECI_to_ECEF(r_ECI, GMST):
     """
