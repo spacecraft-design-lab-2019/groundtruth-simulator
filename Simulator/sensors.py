@@ -75,7 +75,7 @@ def magnetometerModel(X, scaleF = .02, caSense = 0.02):
         measurement model in 3-vector form
     """
     Tmat =  getTmatrix(scaleF, caSense) 
-    magnetometer = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = 4e5*np.ones(3)/1E9, cov = 0.0005))
+    magnetometer = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = 4e5*np.ones(3)/1E8, cov = 0.0005))
     return magnetometer.measure(X)
 
 # #Test Code    
