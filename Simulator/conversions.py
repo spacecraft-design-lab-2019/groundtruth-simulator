@@ -42,7 +42,7 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
 
     lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
     long = np.arctan2(r_ECEF[1], r_ECEF[0])
-    alt = np.linalg.norm(r_ECEF - rad_Earth)
+    alt = np.linalg.norm(r_ECEF) - rad_Earth
 
     return lat, long, alt
 
