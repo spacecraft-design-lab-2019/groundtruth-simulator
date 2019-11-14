@@ -7,7 +7,6 @@ from constants import Environment
 from sgp4.earth_gravity import wgs84
 from sgp4.io import twoline2rv
 
-
 #-------------------------Simulator-------------------------------
 
 def sgp4_step(line1, line2, dt, model=wgs84):
@@ -79,7 +78,6 @@ def calc_statedot(t, state, cmd, structure):
     #-----------------Calculate Environment --------------------------
     environment = Environment(t)
 
-
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)
     accel = np.zeros(3)
@@ -93,14 +91,13 @@ def calc_statedot(t, state, cmd, structure):
     torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
     torque = torque + mdrag
 
+    #------------------Look up magnetic field------------------------
+    B = environment.magfield_lookup(r)
     # TO-DO: if control is off, add torque due to magnetic moment
 
 
     #-------------------Implement Control Law-------------------------
-    # TO-DO: implement control
-    B = environment.magfield_lookup(r)
-
-    torque = torque + np.cross(cmd, B);
+    torque = torque + cmd  # np.cross(cmd, B);
 
 
     #---------------------Kinematics----------------------------------
