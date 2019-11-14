@@ -37,7 +37,7 @@ def sunVector(rsat,jdate):
     return rsun
 
 #Gyro Function
-def gyroModel(X, scaleF = 0.002, caSense = 0.02):
+def gyroModel(X, scaleF = 0.002, caSense = 0.01):
     """
     Inputs: 
         X: 3-vector for position/attitude
@@ -47,7 +47,7 @@ def gyroModel(X, scaleF = 0.002, caSense = 0.02):
         measurement model in 3-vector form
     """
     Tmat =  getTmatrix(scaleF, caSense) 
-    gyro = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = np.ones(3), cov = 0.0005))
+    gyro = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = np.ones(3) .* 0, cov = 0.000000000694444))
     return gyro.measure(X)
 
 #Sun Sensor Function
@@ -75,7 +75,7 @@ def magnetometerModel(X, scaleF = .02, caSense = 0.02):
         measurement model in 3-vector form
     """
     Tmat =  getTmatrix(scaleF, caSense) 
-    magnetometer = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = 4e5*np.ones(3), cov = 0.0005))
+    magnetometer = Sensor(errormodel = LinearErrorModel.withDim(3, T = Tmat, b = 4e5*np.ones(3)/1E9, cov = 0.0005))
     return magnetometer.measure(X)
 
 # #Test Code    
