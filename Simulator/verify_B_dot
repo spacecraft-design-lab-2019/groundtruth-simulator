@@ -22,7 +22,7 @@ import detumble_cpp as dcpp
 plt.close('all')
 
 #----------------Initialize / Setup Workspace------------------
-tspan = np.array([0, 864])    # [sec]
+tspan = np.array([0, 3600])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
 
@@ -45,11 +45,11 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	sensors, sim_state = simulation_step(L_cmd, sim_state)
 	state_history[i+1, :] = sim_state['state']
 
-	# command torque based on state
-	gain = -1
+	# command torque based on sensors (check simulation_step.py for noise addition, currently no noise addition 11/13)
+	gain = 5e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
-	L_cmd = dcpp.detumble_B_cross(w, B, gain)
+	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain)
 
 elapsed = time.time() - t
 print(elapsed)
