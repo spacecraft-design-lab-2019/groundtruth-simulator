@@ -51,10 +51,10 @@ def simulation_step(cmd, sim_prev=None):
 
 	B_ECI = world.magfield_lookup(state[0:3])
 	B_body = conv.quatrot(state[3:7], B_ECI)
-	B_body_noise = sense.magnetometerModel(B_body)
+	B_body_noise = B_body 	# sense.magnetometerModel(B_body)
 
 	w_body = conv.quatrot(state[3:7], state[10:13])
-	w_body_noise = sense.gyroModel(w_body)
+	w_body_noise = w_body 	# sense.gyroModel(w_body)
 	sensors = np.r_[B_body_noise, w_body_noise]
 
 	#------------------------ Export Data -------------------------

@@ -154,9 +154,11 @@ class Environment():
         GMST = conv.mjd_2_GMST(mjd)
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
+        lat = np.rad2deg(glat)
+        long = np.rad2deg(glon) % 360.0                      # pyIGRF requires East Longitude (0-360 deg)
         year = self.datetime.year
 
-        field = pyIGRF.igrf_value(glat, glon, alt, year)
+        field = pyIGRF.igrf_value(lat, long, alt, year)      # pyIGRF uses degrees!!!!
         B_NED = np.array([field[3], field[4], field[5]])
         return B_NED
 

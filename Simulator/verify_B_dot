@@ -11,6 +11,7 @@ import time
 from sim_config import *
 from simulation_step import simulation_step
 from propagate_step import sgp4_step
+
 # import GNC functions
 import sys
 sys.path.append('/home/eleboeuf/Documents/GNC')
@@ -21,7 +22,7 @@ import detumble_cpp as dcpp
 plt.close('all')
 
 #----------------Initialize / Setup Workspace------------------
-tspan = np.array([0, 864])    # [sec]
+tspan = np.array([0, 600])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
 
@@ -44,11 +45,12 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	sensors, sim_state = simulation_step(L_cmd, sim_state)
 	state_history[i+1, :] = sim_state['state']
 
-	# command torque based on state
-	gain = -1
+	# command torque based on sensors (check simulation_step.py for noise addition, currently no noise addition 11/13)
+	gain = 4e-12	#4e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
-	L_cmd = dcpp.detumble_B_cross(w, B, gain)
+	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain)
+	print(i)
 
 elapsed = time.time() - t
 print(elapsed)
@@ -62,6 +64,12 @@ plt.grid()
 
 plt.figure()
 plt.plot(T/3600, state_history[:,10:13])
+plt.xlabel('time [hr]')
+plt.ylabel('quaternions')
+plt.grid()
+
+plt.figure()
+plt.plot(T/3600, np.linalg.norm(state_history[:,10:13],axis=1))
 plt.xlabel('time [hr]')
 plt.ylabel('angular velocity [rad/s]')
 plt.grid()
