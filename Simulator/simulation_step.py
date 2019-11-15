@@ -27,6 +27,8 @@ def simulation_step(cmd, sim_prev=None):
 		-
 	"""
 
+	# TODO: MODIFY TO OUTPUT JSONS
+
 	#------------------ Initialize/Setup Workspace ------------------	
 	# if we are at the first iteration
 	if sim_prev == None:
@@ -41,7 +43,6 @@ def simulation_step(cmd, sim_prev=None):
 
 	# spacecraft class
 	spacecraft = SpacecraftStructure(config.I, mass=config.mass)
-
 
 	#------------------------ Propagate Dynamics --------------------
 	update_f = lambda t, state: calc_statedot(t, state, cmd, spacecraft)
