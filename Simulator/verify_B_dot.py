@@ -25,6 +25,8 @@ plt.close('all')
 tspan = np.array([0, 600])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
+# TODO: initialize classes (sensors, structure)
+
 
 #---------------------Initial State Vector---------------------
 r_i, v_i = sgp4_step(line1, line2, tstart)
