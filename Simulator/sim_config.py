@@ -22,7 +22,6 @@ w_i = np.array([.01, .05, -.03])   # radians/sec
 I = np.array([[17,0,0],[0,18,0],[0,0,22]])
 mass = 1.0 # kg
 
-
 # Sensor Parameters
 gyro_params = {
 	"scaleF" : 0.002,
