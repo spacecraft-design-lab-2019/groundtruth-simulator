@@ -48,27 +48,6 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
 
     return lat, lon, alt
 
-#--------------------Miscellaneous-----------------------------
-
-def skew(v):
-    """
-    Function: skew
-        Calculates the skew matrix for cross-product calculation
-
-    Inputs:
-
-    """
-    S = np.array([[0, -v[2], v[1]],
-                 [v[2], 0, -v[0]],
-                 [-v[1], v[0], 0]])
-    return S
-
-
-def mjd_2_GMST(mjd):
-    # Reference: AA 279A Lecture 6, Slide 3
-    d = mjd - 51544.5
-    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
-
 #--------------------Quaternions-----------------------------
 
 def L(q):
@@ -116,3 +95,45 @@ def quatrot(q1, q2):
         return rotated[1:4]
     else:
         return rotated
+
+
+#--------------------Miscellaneous-----------------------------
+
+def skew(v):
+    """
+    Function: skew
+        Calculates the skew matrix for cross-product calculation
+
+    Inputs:
+
+    """
+    S = np.array([[0, -v[2], v[1]],
+                 [v[2], 0, -v[0]],
+                 [-v[1], v[0], 0]])
+    return S
+
+
+def mjd_2_GMST(mjd):
+    # Reference: AA 279A Lecture 6, Slide 3
+    d = mjd - 51544.5
+    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
+
+
+
+def unit(ax):
+    """
+    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
+    """
+    if isinstance(ax, str):
+        if ax == 'x':
+            ax = 0
+        elif ax == 'y':
+            ax = 1
+        elif ax == 'z':
+            ax = 2
+        else:
+            raise(Exception("invalid unit axis input {}".format(ax)))
+
+    N = np.zeros(3)
+    N[ax] = 1
+    return N

@@ -40,9 +40,9 @@ class SpacecraftStructure():
         A_main = L**2
         A_long = 0.064 * 0.058 # area of the special face
 
-        X = unit('x')
-        Y = unit('y')
-        Z = unit('z')
+        X = conv.unit('x')
+        Y = conv.unit('y')
+        Z = conv.unit('z')
         return [
                 Face(X,  A_main, c_len*X),
                 Face(Y,  A_main, c_len*Y),
@@ -180,42 +180,3 @@ class Earth():
         self.SMA = SMA
         self.J2 = J2
         self.GM = GM
-
-#--------------OTHER STUFF --------------------------
-
-# Magnetorquers
-
-
-# Sensors (Noise constants?)
-
-# class Moon():
-#     """
-#     A class to store Moon parameters
-#     """
-#     def __init__(self,
-#                 R = 1738, #Equatorial Radius, km
-#                 mass = 7.3483e22, #kg
-#                 SMA = 38400, #semimajor axis, km
-#                 GM = 4902.799): #gravitational param, km^3/s^2
-#         self.R = R
-#         self.mass = mass
-#         self.SMA = SMA
-#         self.GM = GM
-
-def unit(ax):
-    """
-    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
-    """
-    if isinstance(ax, str):
-        if ax == 'x':
-            ax = 0
-        elif ax == 'y':
-            ax = 1
-        elif ax == 'z':
-            ax = 2
-        else:
-            raise(Exception("invalid unit axis input {}".format(ax)))
-
-    N = np.zeros(3)
-    N[ax] = 1
-    return N

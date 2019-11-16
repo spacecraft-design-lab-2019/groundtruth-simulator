@@ -1,4 +1,15 @@
 import numpy as np
+from config import mag_params, gyro_params, sun_params
+
+class SpacecraftSensors():
+    """
+    A class to store spacecraft sensors
+    """
+    def __init__(self):
+        self.magnetometer = Sensor(errormodel=LinearErrorModel(scaleF=mag_params["scaleF"], caSense=mag_params["caSense"], b=mag_params["b"], cov=mag_params["cov"]))
+        self.gyroscope    = Sensor(errormodel=LinearErrorModel(scaleF=gyro_params["scaleF"], caSense=gyro_params["caSense"], b=gyro_params["b"], cov=gyro_params["cov"]))
+        self.sunsensor    = Sensor(errormodel=LinearErrorModel(scaleF=sun_params["scaleF"], caSense=sun_params["caSense"], b=sun_params["b"], cov=sun_params["cov"]))
+
 
 class Sensor():
     """
