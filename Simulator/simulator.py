@@ -48,8 +48,7 @@ class Simulator():
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.t)
 
-		B_NED = self.environment.magfield_lookup(self.state[0:3])
-		B_ECI = B_NED # TODO: ADD CONVERSION FROM NED TO ECI
+		B_ECI = self.environment.magfield_lookup(self.state[0:3])
 		B_body = conv.quatrot(self.state[3:7], B_ECI)
 		w_body = conv.quatrot(self.state[3:7], self.state[10:13])
 

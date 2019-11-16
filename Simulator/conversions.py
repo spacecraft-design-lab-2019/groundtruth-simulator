@@ -27,6 +27,27 @@ def ECI_to_ECEF(r_ECI, GMST):
     return r_ECEF
 
 
+def ECEF_to_ECI(r_ECEF, GMST):
+    """
+    Function: ECEF_to_ECI
+        Converts position vector in ECEF to ECI.
+
+    Inputs:
+        r_ECEF: position vector in Earth Centered Earth Fixed (ECEF)
+        GMST: current Greenwich Mean Sidereal Time [rad]
+
+    Outputs:
+        r_ECI: position vector in Earth Centered Inertial (ECI)
+    """
+
+    rotation = np.array([[np.cos(GMST), np.sin(GMST), 0],
+                         [-np.sin(GMST), np.cos(GMST), 0],
+                         [0, 0, 1]])
+    r_ECI = rotation.transpose @ r_ECEF
+
+    return r_ECI
+
+
 def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
     Function: ECEF_to_LLA
@@ -47,6 +68,22 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
     alt = np.linalg.norm(r_ECEF) - rad_Earth
 
     return lat, lon, alt
+
+
+def NED_to_ECI(vec_NED, glat, glon, GMST):
+    """
+    Function: NED_to_ECI
+        Converts a vector in NED to ECI coordinates.
+    """
+    R = np.array([[-np.sin(glat)*np.cos(glon), -np.sin(glon), -np.cos(glat)*np.cos(glon)],
+                  [-np.sin(glat)*np.sin(glon),  np.cos(glon), -np.cos(glat)*np.sin(glon)],
+                  [              np.cos(glat),           0.0,              -np.sin(glat)]])
+
+    vec_ECEF = R @ vec_NED
+    vec_ECI = ECEF_to_ECI(vec_ECEF, GMST)
+    return vec_ECI
+
+
 
 #--------------------Quaternions-----------------------------
 
