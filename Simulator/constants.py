@@ -3,8 +3,8 @@ import numpy as np
 # import msise00
 import julian
 import conversions as conv
-import math
 import pyIGRF
+import sun_model
 
 #--------------------Spacecraft Structure----------------------------
 
@@ -161,6 +161,18 @@ class Environment():
         field = pyIGRF.igrf_value(lat, long, alt, year)      # pyIGRF uses degrees!!!!
         B_NED = np.array([field[3], field[4], field[5]])
         return B_NED
+
+    def sunVector(self, r_ECI):
+        """
+        Inputs:
+            r_ECI: ECI position of satellite
+        Output:
+            position vector (3-vector) from satellite to sun
+        """
+        jdate = julian.to_jd(self.datetime, fmt='jd')
+        earth2sun = sun_model.sun1(jdate)
+        rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
+        return rsun
 
 
 class Earth():
