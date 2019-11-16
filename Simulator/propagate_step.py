@@ -56,7 +56,7 @@ def rk4_step(f, t, state, h):
     return x1
 
 
-def calc_statedot(t, state, cmd, structure):
+def calc_statedot(t, state, cmd, structure, environment):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
@@ -76,7 +76,7 @@ def calc_statedot(t, state, cmd, structure):
 
 
     #-----------------Calculate Environment --------------------------
-    environment = Environment(t)
+    environment.update(t)
 
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)
