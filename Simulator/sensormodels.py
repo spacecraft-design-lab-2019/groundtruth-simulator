@@ -58,8 +58,8 @@ class LinearErrorModel():
         b - bias vector
         cov - covariance of the noise. May be scalar or matrix valued.
         """
-        assert T.shape[0] == T.shape[1], "T is not square."
-        assert b.shape[0] == T.shape[0], "b is not compatible with T"
+        # assert T.shape[0] == T.shape[1], "T is not square."
+        # assert b.shape[0] == T.shape[0], "b is not compatible with T"
 
         self.T = getTmatrix(scaleF, caSense)
         self.b = b

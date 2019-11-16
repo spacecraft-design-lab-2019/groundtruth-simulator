@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import sim_config as config
-from simulator import Simlator
+from simulator import Simulator
 
 
 # import GNC functions
@@ -31,7 +31,7 @@ L_cmd = np.zeros(3)			# initially command 0 torque
 sim = Simulator(config)
 
 # preallocate memory
-T = np.arange(0, tspan[1]+tstep, tstep)
+T = np.arange(0, tspan[1]+config.tstep, config.tstep)
 state_history = np.zeros((np.shape(T)[0], np.shape(sim.state)[0]))
 state_history[0, :] = sim.state
 
