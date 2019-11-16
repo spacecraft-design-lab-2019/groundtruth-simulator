@@ -50,6 +50,9 @@ class Simulator():
 
 		B_ECI = self.environment.magfield_lookup(self.state[0:3])
 		B_body = conv.quatrot(self.state[3:7], B_ECI)
+
+		# TO-DO: update gyro bias
+		#self.environment.sensors.gyroscope.errormodel.b += ?
 		w_body = conv.quatrot(self.state[3:7], self.state[10:13])
 
 
