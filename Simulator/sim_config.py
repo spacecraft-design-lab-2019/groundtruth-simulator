@@ -17,8 +17,28 @@ tstep = .1                     # [sec] - 1 Hz
 q_i = np.array([1, 0, 0, 0])    # quaternion
 w_i = np.array([.01, .05, -.03])   # radians/sec
 
-
 # Spacecraft Properties
 I = np.array([[17,0,0],[0,18,0],[0,0,22]])
 mass = 1.0 # kg
 
+# Sensor Parameters
+gyro_params = {
+	"scaleF" : 0.002,
+	"caSense" : 0.02,
+	"b" : (np.random.rand(3) * np.sqrt(.0022)),
+	"cov" : 0.000000000694444
+}
+
+mag_params = {
+	"scaleF" : 0.02,
+	"caSense" : 0.02,
+	"b" : 40e3*np.ones(3),
+	"cov" : 0.0005
+}
+
+sun_params = {
+	"scaleF" : 0,
+	"caSense" : 0.02,
+	"b" : np.ones(3),
+	"cov" : 0.0005
+}

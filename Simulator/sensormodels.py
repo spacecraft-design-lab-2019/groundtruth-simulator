@@ -24,6 +24,7 @@ class Sensor():
 
         self.name = name
 
+
     def measure(self, x):
         return self.errormodel.measure(x)
 
@@ -39,8 +40,10 @@ class LinearErrorModel():
     In addition to the regular constructor, may also be initialized with:
     LinearErrorModel.withDim(dim = N, [optional_args])
     """
-    def __init__(self, T=np.zeros((3,3)), b=np.zeros(3), cov=0):
+    def __init__(self, scaleF=0, caSense=0, b=np.zeros(3), cov=0):
         """
+        scaleF - scale factor for a particular sensor
+        caSense - cross-axis sensitivity for particular sensor
         T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
         b - bias vector
         cov - covariance of the noise. May be scalar or matrix valued.
@@ -48,7 +51,7 @@ class LinearErrorModel():
         assert T.shape[0] == T.shape[1], "T is not square."
         assert b.shape[0] == T.shape[0], "b is not compatible with T"
 
-        self.T = T
+        self.T = getTmatrix(scaleF, caSense)
         self.b = b
         self.cov = cov
 
@@ -101,4 +104,17 @@ def whitenoise2(mean = 0, cov = 0, dims = None):
 
     return np.random.multivariate_normal(mean*np.ones(dims), cov)
     
-    
+
+def getTmatrix(scaleF, caSense):
+    """
+    Inputs:
+        scaleF: scale factor for a particular sensor
+        caSense: cross-axis sensitivity for particular sensor
+    Outputs:
+        T-matrix, combined misalignment and scaling matrix for linear error model
+    """
+    scaleFmat = np.eye(3) + np.diag(whitenoise(scaleF,3))
+    misalign = np.reshape(np.random.multivariate_normal(np.zeros(9),caSense*np.eye(9)),(3,3))
+    np.fill_diagonal(misalign, 0)
+    T = np.dot(scaleFmat,misalign)
+    return T

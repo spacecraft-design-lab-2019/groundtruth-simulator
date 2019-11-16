@@ -25,7 +25,9 @@ plt.close('all')
 tspan = np.array([0, 600])    # [sec]
 T = np.arange(0, tspan[1]+tstep, tstep)
 
-# TODO: initialize classes (sensors, structure)
+# initialize classes
+spacecraft = SpacecraftStructure(config.I, mass=config.mass)
+
 
 
 #---------------------Initial State Vector---------------------
