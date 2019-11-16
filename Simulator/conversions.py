@@ -43,7 +43,7 @@ def ECEF_to_ECI(r_ECEF, GMST):
     rotation = np.array([[np.cos(GMST), np.sin(GMST), 0],
                          [-np.sin(GMST), np.cos(GMST), 0],
                          [0, 0, 1]])
-    r_ECI = rotation.transpose @ r_ECEF
+    r_ECI = rotation.transpose() @ r_ECEF
 
     return r_ECI
 
