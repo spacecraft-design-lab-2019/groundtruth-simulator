@@ -8,7 +8,8 @@ import pdb
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from sim_config import *
+from constants import SpacecraftStructure, Environment
+from sensormodels import SpacecraftSensors
 from simulation_step import simulation_step
 from propagate_step import sgp4_step
 
