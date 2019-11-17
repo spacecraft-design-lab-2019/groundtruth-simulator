@@ -126,7 +126,7 @@ def quatrot(q1, q2):
         q2 = np.append(0, q2)
         vector = True
 
-    rotated = L(q1).T @ R(q1) @ q2
+    rotated = L(q1) @ R(q1).T @ q2
 
     if vector:
         return rotated[1:4]
