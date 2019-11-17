@@ -54,15 +54,13 @@ class Simulator():
 
 		# TO-DO: update gyro bias
 		#self.environment.sensors.gyroscope.errormodel.b += ?
-		w_body = conv.quatrot(self.state[3:7], self.state[10:13])
-
 
 		#------------------------ Spoof Sensors -------------------------
 		# Actuate based on truth for now until magnetometer bias estimation, TRIAD, and MEKF have been implemented and tested
 		B_body_noise = B_body
-		w_body_noise = w_body
+		w_body_noise = self.state[10:13]
 		# B_body_noise = self.sensors.magnetometer.measure(B_body)
-		# w_body_noise = self.sensors.gyroscope.measure(w_body)
+		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise]
 

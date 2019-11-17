@@ -22,7 +22,7 @@ plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 600])    # [sec]
+tspan = np.array([0, 1200])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 
 
@@ -42,13 +42,13 @@ t = time.time()
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors,B_ECI,B_body = sim.step(L_cmd, config.tstep)
+	sensors, B_ECI, B_body = sim.step(L_cmd, config.tstep)
 	state_history[i+1, :] = sim.state
 	B_ECI_history[i+1,:] = np.transpose(B_ECI)
 	B_body_history[i+1,:] = np.transpose(B_body)
 	command_history[i+1,:] = np.transpose(L_cmd)
 
-	# command torque based on sensors (currently no noise addition 11/13)
+	# command torque based on sensors (currently no noise addition 11/17)
 	gain = .0143	#4e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
