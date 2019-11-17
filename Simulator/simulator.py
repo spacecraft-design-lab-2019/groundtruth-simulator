@@ -30,12 +30,13 @@ class Simulator():
 			Propagates dynamics & models sensors for single step
 
 		Inputs:
-			cmd:	commanded magnetic dipole from controller
+			cmd:	commanded torque, [Nm]
 		Outputs:
 			meas: 	spoofed sensor measurements
 
 		Comments:
 			-Simulation state format: [ r [km], q [], v [km/s], w [rad/s] ] (13x1 np array)
+			-Command format: Torque [Nm]
 			-r & v are in ECI coordinates, q is the transformation from body to ECI, and w is given in the body frame
 
 		"""
@@ -53,16 +54,17 @@ class Simulator():
 
 		# TO-DO: update gyro bias
 		#self.environment.sensors.gyroscope.errormodel.b += ?
-		w_body = conv.quatrot(self.state[3:7], self.state[10:13])
-
 
 		#------------------------ Spoof Sensors -------------------------
-		B_body_noise = self.sensors.magnetometer.measure(B_body)
-		w_body_noise = self.sensors.gyroscope.measure(w_body)
+		# Actuate based on truth for now until magnetometer bias estimation, TRIAD, and MEKF have been implemented and tested
+		B_body_noise = B_body
+		w_body_noise = self.state[10:13]
+		# B_body_noise = self.sensors.magnetometer.measure(B_body)
+		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise]
 
 		#------------------------ Export Data -------------------------
 		# TO-DO: output desired variables to text file for later plotting/analysis
 
-		return meas
+		return meas, B_ECI, B_body
