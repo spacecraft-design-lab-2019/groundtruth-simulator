@@ -27,6 +27,27 @@ def ECI_to_ECEF(r_ECI, GMST):
     return r_ECEF
 
 
+def ECEF_to_ECI(r_ECEF, GMST):
+    """
+    Function: ECEF_to_ECI
+        Converts position vector in ECEF to ECI.
+
+    Inputs:
+        r_ECEF: position vector in Earth Centered Earth Fixed (ECEF)
+        GMST: current Greenwich Mean Sidereal Time [rad]
+
+    Outputs:
+        r_ECI: position vector in Earth Centered Inertial (ECI)
+    """
+
+    rotation = np.array([[np.cos(GMST), np.sin(GMST), 0],
+                         [-np.sin(GMST), np.cos(GMST), 0],
+                         [0, 0, 1]])
+    r_ECI = rotation.transpose() @ r_ECEF
+
+    return r_ECI
+
+
 def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
     Function: ECEF_to_LLA
@@ -43,31 +64,26 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
 
     lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
-    long = np.arctan2(r_ECEF[1], r_ECEF[0])
+    lon = np.arctan2(r_ECEF[1], r_ECEF[0])
     alt = np.linalg.norm(r_ECEF) - rad_Earth
 
-    return lat, long, alt
+    return lat, lon, alt
 
-#--------------------Miscellaneous-----------------------------
 
-def skew(v):
+def NED_to_ECI(vec_NED, glat, glon, GMST):
     """
-    Function: skew
-        Calculates the skew matrix for cross-product calculation
-
-    Inputs:
-
+    Function: NED_to_ECI
+        Converts a vector in NED to ECI coordinates.
     """
-    S = np.array([[0, -v[2], v[1]],
-                 [v[2], 0, -v[0]],
-                 [-v[1], v[0], 0]])
-    return S
+    R = np.array([[-np.sin(glat)*np.cos(glon), -np.sin(glon), -np.cos(glat)*np.cos(glon)],
+                  [-np.sin(glat)*np.sin(glon),  np.cos(glon), -np.cos(glat)*np.sin(glon)],
+                  [              np.cos(glat),           0.0,              -np.sin(glat)]])
+
+    vec_ECEF = R @ vec_NED
+    vec_ECI = ECEF_to_ECI(vec_ECEF, GMST)
+    return vec_ECI
 
 
-def mjd_2_GMST(mjd):
-    # Reference: AA 279A Lecture 6, Slide 3
-    d = mjd - 51544.5
-    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
 
 #--------------------Quaternions-----------------------------
 
@@ -116,3 +132,45 @@ def quatrot(q1, q2):
         return rotated[1:4]
     else:
         return rotated
+
+
+#--------------------Miscellaneous-----------------------------
+
+def skew(v):
+    """
+    Function: skew
+        Calculates the skew matrix for cross-product calculation
+
+    Inputs:
+
+    """
+    S = np.array([[0, -v[2], v[1]],
+                 [v[2], 0, -v[0]],
+                 [-v[1], v[0], 0]])
+    return S
+
+
+def mjd_2_GMST(mjd):
+    # Reference: AA 279A Lecture 6, Slide 3
+    d = mjd - 51544.5
+    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
+
+
+
+def unit(ax):
+    """
+    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
+    """
+    if isinstance(ax, str):
+        if ax == 'x':
+            ax = 0
+        elif ax == 'y':
+            ax = 1
+        elif ax == 'z':
+            ax = 2
+        else:
+            raise(Exception("invalid unit axis input {}".format(ax)))
+
+    N = np.zeros(3)
+    N[ax] = 1
+    return N

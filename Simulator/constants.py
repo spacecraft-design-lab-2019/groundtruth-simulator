@@ -3,8 +3,8 @@ import numpy as np
 # import msise00
 import julian
 import conversions as conv
-import math
 import pyIGRF
+import sun_model
 
 #--------------------Spacecraft Structure----------------------------
 
@@ -40,9 +40,9 @@ class SpacecraftStructure():
         A_main = L**2
         A_long = 0.064 * 0.058 # area of the special face
 
-        X = unit('x')
-        Y = unit('y')
-        Z = unit('z')
+        X = conv.unit('x')
+        Y = conv.unit('y')
+        Z = conv.unit('z')
         return [
                 Face(X,  A_main, c_len*X),
                 Face(Y,  A_main, c_len*Y),
@@ -93,6 +93,9 @@ class Environment():
     def __init__(self, datetime):
         self.datetime = datetime
         self.earth = Earth()
+
+    def update(self, datetime_new):
+        self.datetime = datetime_new
 
     def density_lookup(self, r_ECI, model="exponential_2"):
         """
@@ -155,12 +158,25 @@ class Environment():
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
         glat, glon, alt = conv.ECEF_to_LLA(r_ECEF, self.earth.radius)
         lat = np.rad2deg(glat)
-        long = np.rad2deg(glon) % 360.0                      # pyIGRF requires East Longitude (0-360 deg)
+        lon = np.rad2deg(glon) % 360.0                      # pyIGRF requires East Longitude (0-360 deg)
         year = self.datetime.year
 
-        field = pyIGRF.igrf_value(lat, long, alt, year)      # pyIGRF uses degrees!!!!
+        field = pyIGRF.igrf_value(lat, lon, alt, year)      # pyIGRF uses degrees!!!!
         B_NED = np.array([field[3], field[4], field[5]])
-        return B_NED
+        B_ECI = conv.NED_to_ECI(B_NED, glat, glon, GMST)
+        return B_ECI
+
+    def sunVector(self, r_ECI):
+        """
+        Inputs:
+            r_ECI: ECI position of satellite
+        Output:
+            position vector (3-vector) from satellite to sun
+        """
+        jdate = julian.to_jd(self.datetime, fmt='jd')
+        earth2sun = sun_model.sun1(jdate)
+        rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
+        return rsun
 
 
 class Earth():
@@ -180,42 +196,3 @@ class Earth():
         self.SMA = SMA
         self.J2 = J2
         self.GM = GM
-
-#--------------OTHER STUFF --------------------------
-
-# Magnetorquers
-
-
-# Sensors (Noise constants?)
-
-# class Moon():
-#     """
-#     A class to store Moon parameters
-#     """
-#     def __init__(self,
-#                 R = 1738, #Equatorial Radius, km
-#                 mass = 7.3483e22, #kg
-#                 SMA = 38400, #semimajor axis, km
-#                 GM = 4902.799): #gravitational param, km^3/s^2
-#         self.R = R
-#         self.mass = mass
-#         self.SMA = SMA
-#         self.GM = GM
-
-def unit(ax):
-    """
-    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
-    """
-    if isinstance(ax, str):
-        if ax == 'x':
-            ax = 0
-        elif ax == 'y':
-            ax = 1
-        elif ax == 'z':
-            ax = 2
-        else:
-            raise(Exception("invalid unit axis input {}".format(ax)))
-
-    N = np.zeros(3)
-    N[ax] = 1
-    return N
