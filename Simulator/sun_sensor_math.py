@@ -5,6 +5,32 @@ Created on Thu Nov 14 23:06:02 2019
 """
 import math
 
+def leftMultVecMat(vec, Mat):
+    """
+    Inputs: vector, Matrix
+    Outputs: left side multiplication (vec*Mat)
+    """
+    result = []
+    for i in range(len(Mat[0])): #this loops through columns of the matrix
+        total = 0
+        for j in range(len(vec)): #this loops through vector coordinates & rows of matrix
+            total += vec[j] * Mat[j][i]
+        result.append(total)
+    return result
+
+def rightMultVecMat(vec, Mat):
+    """
+    Inputs: vector, Matrix
+    Outputs: right side multiplication (Mat*vec)
+    """
+    result = []
+    for i in range(len(Mat[0])): #this loops through columns of the matrix
+        total = 0
+        for j in range(len(vec)): #this loops through vector coordinates & rows of matrix
+            total += vec[j] * Mat[i][j]
+        result.append(total)
+    return result
+
 def normalize(vec):
     """
     Inputs: vector
@@ -101,6 +127,9 @@ def isEclispe(r_sat, r_Earth2Sun, Re):
         return False
     else:
         return True
+vec = [1,2,3]
+Mat = [[1,2,3],[1,2,3],[1,2,3]]
+print(rightMultVecMat(vec, Mat))
     
 a = dot([1,2,3], [4,5,6])
 b = norm([1,2,3])
