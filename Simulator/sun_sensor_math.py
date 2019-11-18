@@ -5,6 +5,14 @@ Created on Thu Nov 14 23:06:02 2019
 """
 import math
 
+#placeholder function, need to fix
+def eci2body(vec,R):
+    """
+    Inputs: vector in eci, Rotation matrix for eci to body
+    Outputs: vector in body frame
+    """
+    return rightMultVecMat(vec, R)
+
 def leftMultVecMat(vec, Mat):
     """
     Inputs: vector, Matrix
@@ -97,17 +105,17 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
     irrad_vec = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6] #create irradiance vector from sensor values
     irrad_vec = normalize(irrad_vec) #normalize irradiance vector
     
-    #need to convert to body frame without numpy
-    albedo = scaleVec(normalize(r_sat), 0.2)
+    albedo = eci2body(scaleVec(normalize(r_sat), 0.2)) #convert to body frame
     sat2sun = normalize(subtractVec(irrad_vec,albedo)) #vector subt. irradiance vec and albedo vec, normalize
-    return sat2sun
+    return sat2sun #in body frame
 
 def vector2sense(sat2sun, r_sat):
     irrad_vec = addVec(sat2sun,scaleVec(r_sat))
     delta1 = irrad_vec[0]
     delta2 = irrad_vec[1]
     delta3 = irrad_vec[2]
-    #need to figure out minimum value and do body frame conversion
+    
+    
     
 
 def isEclispe(r_sat, r_Earth2Sun, Re):
@@ -127,6 +135,7 @@ def isEclispe(r_sat, r_Earth2Sun, Re):
         return False
     else:
         return True
+    
 vec = [1,2,3]
 Mat = [[1,2,3],[1,2,3],[1,2,3]]
 print(rightMultVecMat(vec, Mat))
