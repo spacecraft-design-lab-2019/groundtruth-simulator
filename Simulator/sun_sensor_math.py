@@ -4,6 +4,7 @@ Created on Thu Nov 14 23:06:02 2019
 
 """
 import math
+import numpy as np
 
 #placeholder function, need to fix
 def eci2body(vec,R):
@@ -109,13 +110,33 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
     sat2sun = normalize(subtractVec(irrad_vec,albedo)) #vector subt. irradiance vec and albedo vec, normalize
     return sat2sun #in body frame
 
-def vector2sense(sat2sun, r_sat):
-    irrad_vec = addVec(sat2sun,scaleVec(r_sat))
+def vector2sense(sat2sun, r_sat, R_eci2body):
+    """
+    Inputs:
+        sat2sun: satellite to sun vector
+        r_sat: position of satellite in eci
+        R_eci2body: rotation matrix to convert to body frame
+    Outputs: measurements, an array of voltages
+    """
+    
+    r_sat_body = np.dot(R_eci2body,0.2*r_sat)
+    irrad_vec = sat2sun + r_sat_body
     delta1 = irrad_vec[0]
     delta2 = irrad_vec[1]
     delta3 = irrad_vec[2]
     
+    deltas = np.array([delta1,delta2,delta3])
     
+    for i in deltas:
+        if delta[i] <0:
+            measurements = np.append(measurements,0)
+            measurements = np.append(measurements,delta1)
+        else:
+            measurements = np.append(measurements,delta1)
+            measurements = np.append(measurements,0)
+            
+    return measurements
+            
     
 
 def isEclispe(r_sat, r_Earth2Sun, Re):
