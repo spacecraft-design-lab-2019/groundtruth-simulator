@@ -9,6 +9,9 @@ class SpacecraftSensors():
         self.gyroscope    = Sensor(errormodel=LinearErrorModel(scaleF=gyro_params["scaleF"], caSense=gyro_params["caSense"], b=gyro_params["b"], cov=gyro_params["cov"]))
         self.sunsensor    = Sensor(errormodel=LinearErrorModel(scaleF=sun_params["scaleF"], caSense=sun_params["caSense"], b=sun_params["b"], cov=sun_params["cov"]))
 
+        self.magnetometer.errormodel.params = mag_params
+        self.gyroscope.errormodel.params = gyro_params
+        self.sunsensor.errormodel.params = sun_params
 
 class Sensor():
     """
@@ -73,6 +76,9 @@ class LinearErrorModel():
         cov = 0 if cov is None else cov
 
         return cls(T, b, cov)
+
+    def update_bias(self):
+        self.b += self.params["b"]
 
     def measure(self, x):
         """
