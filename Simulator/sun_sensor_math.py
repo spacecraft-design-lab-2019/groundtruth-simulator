@@ -93,6 +93,7 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
         r_sat: position of satellite in ECI
     Outputs:
         sat2sun: satellite to sun 3-vector
+    NOTE: This function can use numpy
     """
     
     #unpack measurements  
@@ -135,12 +136,9 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
         else:
             measurements = np.append(measurements,abs(deltas[i]))
             measurements = np.append(measurements,0)
-
             
     return measurements
-            
-    
-
+                
 def isEclispe(r_sat, r_Earth2Sun, Re):
     """
     Inputs: 
@@ -159,10 +157,23 @@ def isEclispe(r_sat, r_Earth2Sun, Re):
     else:
         return True
 
-
+def isEclipse2(measurements,thresh):
+    """
+    Test measurements determines if sat is in eclipse
+    returns True if there is eclipse (all values are below a threshold)
+    returns False if NOT in eclipse with earth
+    """
+    for x in measurements:
+        if thresh>=x:
+            return False
+    return True
 """
 Test Code Under here:
 """
+a = isEclipse2([6,5,6,5,6,7],4)
+print(a)
+"""
+
 deltas = np.array([200,-190,300])
 measurements = np.array([])
 for i in range(len(deltas)):
@@ -198,7 +209,7 @@ for i in range(len(sensors)):
 vector1 = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6]
 vector2 = normalize(vector1)
 
-
+"""
 
 
 
