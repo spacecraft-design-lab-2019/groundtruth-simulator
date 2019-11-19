@@ -126,14 +126,16 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
     delta3 = irrad_vec[2]
     
     deltas = np.array([delta1,delta2,delta3])
+    measurements = np.array([])
     
-    for i in deltas:
-        if delta[i] <0:
+    for i in range(len(deltas)):
+        if deltas[i] <0:
             measurements = np.append(measurements,0)
-            measurements = np.append(measurements,delta1)
+            measurements = np.append(measurements,abs(deltas[i]))
         else:
-            measurements = np.append(measurements,delta1)
+            measurements = np.append(measurements,abs(deltas[i]))
             measurements = np.append(measurements,0)
+
             
     return measurements
             
@@ -156,14 +158,29 @@ def isEclispe(r_sat, r_Earth2Sun, Re):
         return False
     else:
         return True
-    
+
+
+"""
+Test Code Under here:
+"""
+deltas = np.array([200,-190,300])
+measurements = np.array([])
+for i in range(len(deltas)):
+    if deltas[i] <0:
+        measurements = np.append(measurements,0)
+        measurements = np.append(measurements,abs(deltas[i]))
+    else:
+        measurements = np.append(measurements,abs(deltas[i]))
+        measurements = np.append(measurements,0)
+
+print(measurements)    
 vec = [1,2,3]
 Mat = [[1,2,3],[1,2,3],[1,2,3]]
 print(rightMultVecMat(vec, Mat))
     
 a = dot([1,2,3], [4,5,6])
-b = norm([1,2,3])
-print(a/b)
+b = normalize([1,2,3])
+
 
 
 sun_sense1 = 123
