@@ -22,9 +22,10 @@ class Simulator():
 		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
 		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
 		self.t = config.tstart
+		self.tstep = config.tstep
 
 
-	def step(self, cmd, tstep):
+	def step(self, cmd=np.zeros(3), tstep=self.tstep):
 		"""
 		Function: step
 			Propagates dynamics & models sensors for single step
@@ -62,8 +63,9 @@ class Simulator():
 		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise]
+		self.debug_output = [B_ECI, B_body]
 
 		#------------------------ Export Data -------------------------
 		# TO-DO: output desired variables to text file for later plotting/analysis
 
-		return meas, B_ECI, B_body
+		return meas
