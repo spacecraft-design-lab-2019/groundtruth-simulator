@@ -63,9 +63,9 @@ class Simulator():
 		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise]
-		self.debug_output = [B_ECI, B_body]
 
 		#------------------------ Export Data -------------------------
 		# TO-DO: output desired variables to text file for later plotting/analysis
+		self.debug_output = [B_ECI, B_body]
 
 		return meas
