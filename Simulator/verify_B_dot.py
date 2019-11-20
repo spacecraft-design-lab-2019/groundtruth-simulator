@@ -43,7 +43,7 @@ t = time.time()
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors, B_ECI, B_body = sim.step(L_cmd, config.tstep)
+	sensors = sim.step(L_cmd)
 	state_history[i+1, :] = sim.state
 	B_body_history[i+1,:] = np.transpose(B_body)
 	command_history[i+1,:] = np.transpose(L_cmd)

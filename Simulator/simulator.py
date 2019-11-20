@@ -22,9 +22,10 @@ class Simulator():
 		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
 		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
 		self.t = config.tstart
+		self.tstep = config.tstep
 
 
-	def step(self, cmd, tstep):
+	def step(self, cmd=np.zeros(3), tstep=self.tstep):
 		"""
 		Function: step
 			Propagates dynamics & models sensors for single step
@@ -48,12 +49,11 @@ class Simulator():
 
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.t)
+		self.sensors.gyroscope.update_bias()
 
 		B_ECI = self.environment.magfield_lookup(self.state[0:3])
 		B_body = conv.quatrot(self.state[3:7], B_ECI)
 
-		# TO-DO: update gyro bias
-		#self.environment.sensors.gyroscope.errormodel.b += ?
 
 		#------------------------ Spoof Sensors -------------------------
 		# Actuate based on truth for now until magnetometer bias estimation, TRIAD, and MEKF have been implemented and tested
@@ -66,5 +66,6 @@ class Simulator():
 
 		#------------------------ Export Data -------------------------
 		# TO-DO: output desired variables to text file for later plotting/analysis
+		self.debug_output = [B_ECI, B_body]
 
-		return meas, B_ECI, B_body
+		return meas
