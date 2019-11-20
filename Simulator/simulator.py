@@ -49,7 +49,7 @@ class Simulator():
 
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.t)
-		self.sensors.gyroscope.errormodel.update_bias()
+		self.sensors.gyroscope.update_bias()
 
 		B_ECI = self.environment.magfield_lookup(self.state[0:3])
 		B_body = conv.quatrot(self.state[3:7], B_ECI)

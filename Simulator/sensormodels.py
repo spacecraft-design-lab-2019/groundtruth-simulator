@@ -5,13 +5,10 @@ class SpacecraftSensors():
     A class to store spacecraft sensors
     """
     def __init__(self, mag_params, gyro_params, sun_params):
-        self.magnetometer = Sensor(errormodel=LinearErrorModel(scaleF=mag_params["scaleF"], caSense=mag_params["caSense"], b=mag_params["b"], cov=mag_params["cov"]))
-        self.gyroscope    = Sensor(errormodel=LinearErrorModel(scaleF=gyro_params["scaleF"], caSense=gyro_params["caSense"], b=gyro_params["b"], cov=gyro_params["cov"]))
-        self.sunsensor    = Sensor(errormodel=LinearErrorModel(scaleF=sun_params["scaleF"], caSense=sun_params["caSense"], b=sun_params["b"], cov=sun_params["cov"]))
+        self.magnetometer = Sensor(errormodel=LinearErrorModel.withParams(mag_params))
+        self.gyroscope = Sensor(errormodel=LinearErrorModel.withParams(gyro_params))
+        self.sunsensor = Sensor(errormodel=LinearErrorModel.withParams(sun_params))
 
-        self.magnetometer.errormodel.params = mag_params
-        self.gyroscope.errormodel.params = gyro_params
-        self.sunsensor.errormodel.params = sun_params
 
 class Sensor():
     """
@@ -37,6 +34,8 @@ class Sensor():
 
         self.name = name
 
+    def update_bias(self):
+        self.errormodel.update_bias()
 
     def measure(self, x):
         return self.errormodel.measure(x)
@@ -44,7 +43,7 @@ class Sensor():
 
 class LinearErrorModel():
     """
-    Class that handles a linear error model of the form: Tx + b + W
+    Class that handles a linear error model of the form: Tx + b*np.random.rand(3) + W
 
     T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
     b - bias vector
@@ -53,20 +52,20 @@ class LinearErrorModel():
     In addition to the regular constructor, may also be initialized with:
     LinearErrorModel.withDim(dim = N, [optional_args])
     """
-    def __init__(self, scaleF=0, caSense=0, b=np.zeros(3), cov=0):
-        """
-        scaleF - scale factor for a particular sensor
-        caSense - cross-axis sensitivity for particular sensor
-        T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
-        b - bias vector
-        cov - covariance of the noise. May be scalar or matrix valued.
-        """
-        # assert T.shape[0] == T.shape[1], "T is not square."
-        # assert b.shape[0] == T.shape[0], "b is not compatible with T"
-
-        self.T = getTmatrix(scaleF, caSense)
+    def __init__(self, T=np.zeros((3,3)), b=0, cov=0, dim=3):
+        self.T = T
         self.b = b
         self.cov = cov
+        self.bias_current = b*np.random.rand(dim)
+        self.dim = dim
+
+    @classmethod
+    def withParams(cls, params):
+        T = getTmatrix(params["scaleF"], params["caSense"])
+        b = params["b"]
+        cov = params["cov"]
+
+        return cls(T, b, cov)
 
     @classmethod
     def withDim(cls, N = 3, T = None, b = None, cov = None):
@@ -77,8 +76,8 @@ class LinearErrorModel():
 
         return cls(T, b, cov)
 
-    def update_bias(self):
-        self.b += self.params["b"]
+    def update_bias(self, new_bias=None):
+        self.bias_current += self.b*np.random.rand(self.dim) if new_bias is None else new_bias
 
     def measure(self, x):
         """
@@ -90,7 +89,7 @@ class LinearErrorModel():
 
         I = np.eye(self.T.shape[0])
         n = x.shape[0]
-        return (I + self.T) @ x + self.b + whitenoise(self.cov, dims = n)
+        return (I + self.T) @ x + self.bias_current + whitenoise(self.cov, dims = n)
 
 
 

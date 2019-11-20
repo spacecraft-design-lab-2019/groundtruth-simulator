@@ -26,20 +26,20 @@ mass = 1.0 # kg
 gyro_params = {
 	"scaleF" : 0.002,
 	"caSense" : 0.02,
-	"b" : (np.random.rand(3) * np.sqrt(.0022)),
+	"b" : np.sqrt(.0022), # will be mulitplied to np.random.rand(3)
 	"cov" : 0.000000000694444
 }
 
 mag_params = {
 	"scaleF" : 0.02,
 	"caSense" : 0.02,
-	"b" : 40e3*np.ones(3),
+	"b" : 40e3, # will be mulitplied to np.random.rand(3)
 	"cov" : 0.0005
 }
 
 sun_params = {
 	"scaleF" : 0,
 	"caSense" : 0.02,
-	"b" : np.ones(3),
+	"b" : 1.0, # will be mulitplied to np.random.rand(3)
 	"cov" : 0.0005
 }
