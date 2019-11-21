@@ -56,3 +56,14 @@ def test_NED_to_ECI():
     vec_NED = np.array([0, 0, 1])
     vec_ECI = np.array([-1, 0, 0])
     np.testing.assert_allclose(vec_ECI, conv.NED_to_ECI(vec_NED, 0, 0, 0), atol=tol)
+
+
+#--------------------Miscellaneous-----------------------------
+
+def test_skew():
+    x = np.array([1, 0, 0])
+    y = np.array([0, 1, 0])
+    z = np.array([0, 0, 1])
+    zero = np.zeros(3)
+    np.testing.assert_allclose(z, conv.skew(x)@y, atol=tol)
+    np.testing.assert_allclose(zero, conv.skew(x)@x, atol=tol)
