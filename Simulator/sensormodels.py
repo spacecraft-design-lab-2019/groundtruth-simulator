@@ -1,5 +1,15 @@
 import numpy as np
 
+class SpacecraftSensors():
+    """
+    A class to store spacecraft sensors
+    """
+    def __init__(self, mag_params, gyro_params, sun_params):
+        self.magnetometer = Sensor(errormodel=LinearErrorModel.withParams(mag_params))
+        self.gyroscope = Sensor(errormodel=LinearErrorModel.withParams(gyro_params))
+        self.sunsensor = Sensor(errormodel=LinearErrorModel.withParams(sun_params))
+
+
 class Sensor():
     """
     Generic sensor. Implements measure(x), which returns the
@@ -24,13 +34,16 @@ class Sensor():
 
         self.name = name
 
+    def update_bias(self):
+        self.errormodel.update_bias()
+
     def measure(self, x):
         return self.errormodel.measure(x)
 
 
 class LinearErrorModel():
     """
-    Class that handles a linear error model of the form: Tx + b + W
+    Class that handles a linear error model of the form: Tx + b*np.random.rand(3) + W
 
     T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
     b - bias vector
@@ -39,18 +52,20 @@ class LinearErrorModel():
     In addition to the regular constructor, may also be initialized with:
     LinearErrorModel.withDim(dim = N, [optional_args])
     """
-    def __init__(self, T=np.zeros((3,3)), b=np.zeros(3), cov=0):
-        """
-        T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
-        b - bias vector
-        cov - covariance of the noise. May be scalar or matrix valued.
-        """
-        assert T.shape[0] == T.shape[1], "T is not square."
-        assert b.shape[0] == T.shape[0], "b is not compatible with T"
-
+    def __init__(self, T=np.zeros((3,3)), b=0, cov=0, dim=3):
         self.T = T
         self.b = b
         self.cov = cov
+        self.bias_current = b*np.random.rand(dim)
+        self.dim = dim
+
+    @classmethod
+    def withParams(cls, params):
+        T = getTmatrix(params["scaleF"], params["caSense"])
+        b = params["b"]
+        cov = params["cov"]
+
+        return cls(T, b, cov)
 
     @classmethod
     def withDim(cls, N = 3, T = None, b = None, cov = None):
@@ -60,6 +75,9 @@ class LinearErrorModel():
         cov = 0 if cov is None else cov
 
         return cls(T, b, cov)
+
+    def update_bias(self, new_bias=None):
+        self.bias_current += self.b*np.random.rand(self.dim) if new_bias is None else new_bias
 
     def measure(self, x):
         """
@@ -71,7 +89,7 @@ class LinearErrorModel():
 
         I = np.eye(self.T.shape[0])
         n = x.shape[0]
-        return (I + self.T) @ x + self.b + whitenoise(self.cov, dims = n)
+        return (I + self.T) @ x + self.bias_current + whitenoise(self.cov, dims = n)
 
 
 
@@ -101,4 +119,17 @@ def whitenoise2(mean = 0, cov = 0, dims = None):
 
     return np.random.multivariate_normal(mean*np.ones(dims), cov)
     
-    
+
+def getTmatrix(scaleF, caSense):
+    """
+    Inputs:
+        scaleF: scale factor for a particular sensor
+        caSense: cross-axis sensitivity for particular sensor
+    Outputs:
+        T-matrix, combined misalignment and scaling matrix for linear error model
+    """
+    scaleFmat = np.eye(3) + np.diag(whitenoise(scaleF,3))
+    misalign = np.reshape(np.random.multivariate_normal(np.zeros(9),caSense*np.eye(9)),(3,3))
+    np.fill_diagonal(misalign, 0)
+    T = np.dot(scaleFmat,misalign)
+    return T

@@ -34,6 +34,6 @@ def calc_w_dot(w, torque, I):
         w_dot: derivative of angular velocity (rad/s/s) np.array[3x1][float64]
     """
 
-    w_dot = np.linalg.solve(I, np.dot(skew(w), np.dot(I, w)) + torque)
+    w_dot = np.linalg.solve(I, -np.dot(skew(w), np.dot(I, w)) + torque)
     return w_dot
 
