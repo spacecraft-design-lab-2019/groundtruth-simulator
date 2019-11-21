@@ -97,12 +97,12 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
     """
     
     #unpack measurements  
-    sun_sense1 = measurements[0]
-    sun_sense2 = measurements[1]
-    sun_sense3 = measurements[2]
-    sun_sense4 = measurements[3]
-    sun_sense5 = measurements[4]
-    sun_sense6 = measurements[5]
+    sun_sense1 = measurements[0] # + x
+    sun_sense2 = measurements[1] # - x
+    sun_sense3 = measurements[2] # + y
+    sun_sense4 = measurements[3] # - y
+    sun_sense5 = measurements[4] # + z
+    sun_sense6 = measurements[5] # - z
     
     irrad_vec = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6] #create irradiance vector from sensor values
     irrad_vec = normalize(irrad_vec) #normalize irradiance vector
@@ -162,6 +162,12 @@ def isEclipse2(measurements,thresh):
     Test measurements determines if sat is in eclipse
     returns True if there is eclipse (all values are below a threshold)
     returns False if NOT in eclipse with earth
+    Inputs: 
+        measurements: list of values from sun sensors
+        thresh: all sun sensor values need to be below this to be in eclipse
+    Outputs:
+        True if satellite is in eclipse with Earth
+        False if satellite is NOT in eclipse with Earth
     """
     for x in measurements:
         if thresh>=x:
