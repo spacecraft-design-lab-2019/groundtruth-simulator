@@ -117,18 +117,32 @@ def conj(q):
     return q
 
 
-def quatrot(q1, q2):
-    vector = False
-    if len(q2) == 3:
-        q2 = np.append(0, q2)
-        vector = True
+def quatrot(q, x):
+    """
+    Rotates a vector using a quaternion.
+    """
+    x2 = np.append(0, x2)
+    rotated = L(q) @ x2 @ R(q).T
+    return rotated[1:4]
 
-    rotated = L(q1) @ R(q1).T @ q2
+def quatmult(q1, q2):
+    """
+    Multiplies two quaternions.
+    """
+    return L(q1) @ q2
 
-    if vector:
-        return rotated[1:4]
-    else:
-        return rotated
+
+    # vector = False
+    # if len(q2) == 3:
+    #     q2 = np.append(0, q2)
+    #     vector = True
+
+    # rotated = L(q1) @ R(q1).T @ q2
+
+    # if vector:
+    #     return rotated[1:4]
+    # else:
+    #     return rotated
 
 
 #--------------------Miscellaneous-----------------------------
