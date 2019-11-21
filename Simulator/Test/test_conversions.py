@@ -35,6 +35,22 @@ def test_ECEF_to_ECI():
     np.testing.assert_allclose(x, conv.ECEF_to_ECI(y, GMST), atol=tol)
 
 def test_ECEF_to_LLA():
+    # Case 1
     x = np.array([1, 0, 0])
-    lla = [0, 0, -6378.1378366]
-    np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 6378.1378366), atol=tol)
+    lla = [0, 0, 0]
+    np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
+
+    # Case 2
+    x = np.array([0, 0, 1])
+    lla = [np.pi/2, 0, 0]
+    np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
+
+    # Case 3
+    x = np.array([0, 1, 0])
+    lla = [0, np.pi/2, 0]
+    np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
+
+def test_NED_to_ECI():
+    vec_NED = np.array([0, 0, 1])
+    vec_ECI = np.array([-1, 0, 0])
+    np.testing.assert_allclose(vec_ECI, conv.NED_to_ECI(vec_NED, 0, 0, 0), atol=tol)
