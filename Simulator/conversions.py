@@ -51,7 +51,7 @@ def ECEF_to_ECI(r_ECEF, GMST):
 def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
     Function: ECEF_to_LLA
-        Converts position vector in ECEF to geodetic coordinates.
+        Converts position vector in ECEF to geocentric coordinates.
 
     Inputs:
         r_ECEF: position vector in Earth Centered Earth Fixed (ECEF)
@@ -62,7 +62,6 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
         long:   longitude   [rad]
         alt:    altitude    [rad]
     """
-
     lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
     lon = np.arctan2(r_ECEF[1], r_ECEF[0])
     alt = np.linalg.norm(r_ECEF) - rad_Earth
