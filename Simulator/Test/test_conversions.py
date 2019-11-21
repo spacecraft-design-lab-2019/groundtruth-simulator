@@ -10,6 +10,8 @@ sys.path.insert(0, groundtruth_dir)
 import conversions as conv
 tol = 1e-6
 
+#--------------------Coordinate Frames--------------------------
+
 def test_ECI_to_ECEF():
     # Case 1
     GMST = 0
