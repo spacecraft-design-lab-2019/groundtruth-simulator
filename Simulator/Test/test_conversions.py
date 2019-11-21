@@ -21,6 +21,5 @@ def test_ECI_to_ECEF():
     GMST = np.pi/2
     x = np.array([0, 1, 0])
     y = np.array([1, 0, 0])
-    np.testing.assert_allclose(y, conv.ECI_to_ECEF(x, GMST),)
+    np.testing.assert_allclose(y, conv.ECI_to_ECEF(x, GMST), atol=tol)
 
-    
