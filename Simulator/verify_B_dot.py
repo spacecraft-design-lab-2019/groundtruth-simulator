@@ -22,7 +22,7 @@ plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 1200])    # [sec]
+tspan = np.array([0, 3600])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 
 
