@@ -22,7 +22,7 @@ plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 3600])    # [sec]
+tspan = np.array([0, 100])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 
 
@@ -43,26 +43,27 @@ t = time.time()
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors = sim.step(L_cmd)
+	sensors = sim.step(config.tstep, L_cmd)
 	state_history[i+1, :] = sim.state
-	B_body_history[i+1,:] = np.transpose(B_body)
+	
 	command_history[i+1,:] = np.transpose(L_cmd)
 
 	# command torque based on sensors (currently no noise addition 11/17)
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
 
+	B_body_history[i+1,:] = np.transpose(B_sensed)
 	#--------------------B_cross---------------------------
-	# gain_B_cross = .0143  # 4e-2
-	# L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
+	gain_B_cross = .0143  # 4e-2
+	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
 
 	#--------------------B_dot-----------------------------
-	if i>1:
-		gain_B_dot = 5e-6
-		B_dot = dcpp.get_B_dot(np.transpose(B_body_history[i,:]), B_body, config.tstep)
-		dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
-		bang_bang_gain = 1e-9  # 5e-6
-		L_cmd = np.cross(dipole,B_body)
+	# if i>1:
+	# 	gain_B_dot = 5e-6
+	# 	B_dot = dcpp.get_B_dot(np.transpose(B_body_history[i,:]), B_sensed, config.tstep)
+	# 	dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
+	# 	bang_bang_gain = 1e-9  # 5e-6
+	# 	L_cmd = np.cross(dipole,B_sensed)
 
 
 elapsed = time.time() - t
