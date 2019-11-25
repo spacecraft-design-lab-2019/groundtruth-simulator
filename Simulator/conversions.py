@@ -117,7 +117,7 @@ def conj(q):
     return q
 
 
-def quatrot(q, x):
+def quatrot(q, x2):
     """
     Rotates a vector using a quaternion.
     """
