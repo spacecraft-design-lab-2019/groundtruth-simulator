@@ -3,8 +3,6 @@ import numpy as np
 import math
 
 #--------------------Coordinate Frames--------------------------
-# TODO: Add conversion to/from NED (for use with pyIGRF)
-
 
 def ECI_to_ECEF(r_ECI, GMST):
     """
@@ -51,7 +49,7 @@ def ECEF_to_ECI(r_ECEF, GMST):
 def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
     Function: ECEF_to_LLA
-        Converts position vector in ECEF to geodetic coordinates.
+        Converts position vector in ECEF to geocentric coordinates.
 
     Inputs:
         r_ECEF: position vector in Earth Centered Earth Fixed (ECEF)
@@ -62,7 +60,6 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
         long:   longitude   [rad]
         alt:    altitude    [rad]
     """
-
     lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
     lon = np.arctan2(r_ECEF[1], r_ECEF[0])
     alt = np.linalg.norm(r_ECEF) - rad_Earth
@@ -120,18 +117,32 @@ def conj(q):
     return q
 
 
-def quatrot(q1, q2):
-    vector = False
-    if len(q2) == 3:
-        q2 = np.append(0, q2)
-        vector = True
+def quatrot(q, x):
+    """
+    Rotates a vector using a quaternion.
+    """
+    x2 = np.append(0, x2)
+    rotated = L(q) @ x2 @ R(q).T
+    return rotated[1:4]
 
-    rotated = L(q1) @ R(q1).T @ q2
+def quatmult(q1, q2):
+    """
+    Multiplies two quaternions.
+    """
+    return L(q1) @ q2
 
-    if vector:
-        return rotated[1:4]
-    else:
-        return rotated
+
+    # vector = False
+    # if len(q2) == 3:
+    #     q2 = np.append(0, q2)
+    #     vector = True
+
+    # rotated = L(q1) @ R(q1).T @ q2
+
+    # if vector:
+    #     return rotated[1:4]
+    # else:
+    #     return rotated
 
 
 #--------------------Miscellaneous-----------------------------
