@@ -60,9 +60,12 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
         long:   longitude   [rad]
         alt:    altitude    [rad]
     """
-    lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
+
+    # lat = np.arcsin(r_ECEF[2] / np.linalg.norm(r_ECEF))
+    lat = np.arcsin(r_ECEF[2] / norm2(r_ECEF))
     lon = np.arctan2(r_ECEF[1], r_ECEF[0])
-    alt = np.linalg.norm(r_ECEF) - rad_Earth
+    # alt = np.linalg.norm(r_ECEF) - rad_Earth
+    alt = norm2(r_ECEF) - rad_Earth
 
     return lat, lon, alt
 
@@ -87,21 +90,33 @@ def NED_to_ECI(vec_NED, glat, glon, GMST):
 def L(q):
     s = q[0]
     v = q[1:4]
-    I3 = np.eye(3)
+    # I3 = np.eye(3)
 
-    upper = np.hstack([s, -v])
-    lower = np.column_stack([v, s*I3 + skew(v)])
-    return  np.row_stack([upper, lower])
+    # upper = np.hstack([s, -v])
+    # lower = np.column_stack([v, s*I3 + skew(v)])
+    Vhat = skew(v)
+    L = np.array([[s, -v[0], -v[1], -v[2]], 
+        [v[0], s, Vhat[0, 1], Vhat[0, 2]], 
+        [v[1], Vhat[1, 0], s, Vhat[1, 2]], 
+        [v[2], Vhat[2, 0], Vhat[2, 1], s]])
+    # return  np.row_stack([upper, lower])
+    return L
 
 
 def R(q):
     s = q[0]
     v = q[1:4]
-    I3 = np.eye(3)
+    # I3 = np.eye(3)
 
-    upper = np.hstack([s, -v])
-    lower = np.column_stack([v, s*I3 - skew(v)])
-    return  np.row_stack([upper, lower])
+    # upper = np.hstack([s, -v])
+    # lower = np.column_stack([v, s*I3 - skew(v)])
+    # return  np.row_stack([upper, lower])
+    Vhat = skew(v)
+    R = np.array([[s, -v[0], -v[1], -v[2]], 
+        [v[0], s, -Vhat[0, 1], -Vhat[0, 2]], 
+        [v[1], -Vhat[1, 0], s, -Vhat[1, 2]], 
+        [v[2], -Vhat[2, 0], -Vhat[2, 1], s]])
+    return R
 
 
 def quat(v):
@@ -117,7 +132,7 @@ def conj(q):
     return q
 
 
-def quatrot(q, x):
+def quatrot(q1, q2):
     """
     Rotates a vector using a quaternion.
     """
@@ -130,19 +145,6 @@ def quatmult(q1, q2):
     Multiplies two quaternions.
     """
     return L(q1) @ q2
-
-
-    # vector = False
-    # if len(q2) == 3:
-    #     q2 = np.append(0, q2)
-    #     vector = True
-
-    # rotated = L(q1) @ R(q1).T @ q2
-
-    # if vector:
-    #     return rotated[1:4]
-    # else:
-    #     return rotated
 
 
 #--------------------Miscellaneous-----------------------------
@@ -196,3 +198,16 @@ def unit(ax):
     N = np.zeros(3)
     N[ax] = 1
     return N
+
+def cross3(v1, v2): 
+
+
+    x = ((v1[1] * v2[2]) - (v1[2] * v2[1]))
+    y = ((v1[2] * v2[0]) - (v1[0] * v2[2]))
+    z = ((v1[0] * v2[1]) - (v1[1] * v2[0]))
+
+    return np.array([x, y, z])
+
+def norm2(v):
+
+    return (v.T @ v) ** (0.5)

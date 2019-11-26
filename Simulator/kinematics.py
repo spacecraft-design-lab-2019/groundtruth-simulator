@@ -18,7 +18,7 @@ def calc_q_dot(q, w):
                     [-w[2], 0, w[0], w[1]],
                     [w[1], -w[0], 0, w[2]],
                     [-w[0], -w[1], -w[2],0]])
-    return 0.5*np.dot(omega,q)
+    return 0.5* omega @ q
 
 
 def calc_w_dot(w, torque, I):
@@ -34,6 +34,7 @@ def calc_w_dot(w, torque, I):
         w_dot: derivative of angular velocity (rad/s/s) np.array[3x1][float64]
     """
 
-    w_dot = np.linalg.solve(I, -np.dot(skew(w), np.dot(I, w)) + torque)
+    # w_dot = np.linalg.solve(I, -np.dot(skew(w), np.dot(I, w)) + torque)
+    w_dot = np.linalg.inv(I) @ -(skew(w) @ (I @ w)) + torque
     return w_dot
 

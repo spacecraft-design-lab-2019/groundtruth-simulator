@@ -5,7 +5,10 @@ import julian
 import conversions as conv
 import pyIGRF
 import sun_model
-
+import math
+import sys
+sys.path.append('/home/eleboeuf/Documents/GNC')
+import magnetic_field_cpp as mfcpp
 #--------------------Spacecraft Structure----------------------------
 
 class SpacecraftStructure():
@@ -27,9 +30,10 @@ class SpacecraftStructure():
         """
         F = np.zeros(3)
         M = np.zeros(3)
-
+        # vmag = np.linalg.norm(vRel)
+        vmag = (vRel.T @ vRel)**(0.5)
         for face in self.faces:
-            f, m = face.aerodrag(rho, vRel)
+            f, m = face.aerodrag(rho, vRel, vmag)
             F += f
             M += m
         return self.cD/self.mass*F, self.cD/self.mass*M
@@ -64,23 +68,26 @@ class Face():
         self.A = A
         self.c = c # vector from COM to CP of face.
 
-    def wetted_area(self, v):
+    def wetted_area(self, v_unit):
         """
         Compute the effective area of a face relative to a vector v where
-        v is defined to point outwards from the face.
+        v is the unit vector defined to point outwards from the face.
         """
-        a = (v/np.linalg.norm(v)) @ self.N
+        # a = (v/np.linalg.norm(v)) @ self.N
+        a = v_unit @ self.N
         return max(a, 0) * self.A
 
-    def aerodrag(self, rho, vRel):
+    def aerodrag(self, rho, vRel, vmag):
         """
         See SpacecraftStruct.aerodrag()
         """
-        vmag = np.linalg.norm(vRel)
-        A = self.wetted_area(vRel)
+        # vmag = np.linalg.norm(vRel)
+        A = self.wetted_area(vRel/vmag)
 
         drag_acc = -0.5*rho*A*vmag * vRel
-        drag_M = np.cross(self.c, drag_acc);
+        # drag_M = np.cross(self.c, drag_acc);
+
+        drag_M = conv.cross3(self.c, drag_acc)
         return drag_acc, drag_M
 
 
@@ -124,7 +131,8 @@ class Environment():
             b = -0.01895
             c = 4.895e-12
             d = -0.008471
-            R = np.linalg.norm(r_ECI) - self.earth.radius
+            # R = np.linalg.norm(r_ECI) - self.earth.radius
+            R = conv.norm2(r_ECI) - self.earth.radius
             rho = a*np.exp(b*R) + c*np.exp(d*R)
 
         elif model == "msise00":
@@ -161,8 +169,9 @@ class Environment():
         lon = np.rad2deg(glon) % 360.0                      # pyIGRF requires East Longitude (0-360 deg)
         year = self.datetime.year
 
-        field = pyIGRF.igrf_value(lat, lon, alt, year)      # pyIGRF uses degrees!!!!
-        B_NED = np.array([field[3], field[4], field[5]])
+        # field = pyIGRF.igrf_value(lat, lon, alt, year)      # pyIGRF uses degrees!!!!
+        B_NED = mfcpp.get_magnetic_field(lat, lon, alt, year)
+        # B_NED = np.array([field[3], field[4], field[5]])
         B_ECI = conv.NED_to_ECI(B_NED, glat, glon, GMST)
         return B_ECI
 
