@@ -136,19 +136,9 @@ def quatrot(q1, q2):
     """
     Rotates a vector using a quaternion.
     """
-    vector = False
-    if len(q2) == 3:
-        q2 = np.append(0, q2)
-        vector = True
-
-    rotated = L(q1) @ R(q1).T @ q2
-
-    if vector:
-        return rotated[1:4]
-    else:
-        return rotated
-
-
+    x2 = np.append(0, x)
+    rotated = L(q) @ R(q).T @ x2
+    return rotated[1:4]
 
 def quatmult(q1, q2):
     """
@@ -174,11 +164,22 @@ def skew(v):
 
 
 def mjd_2_GMST(mjd):
-    # Reference: AA 279A Lecture 6, Slide 3
-    d = mjd - 51544.5
-    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
+    """
+    Function: mjd_2_GMST
+        Calculates Greenwich Mean Sidereal Time
 
+    Inputs:
+        mjd - modified julian day
+    Outputs:
+        GMST - Greenwich Mean Sidereal Time [rad]
 
+    Reference: Vallado
+    """
+    d = (mjd - 51544.5) / 36525.0
+    GMST = 67310.54841 + (876600*3600 + 8640184.812866) * d + 0.093104 * d**2 - 6.2 * 10**(-6)*d**3
+    return (GMST % 86400) / 240 * (np.pi / 180)
+    # d = mjd - 51544.5
+    # return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
 
 def unit(ax):
     """
