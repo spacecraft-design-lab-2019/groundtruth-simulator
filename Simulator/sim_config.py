@@ -36,13 +36,13 @@ gyro_params = {
 mag_params = {
 	"scaleF" : 0.02,
 	"caSense" : 0.02,
-	"b" : 40e3, # will be mulitplied to np.random.rand(3)
+	"b" : 40e3, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
 
 sun_params = {
 	"scaleF" : 0,
 	"caSense" : 0.02,
-	"b" : 1.0, # will be mulitplied to np.random.rand(3)
+	"b" : 1.0, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
