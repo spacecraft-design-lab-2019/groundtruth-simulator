@@ -121,8 +121,8 @@ def quatrot(q, x):
     """
     Rotates a vector using a quaternion.
     """
-    x2 = np.append(0, x2)
-    rotated = L(q) @ x2 @ R(q).T
+    x2 = np.append(0, x)
+    rotated = L(q) @ R(q).T @ x2
     return rotated[1:4]
 
 def quatmult(q1, q2):

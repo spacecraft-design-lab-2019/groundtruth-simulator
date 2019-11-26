@@ -62,10 +62,20 @@ def test_NED_to_ECI():
 
 def test_quatrot():
     # Verified against Matlab quatrotate()
-    vec = np.array([1.4832, -0.5856, 1.8844])
+    vec = np.array([-0.7734, -1.7788, -0.9937])
+    quat = conv.conj(np.array([1, 0, 1, 0]))
+    ans = np.array([0.9937, -1.7788, -0.7734])
+    np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
+
+    vec = np.array([1, 1, 0])
     quat = np.array([1, 0, 1, 0])
-    ans = np.array([-1.8844, -0.5856, 1.4832])
-    np.testing.assert_allclose(ans, conv.quatrot(quat, vec), atol=tol)
+    ans = np.array([0, 1, -1])
+    np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
+
+    vec = np.array([1, 1, 0])
+    quat = np.array([1, 0, 1, 0])
+    ans = np.array([0, 1, -1])
+    np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
     
 
 #--------------------Miscellaneous-----------------------------
@@ -79,9 +89,9 @@ def test_skew():
     np.testing.assert_allclose(zero, conv.skew(x)@x, atol=tol)
 
 def test_mjd_2_GMST():
-    assert true
+    assert True
 
 def test_unit():
-    np.testing.assert_allclose(np.array([1,0,0]), conv.skew('x'), atol=tol)
-    np.testing.assert_allclose(np.array([0,1,0]), conv.skew('y'), atol=tol)
-    np.testing.assert_allclose(np.array([0,0,1]), conv.skew('z'), atol=tol)
+    np.testing.assert_allclose(np.array([1,0,0]), conv.unit('x'), atol=tol)
+    np.testing.assert_allclose(np.array([0,1,0]), conv.unit('y'), atol=tol)
+    np.testing.assert_allclose(np.array([0,0,1]), conv.unit('z'), atol=tol)
