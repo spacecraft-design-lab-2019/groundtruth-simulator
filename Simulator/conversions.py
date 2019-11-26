@@ -91,15 +91,14 @@ def L(q):
     s = q[0]
     v = q[1:4]
     # I3 = np.eye(3)
-
     # upper = np.hstack([s, -v])
     # lower = np.column_stack([v, s*I3 + skew(v)])
+    # return  np.row_stack([upper, lower])
     Vhat = skew(v)
     L = np.array([[s, -v[0], -v[1], -v[2]], 
         [v[0], s, Vhat[0, 1], Vhat[0, 2]], 
         [v[1], Vhat[1, 0], s, Vhat[1, 2]], 
         [v[2], Vhat[2, 0], Vhat[2, 1], s]])
-    # return  np.row_stack([upper, lower])
     return L
 
 
@@ -107,7 +106,6 @@ def R(q):
     s = q[0]
     v = q[1:4]
     # I3 = np.eye(3)
-
     # upper = np.hstack([s, -v])
     # lower = np.column_stack([v, s*I3 - skew(v)])
     # return  np.row_stack([upper, lower])
@@ -132,12 +130,12 @@ def conj(q):
     return q
 
 
-def quatrot(q1, q2):
+def quatrot(quat, vec):
     """
     Rotates a vector using a quaternion.
     """
-    x2 = np.append(0, x)
-    rotated = L(q) @ R(q).T @ x2
+    x = np.append(0, vec)
+    rotated = L(quat) @ R(quat).T @ x
     return rotated[1:4]
 
 def quatmult(q1, q2):

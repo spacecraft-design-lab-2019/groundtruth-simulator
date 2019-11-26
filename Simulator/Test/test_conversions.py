@@ -95,3 +95,12 @@ def test_unit():
     np.testing.assert_allclose(np.array([1,0,0]), conv.unit('x'), atol=tol)
     np.testing.assert_allclose(np.array([0,1,0]), conv.unit('y'), atol=tol)
     np.testing.assert_allclose(np.array([0,0,1]), conv.unit('z'), atol=tol)
+
+def test_cross3():
+    a = np.random.randn(3)
+    b = np.random.randn(3)
+    np.testing.assert_allclose(np.cross(a, b), conv.cross3(a, b), atol=tol)
+
+def test_norm2():
+    a = np.random.randn(3)
+    np.testing.assert_allclose(np.linalg.norm(a), conv.norm2(a), atol=tol)
