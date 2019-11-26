@@ -57,7 +57,8 @@ def dragCalc(state, environment, structure):
 
     rho = environment.density_lookup(r)
 
-    vRel = v - np.cross(environment.earth.w, r)
+    # vRel = v - np.cross(environment.earth.w, r)
+    vRel = v - cross3(environment.earth.w, r)
     vRel_body = quatrot(conj(q), vRel) # get from inertial to body
 
     # Simplified model - assumes constant wetted area:
@@ -84,5 +85,6 @@ def gravityGradientTorque(r_sat, I, GM):
         M: moment due to gravity gradient
     """
 
-    return (3*GM / ((r_sat.T @ r_sat)**5/2)) * np.cross(r_sat, I @ r_sat)
+    # return (3*GM / ((r_sat.T @ r_sat)**5/2)) * np.cross(r_sat, I @ r_sat)
+    return (3*GM / ((r_sat.T @ r_sat)**5/2)) * cross3(r_sat, I @ r_sat)
 
