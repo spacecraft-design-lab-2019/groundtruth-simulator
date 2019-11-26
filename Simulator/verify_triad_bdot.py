@@ -67,24 +67,15 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	DCM_history[i, :, :] = triad.triad_ad(M.T, V.T)
 	inter = conv.L(sim.state[3:7]) @ conv.R(sim.state[3:7]).T
 	inter2 = euler_cpp.Lq(sim.state[3:7]) @ euler_cpp.Rq(sim.state[3:7]).T
-	if i == 0:
-		print(inter[1::, 1::])
-		print(inter2)
-		print(triad.triad_ad(M.T, V.T))
-	DCM_truth[i, :, :] = inter[1::, 1::]
 
 	#--------------------B_cross---------------------------
 	gain_B_cross = .0143  # 4e-2
 	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
 
-	#--------------------B_dot-----------------------------
-	# if i>1:
-	# 	gain_B_dot = 5e-6
-	# 	B_dot = dcpp.get_B_dot(np.transpose(B_body_history[i,:]), B_sensed, config.tstep)
-	# 	dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
-	# 	bang_bang_gain = 1e-9  # 5e-6
-	# 	L_cmd = np.cross(dipole,B_sensed)
 
+print(inter[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses python
+print(inter2[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses C++
+print(triad.triad_ad(M.T, V.T))	# This is a matrix from eci2body estimated using the TRIAD algorithm in C++. Should be the transpose of the other two.
 
 elapsed = time.time() - t
 print(elapsed)
@@ -119,9 +110,9 @@ plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
 plt.grid()
 
-plt.figure()
-plt.plot(T/3600, DCM_history[:, 0, 1] - DCM_truth[:, 0, 1])
-# plt.plot(T/3600, )
+# plt.figure()
+# plt.plot(T/3600, DCM_history[:, 0, 1] - DCM_truth[:, 0, 1])
+# # plt.plot(T/3600, )
 
 with plt.rc_context(rc={'interactive': False}):
 	plt.show()

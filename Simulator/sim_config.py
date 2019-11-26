@@ -3,6 +3,7 @@
 import numpy as np
 from datetime import datetime
 import sys
+from math import sqrt
 sys.path.append('/home/eleboeuf/Documents/GNC')
 import time_functions_cpp
 #------------------- Configuration Parameters -------------------
@@ -17,7 +18,7 @@ tstart = datetime(2019, 12, 30, 00, 00, 00)
 tstep = .1                     # [sec] - 1 Hz
 MJDstart = time_functions_cpp.date2MJD(12, 30, 2019, 0, 0, 0)
 # Initial Spacecraft Attitude
-q_i = np.array([1, 0, 0, 0])    # quaternion
+q_i = np.array([sqrt(3.0)/3.0, sqrt(3.0)/3.0, sqrt(3.0)/3.0, 0])    # quaternion
 w_i = np.array([.01, .05, -.03])   # radians/sec
 
 # Spacecraft Properties
