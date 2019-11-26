@@ -55,12 +55,12 @@ class Simulator():
 		self.sensors.gyroscope.update_bias()
 
 		B_ECI = self.environment.magfield_lookup(self.state[0:3])
-		B_body = conv.quatrot(self.state[3:7], B_ECI)
+		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 
 		# S_ECI = sun_utils_cpp.sun_position(self.MJD) 
 		S_ECI = sun_utils_cpp.sat_sun_vect(self.state[0:3], self.MJD) 
 		S_ECI = S_ECI / np.linalg.norm(S_ECI)
-		S_body = conv.quatrot(self.state[3:7], S_ECI)
+		S_body = conv.quatrot(conv.conj(self.state[3:7]), S_ECI)
 
 
 		#------------------------ Spoof Sensors -------------------------
