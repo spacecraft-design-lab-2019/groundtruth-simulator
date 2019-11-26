@@ -91,15 +91,14 @@ def L(q):
     s = q[0]
     v = q[1:4]
     # I3 = np.eye(3)
-
     # upper = np.hstack([s, -v])
     # lower = np.column_stack([v, s*I3 + skew(v)])
+    # return  np.row_stack([upper, lower])
     Vhat = skew(v)
     L = np.array([[s, -v[0], -v[1], -v[2]], 
         [v[0], s, Vhat[0, 1], Vhat[0, 2]], 
         [v[1], Vhat[1, 0], s, Vhat[1, 2]], 
         [v[2], Vhat[2, 0], Vhat[2, 1], s]])
-    # return  np.row_stack([upper, lower])
     return L
 
 
@@ -107,7 +106,6 @@ def R(q):
     s = q[0]
     v = q[1:4]
     # I3 = np.eye(3)
-
     # upper = np.hstack([s, -v])
     # lower = np.column_stack([v, s*I3 - skew(v)])
     # return  np.row_stack([upper, lower])
