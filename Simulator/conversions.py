@@ -132,12 +132,12 @@ def conj(q):
     return q
 
 
-def quatrot(q1, q2):
+def quatrot(quat, vec):
     """
     Rotates a vector using a quaternion.
     """
-    x2 = np.append(0, x)
-    rotated = L(q) @ R(q).T @ x2
+    x = np.append(0, vec)
+    rotated = L(quat) @ R(quat).T @ x
     return rotated[1:4]
 
 def quatmult(q1, q2):
