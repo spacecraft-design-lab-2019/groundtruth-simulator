@@ -36,7 +36,7 @@ gyro_params = {
 mag_params = {
 	"scaleF" : 0.02,
 	"caSense" : 0.02,
-	"b" : 40e3, # initialize with np.random and then don't change ever
+	"b" : 40e3,  # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
 

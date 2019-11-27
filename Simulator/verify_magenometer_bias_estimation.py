@@ -47,11 +47,24 @@ for i in range(len(T)):
 
 elapsed = time.time() - t
 print(elapsed)
+#-------------------------Estimate magnetometer bias-------
+bias_est = dcpp.get_bias_estimate(B_body_history)
+
+print(sim.sensors.magnetometer.errormodel.bias_current) # true bias
+print(bias_est)
+
 # ------------------------Plot-----------------------------
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.scatter(B_body_history[:,0], B_body_history[:,1], B_body_history[:,2])
+ax.scatter(B_body_history[:,0], B_body_history[:,1], B_body_history[:,2], 'bo')
+ax.plot3D([0, bias_est[0]], [0, bias_est[1]], [0, bias_est[2]], 'k')
+ax.plot3D([0, sim.sensors.magnetometer.errormodel.bias_current[0]],
+                           [0, sim.sensors.magnetometer.errormodel.bias_current[1]],
+                           [0, sim.sensors.magnetometer.errormodel.bias_current[2]], 'g')
+
+ax.legend(('True Bias', 'Estimated Bias', 'Data'))
 ax.set_title('Magnetic Field [nT]')
+
 
 with plt.rc_context(rc={'interactive': False}):
     plt.show()
