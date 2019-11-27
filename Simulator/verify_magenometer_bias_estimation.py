@@ -23,7 +23,7 @@ import detumble_cpp as dcpp
 plt.close('all')
 
 # -----------------Configuration / Parameters--------------------
-tspan = np.array([0, 1])  # [sec]
+tspan = np.array([0, 1200])  # [sec]
 L_cmd = np.zeros(3)  # initially command 0 torque
 
 # ----------------Initialize / Setup Workspace------------------
@@ -43,12 +43,15 @@ for i in range(len(T)):
 
     # command torque based on sensors (currently no noise addition 11/17)
     B_sensed = sensors[0:3]
-    B_body_history[i + 1, :] = np.transpose(B_sensed)
+    B_body_history[i, :] = np.transpose(B_sensed)
 
 elapsed = time.time() - t
 print(elapsed)
 # ------------------------Plot-----------------------------
-
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.scatter(B_body_history[:,0], B_body_history[:,1], B_body_history[:,2])
+ax.set_title('Magnetic Field [nT]')
 
 with plt.rc_context(rc={'interactive': False}):
     plt.show()
