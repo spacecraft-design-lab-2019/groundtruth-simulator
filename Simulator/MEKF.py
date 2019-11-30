@@ -8,26 +8,23 @@ from innovation import innovation
 from update import update
 # import functions from other filepaths
 import sys
-sys.path.append('../../TRIAD/py_funcs/')
+sys.path.append('/home/eleboeuf/Documents/GNC/TRIAD/py_funcs/')
+sys.path.append('/home/eleboeuf/Documents/GNC/util_funcs/py_funcs/')
 import deterministic_ad
-sys.path.append('../../util_funcs/py_funcs/')
 import DCM2q 
 # import data from sample mat file
 from scipy.io import loadmat
-#from scipy.io import savemat
 
+''' currently taken from MEKF starter code - input real measurements/covariances here '''
 MEKF_inputs = loadmat('mekf_inputs.mat')
-#MEKF_truth  = loadmat('mekf_truth.mat')
-#b_true = MEKF_truth['btrue']
-#q_true = MEKF_truth['qtrue']
-rN1 = MEKF_inputs['rN1'] # need updated
-rN2 = MEKF_inputs['rN2'] # need updated
+rN1 = MEKF_inputs['rN1'] # unit vector measurement 2 in newtonian frame
+rN2 = MEKF_inputs['rN2'] # unit vector measurement 2 in newtonian frame
 rN = np.vstack((rN1,rN2))
-whist = MEKF_inputs['whist'] # from state machine
-rB2hist = MEKF_inputs['rB2hist'] # from state machine???
-rB1hist = MEKF_inputs['rB1hist']
-W = MEKF_inputs['W'] # need updated
-V = MEKF_inputs['V'] # need updated
+whist = MEKF_inputs['whist'] # gyro measurement
+rB2hist = MEKF_inputs['rB2hist']  # unit vector measurement 1 in body frame
+rB1hist = MEKF_inputs['rB1hist'] # unit vector measurement 2 in body frame
+W = MEKF_inputs['W']
+V = MEKF_inputs['V']
 dt = MEKF_inputs['dt']
 
 # initial conditions:
@@ -87,9 +84,3 @@ for ii in range(len(rB1hist.T)-1):
     
     q_mekf[0:4,ii+1]  = np.reshape(xk[0:4],4)
     b_mekf[0:3,ii+1]  = np.reshape(xk[4:7],3)
-# save to mat file to process in matlab
-#savemat('output_mekf.mat', {
-#        'q_mekf': q_mekf,
-#        'b_mekf': b_mekf,
-#        'q_model': q_model
-#    })
