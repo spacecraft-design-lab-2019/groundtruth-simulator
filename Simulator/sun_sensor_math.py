@@ -42,7 +42,7 @@ def transpose(M):
     return [[M[i][j] for i in I] for j in J]
 
 def norm(vec):
-    return dot(vec, vec)
+    return math.sqrt(dot(vec, vec))
 
 def dot(v1, v2):
     return sum(x*y for x,y in zip(v1,v2))
