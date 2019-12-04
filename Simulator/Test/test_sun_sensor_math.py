@@ -30,3 +30,19 @@ def test_isEclipse2():
     measurements = [3,3,3,3,3,3]
     thresh = 5
     assert LA.isEclipse2(measurements, thresh) == True
+    
+    measurements = [6,5,6,5,6,7]
+    thresh = 5
+    assert LA.isEclipse2(measurements, thresh) == False
+    
+    measurements = [6.1,101,198,32,.1,7]
+    thresh = 5
+    assert LA.isEclipse2(measurements, thresh) == False
+    
+    measurements = [6.14,1861,198,32.5,.1,199]
+    thresh = 200.1
+    assert LA.isEclipse2(measurements, thresh) == True
+    
+    measurements = [6.14,1861,198,32.5,.1,200.1]
+    thresh = 200.1
+    assert LA.isEclipse2(measurements, thresh) == False

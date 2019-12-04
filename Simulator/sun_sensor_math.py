@@ -149,12 +149,13 @@ def isEclipse2(measurements, thresh):
     """
     for x in measurements:
         if thresh>=x:
+            return True
+        else: 
             return False
-    return True
 """
 Test Code Under here:
 """
-a = isEclipse2([6,5,6,5,6,7],4)
+a = isEclipse2([6.1,101,198,32,.1,7],5)
 print(a)
 """
 
