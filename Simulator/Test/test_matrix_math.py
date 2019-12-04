@@ -141,6 +141,18 @@ def test_scale():
     scalar = 100
     assert LA.scale(vec, scalar) == [100, 202, -304]
     
+def test_scale_error():
+    with pytest.raises(TypeError):
+        vec = [1, 2.02, 3.04]
+        scalar = [.1,1]
+        assert LA.scale(vec, scalar)
+        
+        scalar = [.1,1,4]
+        assert LA.scale(vec, scalar)
+        
+        scalar = [1]
+        assert LA.scale(vec, scalar)
+    
 def test_sub():
     v1 = [3,4,5]
     v2 = [1,1,1]

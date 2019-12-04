@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+
+******UNVERIFIED****** 
+
+
 Created on Fri Jan 15 08:59:18 2016
 
 Demo of particulate contaminant transport on an orbiting satellite with solar drag

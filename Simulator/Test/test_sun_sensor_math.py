@@ -76,7 +76,7 @@ def test_isEclipse2():
     thresh = 200
     assert LA.isEclipse2(measurements, thresh) == False
 
-def test_isEclipse_Exception():
+def test_isEclipse_error():
     with pytest.raises(TypeError):    
         measurements = [6.14,186.1,198,2000]
         thresh = [200,4]

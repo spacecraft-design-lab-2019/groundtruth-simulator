@@ -51,6 +51,8 @@ def dot(v1, v2):
     return sum(x*y for x,y in zip(v1,v2))
 
 def scale(vec, scalar):
+    if type(scale)!=int and type(scale)!=float:
+        raise TypeError("scalar must be a int or float")
     return [x*scalar for x in vec]
 
 def sub(vec1, vec2):
