@@ -105,8 +105,13 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
     delta1 = irrad_vec[0]
     delta2 = irrad_vec[1]
     delta3 = irrad_vec[2]
+    
+    return deltas2measure(np.array([delta1,delta2,delta3]))
 
-    deltas = np.array([delta1,delta2,delta3])
+def deltas2measure(deltas):
+    """
+    Helper function to arrange vector of measurements from adjusted light vector
+    """
     measurements = np.array([])
 
     for i in range(len(deltas)):
@@ -118,6 +123,7 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
             measurements = np.append(measurements, 0)
 
     return measurements
+    
 
 def isEclipse(r_sat, r_Earth2Sun, Re):
     """
@@ -157,6 +163,9 @@ Test Code Under here:
 """
 a = isEclipse2([6.1,101,198,32,.1,7],5)
 print(a)
+deltas = [1,-1,1]
+print(deltas2measure(deltas))
+print(deltas2measure(deltas) == [1,0,0,1,1,0])
 """
 
 deltas = np.array([200,-190,300])

@@ -6,6 +6,7 @@ Created on Sat Nov 30 17:22:15 2019
 import pytest
 import os, sys, inspect
 import sun_sensor_math as LA
+import numpy as np
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
@@ -25,6 +26,20 @@ def test_sense2vector():
     
 def test_vector2sense():
     assert True
+    
+def test_deltas2measure():
+    deltas = [1,-1,1]
+    assert LA.deltas2measure(deltas) == [1,0,0,1,1,0]
+    
+    deltas = [-1,-1,1]
+    assert LA.deltas2measure(deltas) == [0,1,0,1,1,0]
+    
+    deltas = [-100,1,1]
+    assert LA.deltas2measure(deltas) == [0,100,1,0,1,0]
+    
+    deltas = [-100,1]
+    assert LA.deltas2measure(deltas) == [0,100,1,0]
+    
     
 def test_isEclipse2():
     measurements = [3,3,3,3,3,3]
