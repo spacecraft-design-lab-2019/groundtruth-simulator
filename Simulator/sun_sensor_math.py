@@ -34,7 +34,10 @@ def normalize(vec):
     Outputs: normalized vector
     """
     mag = norm(vec)
-    return [x/mag for x in vec]
+    if vec == [0,0,0]: #returns 0 vector if vec = [0,0,0]
+        return vec
+    else:
+        return [x/mag for x in vec]
 
 def transpose(M):
     I = range(len(M))
@@ -153,6 +156,8 @@ def isEclipse2(measurements, thresh):
         True if satellite is in eclipse with Earth
         False if satellite is NOT in eclipse with Earth
     """
+    if type(thresh)!=int and type(thresh)!=float:
+        raise TypeError("thresh must be a int or float")
     for x in measurements:
         if thresh>=x:
             return True

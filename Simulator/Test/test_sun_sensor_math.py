@@ -6,7 +6,6 @@ Created on Sat Nov 30 17:22:15 2019
 import pytest
 import os, sys, inspect
 import sun_sensor_math as LA
-import numpy as np
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
@@ -40,6 +39,9 @@ def test_deltas2measure():
     deltas = [-100,1]
     assert LA.deltas2measure(deltas) == [0,100,1,0]
     
+    deltas = [-100]
+    assert LA.deltas2measure(deltas) == [0,100]
+    
     
 def test_isEclipse2():
     measurements = [3,3,3,3,3,3]
@@ -54,10 +56,37 @@ def test_isEclipse2():
     thresh = 5
     assert LA.isEclipse2(measurements, thresh) == False
     
-    measurements = [6.14,1861,198,32.5,.1,199]
+    measurements = [6.14,186.1,198,32.5,.1,199]
     thresh = 200.1
     assert LA.isEclipse2(measurements, thresh) == True
     
-    measurements = [6.14,1861,198,32.5,.1,200.1]
+    measurements = [6.14,186.1,198,32.5,.1,200.1]
     thresh = 200.1
     assert LA.isEclipse2(measurements, thresh) == False
+    
+    measurements = [6.14,186.1,198]
+    thresh = 200
+    assert LA.isEclipse2(measurements, thresh) == False
+    
+    measurements = [6.14,1861,198]
+    thresh = 200
+    assert LA.isEclipse2(measurements, thresh) == False
+    
+    measurements = [6.14,186.1,198,2000]
+    thresh = 200
+    assert LA.isEclipse2(measurements, thresh) == False
+
+def test_isEclipse_Exception():
+    with pytest.raises(TypeError):    
+        measurements = [6.14,186.1,198,2000]
+        thresh = [200,4]
+        assert LA.isEclipse2(measurements, thresh)
+        
+        measurements = [6.14,186.1,198,2000]
+        thresh = [200,4,5]
+        assert LA.isEclipse2(measurements, thresh)
+        
+        measurements = [6.14,186.1,198,2000]
+        thresh = [200]
+        assert LA.isEclipse2(measurements, thresh)
+    
