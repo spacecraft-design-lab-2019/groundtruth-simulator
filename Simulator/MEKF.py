@@ -24,14 +24,6 @@ import sun_utils_cpp
 import euler_cpp
 
 
-''' currently taken from MEKF starter code - input real measurements/covariances here '''
-rN1 = MEKF_inputs['rN1'] # unit vector measurement 2 in newtonian frame
-rN2 = MEKF_inputs['rN2'] # unit vector measurement 2 in newtonian frame
-rN = np.vstack((rN1,rN2))
-whist = MEKF_inputs['whist'] # gyro measurement
-rB2hist = MEKF_inputs['rB2hist']  # unit vector measurement 1 in body frame
-rB1hist = MEKF_inputs['rB1hist'] # unit vector measurement 2 in body frame
-
 dt = 0.1
 
 # initial conditions:
@@ -61,9 +53,51 @@ b_mekf  = np.zeros([3,1501])
 q_mekf[0:4,0]  = np.reshape(q0,4)
 b_mekf[0:3,0]  = np.reshape(Beta0,3)
 
-# start sim
-for ii in range(len(rB1hist.T)-1):
-    # run predict step
+#-----------------Configuration / Parameters--------------------
+tspan = np.array([0, 1])    # [sec]
+L_cmd = np.zeros(3)			# initially command 0 torque
+
+
+#----------------Initialize / Setup Workspace------------------
+# setup sim
+sim = Simulator(config)
+max_dipoles = np.array([[8.8e-3], [1.373e-2], [8.2e-3]]) # TODO: Add dipole saturation to spacecraft properties
+
+# preallocate memory
+T = np.arange(0, tspan[1]+config.tstep, config.tstep)
+state_history = np.zeros((np.shape(T)[0], np.shape(sim.state)[0]))
+state_history[0, :] = sim.state
+B_body_history = np.zeros((np.shape(T)[0], 3))
+command_history = np.zeros((np.shape(T)[0], 3))
+DCM_history = np.zeros((np.shape(T)[0], 3, 3))
+DCM_truth = np.zeros((np.shape(T)[0], 3, 3))
+#---------------------Propagate---------------------------
+t = time.time()
+
+for i, elapsed_t in enumerate(T[0:-1]):
+	# Simulator
+	sensors = sim.step(config.tstep, L_cmd)
+	state_history[i+1, :] = sim.state
+	
+	command_history[i+1,:] = np.transpose(L_cmd)
+
+	# command torque based on sensors (currently no noise addition 11/17)
+	B_sensed = sensors[0:3]
+	w_sensed = sensors[3:6]
+	S_sensed = sensors[6:9]
+	B_body_history[i+1,:] = np.transpose(B_sensed)
+	rB = np.array([B_sensed / np.linalg.norm(B_sensed), S_sensed])
+
+	S_ECI_pred = sun_utils_cpp.sat_sun_vect(sim.state[0:3], sim.MJD) 
+	S_ECI_pred = S_ECI_pred / np.linalg.norm(S_ECI_pred)
+	B_ECI_pred = sim.environment.magfield_lookup(sim.state[0:3])
+	
+	rN = np.array([B_ECI_pred/ np.linalg.norm(B_ECI_pred), S_ECI_pred])
+
+	DCM_history[i, :, :] = triad.triad_ad(rB.T, rN.T)
+	inter = conv.L(sim.state[3:7]) @ conv.R(sim.state[3:7]).T
+	inter2 = euler_cpp.Lq(sim.state[3:7]) @ euler_cpp.Rq(sim.state[3:7]).T
+    
     '''
     xn - predicted state (mu_k+1|k)
     Pn - predicted covariance (sigma_k+1|k)
@@ -73,12 +107,13 @@ for ii in range(len(rB1hist.T)-1):
     rN - Vector measurement in newtonian frame
     rB - Vector measurement in body frame
     '''
-    # get measurement vector
-    rB1 = np.reshape(rB1hist[:,ii+1],(3,1))
-    rB2 = np.reshape(rB2hist[:,ii+1],(3,1))
-    rB  = np.vstack((rB1,rB2))
     
-    xn,A = predict(xk,whist[:,ii+1],dt)
+    #rB = np.vstack((M[0:3],M[3:6]))
+    #rN = np.vstack((V[0:3],V[3:6]))
+
+    
+    
+    xn,A = predict(xk,w_sensed,dt)
     Pn   = A*Pk*np.transpose(A)+W
     
     # run measurement step
@@ -93,5 +128,5 @@ for ii in range(len(rB1hist.T)-1):
     # update step
     xk, Pk = update(L, z, xn, Pn, V, C)
     
-    q_mekf[0:4,ii+1]  = np.reshape(xk[0:4],4)
-    b_mekf[0:3,ii+1]  = np.reshape(xk[4:7],3)
+    q_mekf[0:4,i+1]  = np.reshape(xk[0:4],4)
+    b_mekf[0:3,i+1]  = np.reshape(xk[4:7],3)
