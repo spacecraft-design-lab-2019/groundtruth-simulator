@@ -4,7 +4,7 @@ backcall==0.1.0
 certifi==2018.1.18
 chardet==3.0.4
 cmake==3.13.3
-cryptography==2.1.4
+cryptography==2.3
 cycler==0.10.0
 Cython==0.29.14
 decorator==4.4.1
