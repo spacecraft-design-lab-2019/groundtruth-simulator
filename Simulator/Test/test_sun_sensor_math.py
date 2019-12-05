@@ -20,8 +20,22 @@ def pytest_addoption(parser):
 def cmdopt(request):
     return request.config.getoption("--cmdopt")
 
-def test_sense2vector():
-    assert True
+def test_sense2vector_error():
+    with pytest.raises(TypeError):
+        measurements = 5
+        r_Earth2Sun = [1,1,1]
+        r_sat = [1,1,1]
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
+        
+        measurements = [5,3,3,4,5,6]
+        r_Earth2Sun = 1
+        r_sat = [1,1,1]
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
+        
+        measurements = [5,3,3,4,5,6]
+        r_Earth2Sun = [1,1,1]
+        r_sat = 1
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
     
 def test_vector2sense():
     assert True

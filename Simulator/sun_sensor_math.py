@@ -4,7 +4,7 @@ Created on Thu Nov 14 23:06:02 2019
 
 """
 import math
-import numpy as np
+import numpy as np 
 
 #placeholder function, need to fix
 def eci2body(vec, R):
@@ -79,7 +79,13 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
         sat2sun: satellite to sun 3-vector
     NOTE: This function can use numpy
     """
-    
+    if type(measurements) != list:
+        raise TypeError('measurements must be a list') 
+    if type(r_Earth2Sun) != list:
+        raise TypeError('r_Earth2Sun must be a list') 
+    if type(r_sat) != list:
+        raise TypeError('r_sat must be a list')
+        
     #unpack measurements  
     sun_sense1 = measurements[0] # + x
     sun_sense2 = measurements[1] # - x
@@ -116,6 +122,7 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
 def deltas2measure(deltas):
     """
     Helper function to arrange vector of measurements from adjusted light vector
+    Can create a measurement list regardless of input list length
     """
     measurements = np.array([])
 
