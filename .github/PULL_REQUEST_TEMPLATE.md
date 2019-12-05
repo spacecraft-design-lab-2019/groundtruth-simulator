@@ -21,3 +21,5 @@ Please describe the tests that you ran to verify your changes.
 - [ ] Test B
 
 # Please include plots from verify_ simulation runs to ensure that Bdot/Bcross/Triad/MEKF still work
+
+The plots should include a run long enough to show convergence of the Bdot/Bcross algorithms
