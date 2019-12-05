@@ -193,7 +193,15 @@ def test_add():
     
     v1 = [0,0,0]
     v2 = [0,-4,-3]
-    assert LA.add(v1,v2) == v2    
+    assert LA.add(v1,v2) == v2 
+    
+    v1 = [.1,.1,.2]
+    v2 = [.4,.3,.6]
+    assert LA.add(v1,v2) == [.5,.4,.8]
+    
+    v1 = [2,3,4]
+    v2 = [0.234,0.456,0.54635]
+    assert LA.add(v1,v2) == LA.add(v2,v1)
     
     # ... more and more tests go here.
 

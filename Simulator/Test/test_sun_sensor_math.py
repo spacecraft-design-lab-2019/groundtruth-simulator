@@ -6,6 +6,7 @@ Created on Sat Nov 30 17:22:15 2019
 import pytest
 import os, sys, inspect
 import sun_sensor_math as LA
+import numpy as np
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
@@ -27,14 +28,29 @@ def test_sense2vector_error():
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
         
+        measurements = np.array([5,5,5])
+        r_Earth2Sun = [1,1,1]
+        r_sat = [1,1,1]
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
+        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = 1
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
         
         measurements = [5,3,3,4,5,6]
+        r_Earth2Sun = np.array([1,1,1])
+        r_sat = [1,1,1]
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
+        
+        measurements = [5,3,3,4,5,6]
         r_Earth2Sun = [1,1,1]
         r_sat = 1
+        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
+        
+        measurements = [5,3,3,4,5,6]
+        r_Earth2Sun = [1,1,1]
+        r_sat = np.array([1,1,1])
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
     
 def test_vector2sense():
