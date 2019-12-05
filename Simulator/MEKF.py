@@ -27,23 +27,18 @@ import euler_cpp
 dt = 0.1
 
 # initial conditions:
-rB1 = np.reshape(rB1hist[:,0],(3,1))
-rB2 = np.reshape(rB2hist[:,0],(3,1))
 Pk  = (10*math.pi/180)**2*np.eye(6) 
-R0  = deterministic_ad.triad_ad(np.hstack((rB1,rB2)),np.hstack((rN1,rN2)))
-q0  = DCM2q.DCM2quat(R0)  
+
 
 # process and measurement noise (update with true values)
-W = np.array(np.identity(6))*1e-9*0.3046
-V = np.array(np.identity(6))
+W = np.array(np.eye(6))*1e-9*0.3046
+V = np.array(np.eye(6))
 for ii in range(3):
     V(ii,ii) = 0.003
     V(ii+3,ii+3) = 0.0076
 
 # initial conditions for MEKF
-q0 = np.reshape(q0,(4,1))
 Beta0 = np.reshape(np.array([0.1,0.1,0.1]),(3,1))
-xk    = np.vstack((q0,Beta0))
 
 # pre-allocate 
 q_mekf  = np.zeros([4,1501])
@@ -110,6 +105,8 @@ for i, elapsed_t in enumerate(T[0:-1]):
     
     #rB = np.vstack((M[0:3],M[3:6]))
     #rN = np.vstack((V[0:3],V[3:6]))
+    q0 = DCM2q.DCM2q(DCM_history[i,:,:])
+    xk    = np.vstack((q0,Beta0))
 
     
     
