@@ -9,6 +9,7 @@ Verify detumble algorithms
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import sys
 sys.path.append('./GNC')
 import detumble_cpp as dcpp
 import sim_config as config
