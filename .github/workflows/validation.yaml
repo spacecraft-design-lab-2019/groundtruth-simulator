@@ -33,5 +33,22 @@ jobs:
         name: my-artifact
         path: path/to/artifact
 
+    - uses: rytswd/comvent@v0.1.0
+      id: comvent
+      with:
+        keyword: "special string"
+    - name: Add comment to PR
+      if: steps.comvent.outputs.comvent != ''
+      env:
+        URL: ${{ github.event.issue.comments_url }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          curl \
+            -X POST \
+            $URL \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            --data '{ "body": "blah blah" }'
+
 
 
