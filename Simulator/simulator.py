@@ -65,11 +65,11 @@ class Simulator():
 
 		#------------------------ Spoof Sensors -------------------------
 		# Actuate based on truth for now until magnetometer bias estimation, TRIAD, and MEKF have been implemented and tested
-		B_body_noise = B_body
+		# B_body_noise = B_body
 		S_body_noise = S_body
 		# S_body_noise = self.sensors.sunsensor.measure(S_body)
 		w_body_noise = self.state[10:13]
-		# B_body_noise = self.sensors.magnetometer.measure(B_body)
+		B_body_noise = self.sensors.magnetometer.measure(B_body)
 		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise, S_body_noise]

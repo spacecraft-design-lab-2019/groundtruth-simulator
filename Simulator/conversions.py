@@ -3,8 +3,6 @@ import numpy as np
 import math
 
 #--------------------Coordinate Frames--------------------------
-# TODO: Add conversion to/from NED (for use with pyIGRF)
-
 
 def ECI_to_ECEF(r_ECI, GMST):
     """
@@ -51,7 +49,7 @@ def ECEF_to_ECI(r_ECEF, GMST):
 def ECEF_to_LLA(r_ECEF, rad_Earth):
     """
     Function: ECEF_to_LLA
-        Converts position vector in ECEF to geodetic coordinates.
+        Converts position vector in ECEF to geocentric coordinates.
 
     Inputs:
         r_ECEF: position vector in Earth Centered Earth Fixed (ECEF)
@@ -135,6 +133,9 @@ def conj(q):
 
 
 def quatrot(q1, q2):
+    """
+    Rotates a vector using a quaternion.
+    """
     vector = False
     if len(q2) == 3:
         q2 = np.append(0, q2)
@@ -146,6 +147,14 @@ def quatrot(q1, q2):
         return rotated[1:4]
     else:
         return rotated
+
+
+
+def quatmult(q1, q2):
+    """
+    Multiplies two quaternions.
+    """
+    return L(q1) @ q2
 
 
 #--------------------Miscellaneous-----------------------------

@@ -74,14 +74,10 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	gain_B_cross = .0143  # 4e-2
 	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
 
-	#--------------------B_dot-----------------------------
-	# if i>1:
-	# 	gain_B_dot = 5e-6
-	# 	B_dot = dcpp.get_B_dot(np.transpose(B_body_history[i,:]), B_sensed, config.tstep)
-	# 	dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
-	# 	bang_bang_gain = 1e-9  # 5e-6
-	# 	L_cmd = np.cross(dipole,B_sensed)
 
+print(inter[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses python
+print(inter2[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses C++
+print(triad.triad_ad(M.T, V.T))	# This is a matrix from eci2body estimated using the TRIAD algorithm in C++. Should be the transpose of the other two.
 
 elapsed = time.time() - t
 print(elapsed)
@@ -115,6 +111,7 @@ plt.plot(T/3600, np.linalg.norm(state_history[:,10:13],axis=1))
 plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
 plt.grid()
+
 
 plt.figure()
 plt.plot(T/3600, DCM_err)

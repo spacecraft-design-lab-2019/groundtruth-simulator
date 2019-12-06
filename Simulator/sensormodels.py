@@ -77,7 +77,7 @@ class LinearErrorModel():
         return cls(T, b, cov)
 
     def update_bias(self, new_bias=None):
-        self.bias_current += self.b*np.random.rand(self.dim) if new_bias is None else new_bias
+        self.bias_current += self.b*np.random.randn(self.dim) if new_bias is None else new_bias # make sure random vector is mean 0, var 1
 
     def measure(self, x):
         """
