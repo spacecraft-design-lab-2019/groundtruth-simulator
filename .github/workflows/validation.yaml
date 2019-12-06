@@ -39,8 +39,8 @@ jobs:
     - name: Respost - Response Post
       uses: rytswd/respost@v0.1.0
       with:
-          title: Respost Custom Title from step 1, for Issue
-          body: "[test](https://github.com/spacecraft-design-lab-2019/groundtruth-simulator/blob/master/Simulator/conversions.py)"
+          title: Automated Reminder
+          body: "Go to the actions to retrieve the artifacts. Upload the plots to a comment so that it can be reviewed."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
