@@ -44,15 +44,15 @@ t = time.time()
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
 	sensors = sim.step(config.tstep, L_cmd)
-	state_history[i+1, :] = sim.state
+	state_history[i, :] = sim.state
 	
-	command_history[i+1,:] = np.transpose(L_cmd)
+	command_history[i,:] = np.transpose(L_cmd)
 
 	# command torque based on sensors (currently no noise addition 11/17)
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
 
-	B_body_history[i+1,:] = np.transpose(B_sensed)
+	B_body_history[i,:] = np.transpose(B_sensed)
 	#--------------------B_cross---------------------------
 	gain_B_cross = .0143  # 4e-2
 	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)

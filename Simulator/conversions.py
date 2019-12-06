@@ -130,7 +130,7 @@ def quat(v):
 
 def conj(q):
     q = np.copy(q)
-    q[0] = -q[0]
+    q[1:4] = -q[1:4]
     return q
 
 
