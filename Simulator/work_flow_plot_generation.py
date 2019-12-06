@@ -102,7 +102,7 @@ plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
 plt.grid()
 
-pp = PdfPages('path/to/artifact/foo.pdf')
+pp = PdfPages('./path/to/artifact/foo.pdf')
 pp.savefig(plot1)
 pp.savefig(plot2)
 pp.savefig(plot3)

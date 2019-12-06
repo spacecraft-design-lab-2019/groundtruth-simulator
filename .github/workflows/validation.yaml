@@ -27,8 +27,7 @@ jobs:
       run: mkdir -p path/to/artifact
     - name: Run File
       run: python ./Simulator/work_flow_plot_generation.py
-    - name: Move artifact
-      uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v1
         with:
           name: my-artifact
           path: path/to/artifact
