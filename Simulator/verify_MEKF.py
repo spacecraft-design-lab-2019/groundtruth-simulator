@@ -16,6 +16,8 @@ import detumble_cpp as dcpp
 import triad_cpp as triad
 import sun_utils_cpp
 import euler_cpp
+
+import MEKF_cpp as MEKF
 #-----------------------Clear Figures----------------------------
 # clear figures
 plt.close('all')
@@ -28,7 +30,6 @@ L_cmd = np.zeros(3)			# initially command 0 torque
 #----------------Initialize / Setup Workspace------------------
 # setup sim
 sim = Simulator(config)
-max_dipoles = np.array([[8.8e-3], [1.373e-2], [8.2e-3]]) # TODO: Add dipole saturation to spacecraft properties
 
 # preallocate memory
 T = np.arange(0, tspan[1]+config.tstep, config.tstep)
@@ -41,6 +42,13 @@ DCM_truth = np.zeros((np.shape(T)[0], 3, 3))
 DCM_err = np.zeros(np.shape(T)[0])
 #---------------------Propagate---------------------------
 t = time.time()
+
+# MEKF preallocation
+xk = np.zeros(7,(np.shape(T)[0]))
+Pk = np.zeros(6,6,(np.shape(T)[0])
+
+W = 0.00000001 * np.identity(6) # needs to be updated
+V = 0.0003 * np.identity(6) # needs to be updated
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
@@ -67,10 +75,14 @@ for i, elapsed_t in enumerate(T[0:-1]):
 
 	DCM_truth[i, :, :] = inter[1::, 1::]
 	DCM_err[i] = np.linalg.norm(DCM_history[i, :, :] - DCM_truth[i, :, :].T)
-	#--------------------B_cross---------------------------
-	gain_B_cross = .0143  # 4e-2
-	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
 
+    #--------------------MEKF-------------------------------
+    
+    xk[:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
+    Pk[:,:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
+    
+    
+    
 elapsed = time.time() - t
 print(elapsed)
 #------------------------Plot-----------------------------
