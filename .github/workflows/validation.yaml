@@ -26,6 +26,6 @@ jobs:
         mkdir -p path/to/artifact
         python groundtruth-simulator/Simulator/work_flow_plot_generation.py
       uses: actions/upload-artifact@v1
-        with:
-          name: my-artifact
-          path: path/to/artifact
+      with:
+        name: my-artifact
+        path: path/to/artifact
