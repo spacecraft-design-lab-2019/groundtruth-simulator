@@ -13,10 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - uses: actions/clone
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Run git clone
+      run: sh ./git_script.sh
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -24,7 +27,7 @@ jobs:
     - name: Create Path
       run: mkdir -p path/to/artifact
     - name: Run File
-      run: groundtruth-simulator/Simulator/work_flow_plot_generation.py
-      shell: python
+      run: python groundtruth-simulator/Simulator/work_flow_plot_generation.py
+
 
 
