@@ -24,7 +24,7 @@ jobs:
     - name: Create Path
       run: |
       mkdir -p path/to/artifact
-    # python groundtruth-simulator/Simulator/work_flow_plot_generation.py
+    #  python groundtruth-simulator/Simulator/work_flow_plot_generation.py
     # - name: Upload Aritfact
     #   uses: actions/upload-artifact@v1
     #   with:
