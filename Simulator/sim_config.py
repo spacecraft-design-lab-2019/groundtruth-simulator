@@ -46,3 +46,5 @@ sun_params = {
 	"b" : 1.0, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
+
+mag_order = 10
