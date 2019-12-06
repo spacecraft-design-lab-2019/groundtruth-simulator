@@ -38,19 +38,10 @@ jobs:
 
     - name: Respost - Response Post
       uses: rytswd/respost@v0.1.0
-      
-    - name: Add comment to PR
-      if: steps.comvent.outputs.comvent != ''
+      with:
+          title: Respost Custom Title from step 1, for Issue
+          body: "Hello, World! Respost is here, making your GitHub Actions workflow even easier!"
       env:
-        URL: ${{ github.event.issue.comments_url }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-          curl \
-            -X POST \
-            $URL \
-            -H "Content-Type: application/json" \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            --data '{ "body": "blah blah" }'
-
 
 
