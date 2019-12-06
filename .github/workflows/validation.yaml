@@ -1,0 +1,44 @@
+name: Validation Tests
+
+on: [pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Run git clone
+      run: sh ./git_script.sh
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Create Path
+      run: mkdir -p path/to/artifact
+    - name: Run File
+      run: python ./Simulator/work_flow_plot_generation.py
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: my-artifact
+        path: path/to/artifact
+
+    - name: Respost - Response Post
+      uses: rytswd/respost@v0.1.0
+      with:
+          title: Automated Reminder
+          body: "Click on **Checks** and go to Validation. Download the artifacts, unzip the folder, and upload the images to a comment in the pull request for review."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

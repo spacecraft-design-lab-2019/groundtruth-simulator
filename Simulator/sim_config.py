@@ -5,6 +5,7 @@ from datetime import datetime
 import sys
 from math import sqrt
 sys.path.append('/home/eleboeuf/Documents/GNC')
+sys.path.append('./GNC')
 import time_functions_cpp
 #------------------- Configuration Parameters -------------------
 
