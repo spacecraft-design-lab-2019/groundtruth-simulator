@@ -40,7 +40,7 @@ jobs:
       uses: rytswd/respost@v0.1.0
       with:
           title: Automated Reminder
-          body: "Go to the actions to retrieve the artifacts. Upload the plots to a comment so that it can be reviewed."
+          body: "Click on **Checks** and go to Validation. Download the artifacts, unzip the folder, and upload the images to a comment in the pull request for review."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
