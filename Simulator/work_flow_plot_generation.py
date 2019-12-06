@@ -14,8 +14,8 @@ from simulator import Simulator
 
 
 # import GNC functions
-import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
+
+sys.path.append('./GNC')
 import detumble_cpp as dcpp
 
 #-----------------------Clear Figures----------------------------

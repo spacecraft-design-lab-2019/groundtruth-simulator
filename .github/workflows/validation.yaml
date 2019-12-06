@@ -26,7 +26,7 @@ jobs:
     - name: Create Path
       run: mkdir -p path/to/artifact
     - name: Run File
-      run: python groundtruth-simulator/Simulator/work_flow_plot_generation.py
+      run: python ./Simulator/work_flow_plot_generation.py
 
 
 
