@@ -1,6 +1,9 @@
+
+
+
 name: Validation Tests
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -33,10 +36,9 @@ jobs:
         name: my-artifact
         path: path/to/artifact
 
-    - uses: rytswd/comvent@v0.1.0
-      id: comvent
-      with:
-        keyword: "special string"
+    - name: Respost - Response Post
+      uses: rytswd/respost@v0.1.0
+      
     - name: Add comment to PR
       if: steps.comvent.outputs.comvent != ''
       env:
