@@ -60,7 +60,7 @@ for i, elapsed_t in enumerate(T[0:-1]):
 
 	S_ECI_pred = sun_utils_cpp.sat_sun_vect(sim.state[0:3], sim.MJD) 
 	S_ECI_pred = S_ECI_pred / np.linalg.norm(S_ECI_pred)
-	B_ECI_pred = sim.environment.magfield_lookup(sim.state[0:3])
+	B_ECI_pred = sim.environment.magfield_lookup(sim.state[0:3], sim.mag_order)
 	
 	V = np.array([B_ECI_pred/ np.linalg.norm(B_ECI_pred), S_ECI_pred])
 

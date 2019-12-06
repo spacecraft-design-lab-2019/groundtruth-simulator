@@ -56,7 +56,7 @@ def rk4_step(f, t, state, h):
     return x1
 
 
-def calc_statedot(t, state, cmd, structure, environment):
+def calc_statedot(t, state, cmd, structure, environment, mag_order):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
@@ -92,7 +92,7 @@ def calc_statedot(t, state, cmd, structure, environment):
     torque = torque + mdrag
 
     #------------------Look up magnetic field------------------------
-    B = environment.magfield_lookup(r)
+    B = environment.magfield_lookup(r, mag_order)
     # TO-DO: if control is off, add torque due to magnetic moment
 
 
