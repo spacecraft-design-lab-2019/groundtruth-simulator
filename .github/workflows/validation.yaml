@@ -23,3 +23,8 @@ jobs:
         pip install -r requirements.txt
     - name: Create Path
       run: mkdir -p path/to/artifact
+    - name: Run File
+      run: groundtruth-simulator/Simulator/work_flow_plot_generation.py
+      shell: python
+
+
