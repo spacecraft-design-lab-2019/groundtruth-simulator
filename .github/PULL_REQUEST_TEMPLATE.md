@@ -6,7 +6,6 @@ Fixes # (issue)
 
 ## Type of change
 
-Please delete options that are not relevant.
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
@@ -20,6 +19,4 @@ Please describe the tests that you ran to verify your changes.
 - [ ] Test A
 - [ ] Test B
 
-# Please include plots from verify_ simulation runs to ensure that Bdot/Bcross/Triad/MEKF still work
-
-The plots should include a run long enough to show convergence of the Bdot/Bcross algorithms
+# Please include plots in a comment after starting the pull request (Follow instructions from bot in the comments)
