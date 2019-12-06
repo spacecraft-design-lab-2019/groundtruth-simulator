@@ -22,10 +22,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Create PDF
-      run: |
-        mkdir -p path/to/artifact
-        python groundtruth-simulator/Simulator/work_flow_plot_generation.py
-      uses: actions/upload-artifact@v1
+    - run: |
+      mkdir -p path/to/artifact
+      python groundtruth-simulator/Simulator/work_flow_plot_generation.py
+    - uses: actions/upload-artifact@v1
       with:
         name: my-artifact
         path: path/to/artifact
