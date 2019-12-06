@@ -206,13 +206,6 @@ def cross3(v1, v2):
 
     return np.array([x, y, z])
 
-def norm2(v):
-
-=======
-# -*- coding: utf-8 -*-
-import numpy as np
-import math
-
 #--------------------Coordinate Frames--------------------------
 
 def ECI_to_ECEF(r_ECI, GMST):
