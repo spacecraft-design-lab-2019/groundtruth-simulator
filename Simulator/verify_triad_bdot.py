@@ -74,11 +74,6 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	gain_B_cross = .0143  # 4e-2
 	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
 
-
-print(inter[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses python
-print(inter2[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses C++
-print(triad.triad_ad(M.T, V.T))	# This is a matrix from eci2body estimated using the TRIAD algorithm in C++. Should be the transpose of the other two.
-
 elapsed = time.time() - t
 print(elapsed)
 #------------------------Plot-----------------------------
