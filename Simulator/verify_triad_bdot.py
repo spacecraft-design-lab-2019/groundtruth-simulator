@@ -24,7 +24,7 @@ plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 1])    # [sec]
+tspan = np.array([0, 100])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 
 
@@ -41,6 +41,7 @@ B_body_history = np.zeros((np.shape(T)[0], 3))
 command_history = np.zeros((np.shape(T)[0], 3))
 DCM_history = np.zeros((np.shape(T)[0], 3, 3))
 DCM_truth = np.zeros((np.shape(T)[0], 3, 3))
+DCM_err = np.zeros(np.shape(T)[0])
 #---------------------Propagate---------------------------
 t = time.time()
 
@@ -60,22 +61,18 @@ for i, elapsed_t in enumerate(T[0:-1]):
 
 	S_ECI_pred = sun_utils_cpp.sat_sun_vect(sim.state[0:3], sim.MJD) 
 	S_ECI_pred = S_ECI_pred / np.linalg.norm(S_ECI_pred)
-	B_ECI_pred = sim.environment.magfield_lookup(sim.state[0:3])
+	B_ECI_pred = sim.environment.magfield_lookup(sim.state[0:3], sim.mag_order)
 	
 	V = np.array([B_ECI_pred/ np.linalg.norm(B_ECI_pred), S_ECI_pred])
 
 	DCM_history[i, :, :] = triad.triad_ad(M.T, V.T)
 	inter = conv.L(sim.state[3:7]) @ conv.R(sim.state[3:7]).T
-	inter2 = euler_cpp.Lq(sim.state[3:7]) @ euler_cpp.Rq(sim.state[3:7]).T
 
+	DCM_truth[i, :, :] = inter[1::, 1::]
+	DCM_err[i] = np.linalg.norm(DCM_history[i, :, :] - DCM_truth[i, :, :].T)
 	#--------------------B_cross---------------------------
 	gain_B_cross = .0143  # 4e-2
 	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain_B_cross)
-
-
-print(inter[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses python
-print(inter2[1::, 1::])			# This is a matrix from body2eci according to the spacecraft quaternion. Uses C++
-print(triad.triad_ad(M.T, V.T))	# This is a matrix from eci2body estimated using the TRIAD algorithm in C++. Should be the transpose of the other two.
 
 elapsed = time.time() - t
 print(elapsed)
@@ -110,9 +107,12 @@ plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
 plt.grid()
 
-# plt.figure()
-# plt.plot(T/3600, DCM_history[:, 0, 1] - DCM_truth[:, 0, 1])
-# # plt.plot(T/3600, )
+
+plt.figure()
+plt.plot(T/3600, DCM_err)
+plt.xlabel('time [hr]')
+plt.title('DCM error')
+plt.grid()
 
 with plt.rc_context(rc={'interactive': False}):
 	plt.show()

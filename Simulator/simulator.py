@@ -8,6 +8,7 @@ from sensormodels import SpacecraftSensors
 import sys
 sys.path.append('/home/eleboeuf/Documents/GNC')
 import sun_utils_cpp
+from astropy_sun_position import sun_position_ECI
 
 class Simulator():
 	"""
@@ -27,6 +28,9 @@ class Simulator():
 		self.MJD = config.MJDstart
 		self.tstep = config.tstep
 
+		# magnetic field order (for IGRF)
+		self.mag_order = config.mag_order
+
 
 	def step(self, tstep, cmd=np.zeros(3)):
 		"""
@@ -45,7 +49,7 @@ class Simulator():
 
 		"""
 		#------------------------ Propagate Dynamics --------------------
-		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment)
+		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
 		self.state = rk4_step(update_f, self.t, self.state, tstep)
 		self.t = self.t + datetime.timedelta(seconds=tstep)
 		self.MJD = self.MJD + self.tstep / 24 / 3600
@@ -54,21 +58,23 @@ class Simulator():
 		self.environment.update(self.t)
 		self.sensors.gyroscope.update_bias()
 
-		B_ECI = self.environment.magfield_lookup(self.state[0:3])
+		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order)
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 
 		# S_ECI = sun_utils_cpp.sun_position(self.MJD) 
-		S_ECI = sun_utils_cpp.sat_sun_vect(self.state[0:3], self.MJD) 
+		# S_ECI = sun_utils_cpp.sat_sun_vect(self.state[0:3], self.MJD) 
+		S_ECI = sun_position_ECI(self.MJD)
 		S_ECI = S_ECI / np.linalg.norm(S_ECI)
 		S_body = conv.quatrot(conv.conj(self.state[3:7]), S_ECI)
 
 
 		#------------------------ Spoof Sensors -------------------------
 		# Actuate based on truth for now until magnetometer bias estimation, TRIAD, and MEKF have been implemented and tested
-		B_body_noise = B_body
+		# B_body_noise = B_body
 		S_body_noise = S_body
+		# S_body_noise = self.sensors.sunsensor.measure(S_body)
 		w_body_noise = self.state[10:13]
-		# B_body_noise = self.sensors.magnetometer.measure(B_body)
+		B_body_noise = self.sensors.magnetometer.measure(B_body)
 		# w_body_noise = self.sensors.gyroscope.measure(self.state[10:13])
 
 		meas = np.r_[B_body_noise, w_body_noise, S_body_noise]
