@@ -45,7 +45,7 @@ t = time.time()
 
 # MEKF preallocation
 xk = np.zeros(7,(np.shape(T)[0]))
-Pk = np.zeros(6,6,(np.shape(T)[0])
+Pk = np.zeros(6,6,(np.shape(T)[0]))
 
 W = 0.00000001 * np.identity(6) # needs to be updated
 V = 0.0003 * np.identity(6) # needs to be updated
@@ -76,11 +76,11 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	DCM_truth[i, :, :] = inter[1::, 1::]
 	DCM_err[i] = np.linalg.norm(DCM_history[i, :, :] - DCM_truth[i, :, :].T)
 
-    #--------------------MEKF-------------------------------
-    
-    xk[:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-    Pk[:,:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-    
+	#--------------------MEKF-------------------------------
+
+	xk[:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
+	Pk[:,:,i+1] = MEKF.get_Pk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
+
     
     
 elapsed = time.time() - t
