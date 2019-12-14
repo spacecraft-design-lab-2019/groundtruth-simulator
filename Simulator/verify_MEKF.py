@@ -44,11 +44,16 @@ DCM_err = np.zeros(np.shape(T)[0])
 t = time.time()
 
 # MEKF preallocation
-xk = np.zeros(7,(np.shape(T)[0]))
-Pk = np.zeros(6,6,(np.shape(T)[0]))
+xk = np.zeros((np.shape(T)[0],7))
 
-W = 0.00000001 * np.identity(6) # needs to be updated
-V = 0.0003 * np.identity(6) # needs to be updated
+xk[0,0:4] = state_history[0,3:7]
+Pk = np.zeros((np.shape(T)[0],6,6))
+Pk[0,:,:] = ((10*3.1415/180)**2)*np.identity(6)
+
+
+W_noise = 0.00000001 * np.identity(6) # needs to be updated
+V_noise = 0.0003 * np.identity(6) # needs to be updated
+
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
@@ -77,21 +82,35 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	DCM_err[i] = np.linalg.norm(DCM_history[i, :, :] - DCM_truth[i, :, :].T)
 
 	#--------------------MEKF-------------------------------
+	# get M and V into a 6x1 vec instead of 2x3 (for MEKF)
+	M_vert = np.zeros(6)
+	V_vert = np.zeros(6)
+	M_vert[0:3] = M[0,0:3]
+	M_vert[3:6] = M[1,0:3]
+	V_vert[0:3] = V[0,0:3]
+	V_vert[3:6] = V[1,0:3]
 
-	xk[:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-	Pk[:,:,i+1] = MEKF.get_Pk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-
-    
-    
+	xk[i+1,:] = MEKF.get_xk(xk[i,:],Pk[i,:,:],w_sensed,M_vert,V_vert,W_noise,V_noise,config.tstep).reshape(7)
+	Pk[i+1,:,:] = MEKF.get_Pk(xk[i,:],Pk[i,:,:],w_sensed,M_vert,V_vert,W_noise,V_noise,config.tstep)
+	
 elapsed = time.time() - t
 print(elapsed)
 #------------------------Plot-----------------------------
+
 plt.figure()
 plt.plot(T/3600, state_history[:,3:7])
 plt.xlabel('time [hr]')
 plt.ylabel('quaternions')
 plt.grid()
 
+plt.figure()
+plt.plot(T/3600, xk[:,0:4])
+plt.xlabel('time [hr]')
+plt.ylabel('MEKF quaternions')
+plt.grid()
+
+
+'''
 plt.figure()
 plt.plot(T/3600, state_history[:,10:13])
 plt.xlabel('time [hr]')
@@ -122,6 +141,8 @@ plt.plot(T/3600, DCM_err)
 plt.xlabel('time [hr]')
 plt.title('DCM error')
 plt.grid()
+
+'''
 
 with plt.rc_context(rc={'interactive': False}):
 	plt.show()
