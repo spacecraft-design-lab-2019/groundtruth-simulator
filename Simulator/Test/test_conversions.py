@@ -76,7 +76,22 @@ def test_quatrot():
     quat = np.array([1, 0, 1, 0])
     ans = np.array([0, 1, -1])
     np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
-    
+
+def test_L():
+	assert True
+
+def test_R():
+	assert True
+
+def test_quat():
+	assert True
+
+def test_conj():
+	assert True
+
+def test_quatmult():
+	assert True
+
 
 #--------------------Miscellaneous-----------------------------
 
