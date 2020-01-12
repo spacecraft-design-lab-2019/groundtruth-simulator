@@ -58,9 +58,6 @@ def test_NED_to_ECI():
     vec_ECI = np.array([-1, 0, 0])
     np.testing.assert_allclose(vec_ECI, conv.NED_to_ECI(vec_NED, 0, 0, 0), atol=tol)
 
-    #Case 2
-
-
 
 #--------------------Quaternions-----------------------------
 
@@ -111,11 +108,26 @@ def test_quat():
 	np.testing.assert_allclose(q1, conv.quat(v1), atol=tol)
 
 def test_conj():
-	assert True
+	# Case 1
+	q = np.zeros(4)
+	np.testing.assert_allclose(q, conv.conj(q), atol=tol)
+
+	# Case 2
+	q = -np.ones(4)
+	ans = np.array([-1, 1, 1, 1])
+	np.testing.assert_allclose(ans, conv.conj(q), atol=tol)
 
 def test_quatmult():
-	assert True
+	# Case 1
+	q1 = np.array([1, 0 ,0 ,0])
+	q2 = np.array([2, -3, 1, 0])
+	np.testing.assert_allclose(q2, conv.quatmult(q1, q2), atol=tol)
 
+	# Case 2
+	q1 = np.array([-1, 2, 0, 4])
+	q2 = np.array([1, 0, 1, 0])
+	product = np.array([-1, -2, -1, 6])
+	np.testing.assert_allclose(product, conv.quatmult(q1, q2), atol=tol)
 
 #--------------------Miscellaneous-----------------------------
 
