@@ -87,6 +87,10 @@ def NED_to_ECI(vec_NED, glat, glon, GMST):
 #--------------------Quaternions-----------------------------
 
 def L(q):
+    """
+    Returns the left-hand matrix equivilent of multiplying by the quaternion q
+    eg. q1 * q2 := L(q1)*q2
+    """
     s = q[0]
     v = q[1:4]
     Vhat = skew(v)
@@ -98,6 +102,10 @@ def L(q):
 
 
 def R(q):
+    """
+    Returns the right-hand matrix equivilent of multiplying by the quaternion q
+    eg. q1 * q2 := R(q2)*q1
+    """
     s = q[0]
     v = q[1:4]
     Vhat = skew(v)
@@ -120,8 +128,7 @@ def quat(v):
 
 def conj(q):
     """
-    Function: conj
-        Returns the conjugate quaternion 
+    Returns the conjugate quaternion 
     """
     q = np.copy(q)
     q[1:4] = -q[1:4]
@@ -161,7 +168,6 @@ def skew(v):
         Calculates the skew matrix for cross-product calculation
 
     Inputs:
-
     """
     S = np.array([[0, -v[2], v[1]],
                  [v[2], 0, -v[0]],
@@ -172,7 +178,7 @@ def skew(v):
 def mjd_2_GMST(mjd):
     """
     Function: mjd_2_GMST
-        Calculates Greenwich Mean Sidereal Time
+        Calculates Greenwich Mean Sidereal Time from Modified Julian Date
 
     Inputs:
         mjd - modified julian day
@@ -185,33 +191,9 @@ def mjd_2_GMST(mjd):
     GMST = 67310.54841 + (876600*3600 + 8640184.812866) * d + 0.093104 * d**2 - 6.2 * 10**(-6)*d**3
     return (GMST % 86400) / 240 * (np.pi / 180)
 
-
-def mjd_2_GMST_2(mjd):
-    """
-    Calculates Greenwich Mean Sidereal Time from Modified Julian Day
-
-    Reference: AA 279A Lecture 6, Slide 3
-    """
-    d = mjd - 51544.5
-    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
-
-
-def mjd_2_GMST_3(mjd):
-    """
-    Reference: http://www.radiativetransfer.org/misc/atmlabdoc/atmlab/time/mjd2gmst.html
-    """
-    mjd2000 = 51544.5  # Modified Julian Date of Epoch J2000.0
-    int_mjd = floor(mjd)
-    frac_mjd = mjd - int_mjd
-    Tu = (int_mjd - mjd2000) / 36525.0
-    gmst = 24110.54841 + Tu * (8640184.812866 + Tu * (0.093104 - Tu * 6.2e-6))
-
-    # add the mean sidereal time interval from midnight to time
-    gmst = gmst+frac_mjd*86400*1.00273790934 % 86400
-
-    #convert to hours
-    gmst = gmst/3600;
-    return gmst
+    """ Alternative method returns almost the same value (Reference: AA 279A Lecture 6, Slide 3) """
+    # d = mjd - 51544.5
+    # return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
 
 
 def unit(ax):
@@ -232,8 +214,11 @@ def unit(ax):
     N[ax] = 1
     return N
 
-def cross3(v1, v2): 
 
+def cross3(v1, v2): 
+    """
+    Calcualtes the cross-product of two vectors in R^3
+    """
     x = ((v1[1] * v2[2]) - (v1[2] * v2[1]))
     y = ((v1[2] * v2[0]) - (v1[0] * v2[2]))
     z = ((v1[0] * v2[1]) - (v1[1] * v2[0]))
@@ -241,9 +226,23 @@ def cross3(v1, v2):
     return np.array([x, y, z])
 
 
-
 def norm2(v):
-
+    """
+    Caluclates the 2-norm of a vector
+    """
     return (v.T @ v) ** (0.5)
 
 
+
+# 6th Jan 2020, time = 0000
+# Reference: http://www.csgnetwork.com/siderealjuliantimecalc.html (Dubious accuracy)
+mjd = 58854
+GMST = 7.002996942  # hours
+GMST_Rad = GMST * (2*np.pi/23.9344696)
+print(GMST_Rad)
+
+
+g1 = mjd_2_GMST(mjd)
+print(g1)
+g2 = mjd_2_GMST_2(mjd)
+print(g2)
