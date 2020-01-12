@@ -140,7 +140,13 @@ def test_skew():
     np.testing.assert_allclose(zero, conv.skew(x)@x, atol=tol)
 
 def test_mjd_2_GMST():
-    assert True
+	# 6th Jan 2020, time = 0000
+	# Reference: http://www.csgnetwork.com/siderealjuliantimecalc.html (Dubious accuracy)
+	# WARNING: This test may be innacurate and ideally a better one can be created
+	mjd = 58854
+	GMST = 7.002996942  # hours
+	GMST_Rad = GMST * (2*np.pi/23.9344696)
+	np.testing.assert_allclose(GMST_Rad, conv.mjd_2_GMST(mjd), atol=tol)
 
 def test_unit():
     np.testing.assert_allclose(np.array([1,0,0]), conv.unit('x'), atol=tol)
