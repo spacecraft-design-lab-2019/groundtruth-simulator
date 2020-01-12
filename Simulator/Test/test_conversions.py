@@ -82,25 +82,33 @@ def test_quatrot():
     np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
 
 def test_L():
-	# Case 1 (Found by hand)
-	q = np.array([1, 2, 3, 4])
-	L = np.array([[1, -2, -3, -4],
-				[2, 1, -4, 3],
-				[3, 4, 1, -2],
-				[4, -3, 2, 1]])
-	np.testing.assert_allclose(L, conv.L(q), atol=tol)
+	# Case 1
+	q1 = np.array([1, 0 ,0 ,0])
+	q2 = np.array([2, -3, 1, 0])
+	np.testing.assert_allclose(q2, conv.L(q1) @ q2)
 
 	# Case 2 (Checked using https://www.vcalc.com/equation/?uuid=ca9f0f2b-7527-11e6-9770-bc764e2038f2)
-	q1 = np.array([1, 2, 3, 4])
+	q1 = np.array([-1, 2, 0, 4])
 	q2 = np.array([1, 0, 1, 0])
-	ans = np.array([-2, -2, 4, 6])
-	np.testing.assert_allclose(ans, conv.L(q1) @ q2, atol=tol)
+	product = np.array([-1, -2, -1, 6])
+	np.testing.assert_allclose(product, conv.L(q1) @ q2, atol=tol)
 
 def test_R():
-	assert True
+	# Case 1
+	q1 = np.array([1, 0 ,0 ,0])
+	q2 = np.array([2, -3, 1, 0])
+	np.testing.assert_allclose(q2, conv.R(q1) @ q2)
+
+	# Case 2 (Checked using https://www.vcalc.com/equation/?uuid=ca9f0f2b-7527-11e6-9770-bc764e2038f2)
+	q1 = np.array([-1, 2, 0, 4])
+	q2 = np.array([1, 0, 1, 0])
+	product = np.array([-1, -2, -1, 6])
+	np.testing.assert_allclose(product, conv.R(q2) @ q1, atol=tol)
 
 def test_quat():
-	assert True
+	v1 = np.ones(4)
+	q1 = np.ones(4) / 2
+	np.testing.assert_allclose(q1, conv.quat(v1), atol=tol)
 
 def test_conj():
 	assert True
