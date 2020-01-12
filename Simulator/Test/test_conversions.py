@@ -53,9 +53,13 @@ def test_ECEF_to_LLA():
     np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
 
 def test_NED_to_ECI():
+	# Case 1
     vec_NED = np.array([0, 0, 1])
     vec_ECI = np.array([-1, 0, 0])
     np.testing.assert_allclose(vec_ECI, conv.NED_to_ECI(vec_NED, 0, 0, 0), atol=tol)
+
+    #Case 2
+
 
 
 #--------------------Quaternions-----------------------------
@@ -78,7 +82,19 @@ def test_quatrot():
     np.testing.assert_allclose(ans, conv.quatrot(quat/np.linalg.norm(quat), vec), atol=tol)
 
 def test_L():
-	assert True
+	# Case 1 (Found by hand)
+	q = np.array([1, 2, 3, 4])
+	L = np.array([[1, -2, -3, -4],
+				[2, 1, -4, 3],
+				[3, 4, 1, -2],
+				[4, -3, 2, 1]])
+	np.testing.assert_allclose(L, conv.L(q), atol=tol)
+
+	# Case 2 (Checked using https://www.vcalc.com/equation/?uuid=ca9f0f2b-7527-11e6-9770-bc764e2038f2)
+	q1 = np.array([1, 2, 3, 4])
+	q2 = np.array([1, 0, 1, 0])
+	ans = np.array([-2, -2, 4, 6])
+	np.testing.assert_allclose(ans, conv.L(q1) @ q2, atol=tol)
 
 def test_R():
 	assert True
@@ -119,3 +135,28 @@ def test_cross3():
 def test_norm2():
     a = np.random.randn(3)
     np.testing.assert_allclose(np.linalg.norm(a), conv.norm2(a), atol=tol)
+
+
+
+def main():
+	""" Runs tests (for debugging the tests themselves) """
+	test_ECI_to_ECEF()
+	test_ECEF_to_ECI()
+	test_ECEF_to_LLA()
+	test_NED_to_ECI()
+	test_quatrot()
+	test_L()
+	test_R()
+	test_quat()
+	test_conj()
+	test_quatmult()
+	test_skew()
+	test_mjd_2_GMST()
+	test_unit()
+	test_cross3()
+	test_norm2()
+	print("All tests complete")
+
+
+if __name__ == "__main__":
+	main()
