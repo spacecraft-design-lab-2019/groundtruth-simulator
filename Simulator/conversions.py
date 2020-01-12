@@ -232,17 +232,3 @@ def norm2(v):
     """
     return (v.T @ v) ** (0.5)
 
-
-
-# 6th Jan 2020, time = 0000
-# Reference: http://www.csgnetwork.com/siderealjuliantimecalc.html (Dubious accuracy)
-mjd = 58854
-GMST = 7.002996942  # hours
-GMST_Rad = GMST * (2*np.pi/23.9344696)
-print(GMST_Rad)
-
-
-g1 = mjd_2_GMST(mjd)
-print(g1)
-g2 = mjd_2_GMST_2(mjd)
-print(g2)
