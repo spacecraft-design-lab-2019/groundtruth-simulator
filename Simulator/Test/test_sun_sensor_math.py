@@ -21,36 +21,32 @@ def pytest_addoption(parser):
 def cmdopt(request):
     return request.config.getoption("--cmdopt")
 
-def test_sense2vector_error():
+def test_sense2vector_error1():
     with pytest.raises(TypeError):
         measurements = 5
         r_Earth2Sun = [1,1,1]
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
-        
-        measurements = np.array([5,5,5])
-        r_Earth2Sun = [1,1,1]
-        r_sat = [1,1,1]
-        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
-        
+
+def test_sense2vector_error2():
+    with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = 1
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
-        
+
+def test_sense2vector_error3():
+    with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = np.array([1,1,1])
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
-        
+
+def test_sense2vector_error4():
+    with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = [1,1,1]
         r_sat = 1
-        assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
-        
-        measurements = [5,3,3,4,5,6]
-        r_Earth2Sun = [1,1,1]
-        r_sat = np.array([1,1,1])
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
     
 def test_vector2sense():
@@ -58,65 +54,23 @@ def test_vector2sense():
     
 def test_deltas2measure():
     deltas = [1,-1,1]
-    assert LA.deltas2measure(deltas) == [1,0,0,1,1,0]
+    b = all(LA.deltas2measure(deltas) == [1,0,0,1,1,0])
+    assert b == True
     
     deltas = [-1,-1,1]
-    assert LA.deltas2measure(deltas) == [0,1,0,1,1,0]
+    b = all(LA.deltas2measure(deltas) == [0,1,0,1,1,0])
+    assert b == True
     
     deltas = [-100,1,1]
-    assert LA.deltas2measure(deltas) == [0,100,1,0,1,0]
+    b = all(LA.deltas2measure(deltas) == [0,100,1,0,1,0])
+    assert b == True
     
     deltas = [-100,1]
-    assert LA.deltas2measure(deltas) == [0,100,1,0]
+    b = all(LA.deltas2measure(deltas) == [0,100,1,0])
+    assert b == True
     
     deltas = [-100]
-    assert LA.deltas2measure(deltas) == [0,100]
-    
-    
-def test_isEclipse2():
-    measurements = [3,3,3,3,3,3]
-    thresh = 5
-    assert LA.isEclipse2(measurements, thresh) == True
-    
-    measurements = [6,5,6,5,6,7]
-    thresh = 5
-    assert LA.isEclipse2(measurements, thresh) == False
-    
-    measurements = [6.1,101,198,32,.1,7]
-    thresh = 5
-    assert LA.isEclipse2(measurements, thresh) == False
-    
-    measurements = [6.14,186.1,198,32.5,.1,199]
-    thresh = 200.1
-    assert LA.isEclipse2(measurements, thresh) == True
-    
-    measurements = [6.14,186.1,198,32.5,.1,200.1]
-    thresh = 200.1
-    assert LA.isEclipse2(measurements, thresh) == False
-    
-    measurements = [6.14,186.1,198]
-    thresh = 200
-    assert LA.isEclipse2(measurements, thresh) == False
-    
-    measurements = [6.14,1861,198]
-    thresh = 200
-    assert LA.isEclipse2(measurements, thresh) == False
-    
-    measurements = [6.14,186.1,198,2000]
-    thresh = 200
-    assert LA.isEclipse2(measurements, thresh) == False
+    b = all(LA.deltas2measure(deltas) == [0,100])
+    assert b == True
 
-def test_isEclipse_error():
-    with pytest.raises(TypeError):    
-        measurements = [6.14,186.1,198,2000]
-        thresh = [200,4]
-        assert LA.isEclipse2(measurements, thresh)
-        
-        measurements = [6.14,186.1,198,2000]
-        thresh = [200,4,5]
-        assert LA.isEclipse2(measurements, thresh)
-        
-        measurements = [6.14,186.1,198,2000]
-        thresh = [200]
-        assert LA.isEclipse2(measurements, thresh)
     

@@ -51,8 +51,6 @@ def dot(v1, v2):
     return sum(x*y for x,y in zip(v1,v2))
 
 def scale(vec, scalar):
-    if type(scale)!=int and type(scale)!=float:
-        raise TypeError("scalar must be a int or float")
     return [x*scalar for x in vec]
 
 def sub(vec1, vec2):
@@ -79,12 +77,6 @@ def sense2vector(measurements, r_Earth2Sun, r_sat):
         sat2sun: satellite to sun 3-vector
     NOTE: This function can use numpy
     """
-    if type(measurements) != list:
-        raise TypeError('measurements must be a list') 
-    if type(r_Earth2Sun) != list:
-        raise TypeError('r_Earth2Sun must be a list') 
-    if type(r_sat) != list:
-        raise TypeError('r_sat must be a list')
         
     #unpack measurements  
     sun_sense1 = measurements[0] # + x
@@ -155,6 +147,7 @@ def isEclipse(r_sat, r_Earth2Sun, Re):
 
 def isEclipse2(measurements, thresh):
     """
+    USE all() INSTEAD
     Test measurements determines if sat is in eclipse
     returns True if there is eclipse (all values are below a threshold)
     returns False if NOT in eclipse with earth
@@ -168,7 +161,7 @@ def isEclipse2(measurements, thresh):
     if type(thresh)!=int and type(thresh)!=float:
         raise TypeError("thresh must be a int or float")
     for x in measurements:
-        if thresh>=x:
+        if thresh>x:
             return True
         else: 
             return False
@@ -180,6 +173,10 @@ print(a)
 deltas = [1,-1,1]
 print(deltas2measure(deltas))
 print(deltas2measure(deltas) == [1,0,0,1,1,0])
+
+vec = [1.09, -2.02, 3.04]
+scalar = 0
+print(scale(vec, scalar))
 """
 
 deltas = np.array([200,-190,300])

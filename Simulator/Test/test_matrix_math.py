@@ -10,6 +10,8 @@ sys.path.insert(0, groundtruth_dir)
 
 import sun_sensor_math as LA
 
+
+
 def pytest_addoption(parser):
     parser.addoption(
         "--cmdopt", action="store", default="type1", help="my option: type1 or type2"
@@ -20,7 +22,7 @@ def cmdopt(request):
     return request.config.getoption("--cmdopt")
 
 # usual convention is to name the function "test_<function_to_test>"
-def test_test_vecTimesMat():
+def test_vecTimesMat():
     x = [1, 1, 1]
     M = [[1,2,3],[4,5,6],[7,8,9]]
 
@@ -202,7 +204,7 @@ def test_add():
     v1 = [2,3,4]
     v2 = [0.234,0.456,0.54635]
     assert LA.add(v1,v2) == LA.add(v2,v1)
-    
+
     # ... more and more tests go here.
 
     # For function that have a known and desired error (i.e. incorrect bounds in multiplication)
