@@ -67,7 +67,7 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
     # alt = np.linalg.norm(r_ECEF) - rad_Earth
     alt = norm2(r_ECEF) - rad_Earth
 
-    return lat, lon, alt
+    return np.array([lat, lon, alt])
 
 
 def NED_to_ECI(vec_NED, glat, glon, GMST):

@@ -30,17 +30,17 @@ def test_coordinate_frame_conversions():
     ######### ECEF_to_LLA #######
     # Case 1
     x = np.array([1, 0, 0])
-    lla = [0, 0, 0]
+    lla = np.array([0, 0, 0])
     np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
 
     # Case 2
     x = np.array([0, 0, 1])
-    lla = [np.pi/2, 0, 0]
+    lla = np.array([np.pi/2, 0, 0])
     np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
 
     # Case 3
     x = np.array([0, 1, 0])
-    lla = [0, np.pi/2, 0]
+    lla = np.array([0, np.pi/2, 0])
     np.testing.assert_allclose(lla, conv.ECEF_to_LLA(x, 1), atol=tol)
 
     ######### NED_to_ECI #######
