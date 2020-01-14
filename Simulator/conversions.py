@@ -135,12 +135,12 @@ def conj(q):
     Calculates the quaternion conjugate
     """
     q = np.copy(q)
-    q[1:4] = -q[1:4]
+    q[0] = -q[0]
     return q
 
 def quatrot(q1, q2):
     """
-    Rotates a vector using a quaternion.
+    Rotates a vector `q2` using the quaternion `q1`.
     """
     vector = False
     if len(q2) == 3:
