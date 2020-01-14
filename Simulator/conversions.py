@@ -102,7 +102,7 @@ def L(q):
 
 
 def R(q):
-        """
+    """
     Matrix equivilent to right-hand quaternion for mulitplication
     (eg. q1 * q2 = R(q2)q1)
     """
@@ -117,17 +117,19 @@ def R(q):
 
 def quat(v):
     """
-    Normalizes a vector of length(4)
+    Normalizes a quaternion (or any 4d vector)
     """
     assert len(v) == 4, f"can't make a quaternion out of: {v}"
     N = np.linalg.norm(v)
     assert N > 0, "Norm of input is 0. Can't make a quaternion out of this! Got {}".format(v)
     return v / N
 
-
 def conj(q):
+    """
+    Calculates the quaternion conjugate
+    """
     q = np.copy(q)
-    q[0] = -q[0]
+    q[1:4] = -q[1:4]
     return q
 
 def quatrot(q1, q2):
@@ -150,7 +152,13 @@ def quatmult(q1, q2):
     """
     Multiplies two quaternions.
     """
-    return L(q1) @ q2
+    s = q1[0]
+    v = q1[1:4]
+    L = np.array([[s, -v[0], -v[1], -v[2]], 
+            [v[0], s, -v[2], v[1]], 
+            [v[1], v[2], s, -v[0]], 
+            [v[2], -v[1], v[0], s]])
+    return L @ q2
 
 
 #--------------------Miscellaneous-----------------------------
@@ -167,7 +175,6 @@ def skew(v):
                  [v[2], 0, -v[0]],
                  [-v[1], v[0], 0]])
     return S
-
 
 def mjd_2_GMST(mjd):
     """
@@ -206,81 +213,18 @@ def unit(ax):
     return N
 
 def cross3(v1, v2): 
-
-
+    """
+    Calculates the cross-product of a pair of vectors in R^3
+    """
     x = ((v1[1] * v2[2]) - (v1[2] * v2[1]))
     y = ((v1[2] * v2[0]) - (v1[0] * v2[2]))
     z = ((v1[0] * v2[1]) - (v1[1] * v2[0]))
 
     return np.array([x, y, z])
 
-def conj(q):
-    q = np.copy(q)
-    q[1:4] = -q[1:4]
-    return q
-
-
-
-
-
-
-def quatmult(q1, q2):
-    """
-    Multiplies two quaternions.
-    """
-    return L(q1) @ q2
-
-
-#--------------------Miscellaneous-----------------------------
-
-def skew(v):
-    """
-    Function: skew
-        Calculates the skew matrix for cross-product calculation
-
-    Inputs:
-
-    """
-    S = np.array([[0, -v[2], v[1]],
-                 [v[2], 0, -v[0]],
-                 [-v[1], v[0], 0]])
-    return S
-
-
-def mjd_2_GMST(mjd):
-    # Reference: AA 279A Lecture 6, Slide 3
-    d = mjd - 51544.5
-    return math.fmod(np.radians(280.4606 + 360.9856473*d), 2*np.pi)
-
-
-
-def unit(ax):
-    """
-    make a unit vector from int or str input (0, 1, 2) / ('x', 'y', 'z')
-    """
-    if isinstance(ax, str):
-        if ax == 'x':
-            ax = 0
-        elif ax == 'y':
-            ax = 1
-        elif ax == 'z':
-            ax = 2
-        else:
-            raise(Exception("invalid unit axis input {}".format(ax)))
-
-    N = np.zeros(3)
-    N[ax] = 1
-    return N
-
-def cross3(v1, v2): 
-
-
-    x = ((v1[1] * v2[2]) - (v1[2] * v2[1]))
-    y = ((v1[2] * v2[0]) - (v1[0] * v2[2]))
-    z = ((v1[0] * v2[1]) - (v1[1] * v2[0]))
-
-    return np.array([x, y, z])
 
 def norm2(v):
-
+    """
+    Caluclates the 2-norm of a vector
+    """
     return (v.T @ v) ** (0.5)
