@@ -11,14 +11,12 @@ import astropy_sun_position as asp
 tol = 1e-6
 
 
-def test_approx_sun_position_ECI(MJD):
-	
-
-
-
-def test_sun_position_ECI(MJD):
+def test_approx_sun_position_ECI():
 	assert True
 
-def test_GCRS_to_ECI(r_GCRS,MJD):
+def test_sun_position_ECI():
+	assert True
+
+def test_GCRS_to_ECI():
 	assert True
 

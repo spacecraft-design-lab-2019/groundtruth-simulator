@@ -103,13 +103,14 @@ def test_R():
 	np.testing.assert_allclose(product, conv.R(q2) @ q1, atol=tol)
 
 def test_quat():
+	# Case 1
 	v1 = np.ones(4)
 	q1 = np.ones(4) / 2
 	np.testing.assert_allclose(q1, conv.quat(v1), atol=tol)
 
 def test_conj():
 	# Case 1
-	q = np.zeros(4)
+	q = np.array([1, 0, 0, 0])
 	np.testing.assert_allclose(q, conv.conj(q), atol=tol)
 
 	# Case 2
@@ -146,7 +147,7 @@ def test_mjd_2_GMST():
 	mjd = 58854
 	GMST = 7.002996942  # hours
 	GMST_Rad = GMST * (2*np.pi/23.9344696)
-	np.testing.assert_allclose(GMST_Rad, conv.mjd_2_GMST(mjd), atol=tol)
+	np.testing.assert_allclose(GMST_Rad, conv.mjd_2_GMST(mjd), atol=1e-2)
 
 def test_unit():
     np.testing.assert_allclose(np.array([1,0,0]), conv.unit('x'), atol=tol)
@@ -162,27 +163,3 @@ def test_norm2():
     a = np.random.randn(3)
     np.testing.assert_allclose(np.linalg.norm(a), conv.norm2(a), atol=tol)
 
-
-
-def main():
-	""" Runs tests (for debugging the tests themselves) """
-	test_ECI_to_ECEF()
-	test_ECEF_to_ECI()
-	test_ECEF_to_LLA()
-	test_NED_to_ECI()
-	test_quatrot()
-	test_L()
-	test_R()
-	test_quat()
-	test_conj()
-	test_quatmult()
-	test_skew()
-	test_mjd_2_GMST()
-	test_unit()
-	test_cross3()
-	test_norm2()
-	print("All tests complete")
-
-
-if __name__ == "__main__":
-	main()
