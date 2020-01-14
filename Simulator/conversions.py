@@ -154,17 +154,11 @@ def quatrot(q1, q2):
     else:
         return rotated
 
-def quatmult(q1, q2):
-    """
-    Multiplies two quaternions.
-    """
-    s = q1[0]
-    v = q1[1:4]
-    L = np.array([[s, -v[0], -v[1], -v[2]],
-            [v[0], s, -v[2], v[1]],
-            [v[1], v[2], s, -v[0]],
-            [v[2], -v[1], v[0], s]])
-    return L @ q2
+# def quatmult(q1, q2):
+#     """
+#     Multiplies two quaternions as in q1*q2 -> L(q1)*q2.
+#     """
+#     return L(q1) @ q2
 
 
 #--------------------Miscellaneous-----------------------------
