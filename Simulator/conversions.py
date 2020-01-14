@@ -73,7 +73,13 @@ def ECEF_to_LLA(r_ECEF, rad_Earth):
 def NED_to_ECI(vec_NED, glat, glon, GMST):
     """
     Function: NED_to_ECI
-        Converts a vector in NED to ECI coordinates.
+        Converts a vector from NED to ECI coordinates.
+
+    Inputs:
+        vec_NED: position vector in NED coordinates
+        glat: geodetic latitude (radians)
+        glon: geodetic longitude (radians)
+        GMST: Greenwich mean sidereal time (radians)
     """
     R = np.array([[-np.sin(glat)*np.cos(glon), -np.sin(glon), -np.cos(glat)*np.cos(glon)],
                   [-np.sin(glat)*np.sin(glon),  np.cos(glon), -np.cos(glat)*np.sin(glon)],
@@ -94,9 +100,9 @@ def L(q):
     """
     s = q[0]
     v = q[1:4]
-    L = np.array([[s, -v[0], -v[1], -v[2]], 
-            [v[0], s, -v[2], v[1]], 
-            [v[1], v[2], s, -v[0]], 
+    L = np.array([[s, -v[0], -v[1], -v[2]],
+            [v[0], s, -v[2], v[1]],
+            [v[1], v[2], s, -v[0]],
             [v[2], -v[1], v[0], s]])
     return L
 
@@ -108,9 +114,9 @@ def R(q):
     """
     s = q[0]
     v = q[1:4]
-    R = np.array([[s, -v[0], -v[1], -v[2]], 
-        [v[0], s, v[2], -v[1]], 
-        [v[1], -v[2], s, v[0]], 
+    R = np.array([[s, -v[0], -v[1], -v[2]],
+        [v[0], s, v[2], -v[1]],
+        [v[1], -v[2], s, v[0]],
         [v[2], v[1], -v[0], s]])
     return R
 
@@ -154,9 +160,9 @@ def quatmult(q1, q2):
     """
     s = q1[0]
     v = q1[1:4]
-    L = np.array([[s, -v[0], -v[1], -v[2]], 
-            [v[0], s, -v[2], v[1]], 
-            [v[1], v[2], s, -v[0]], 
+    L = np.array([[s, -v[0], -v[1], -v[2]],
+            [v[0], s, -v[2], v[1]],
+            [v[1], v[2], s, -v[0]],
             [v[2], -v[1], v[0], s]])
     return L @ q2
 
@@ -212,7 +218,7 @@ def unit(ax):
     N[ax] = 1
     return N
 
-def cross3(v1, v2): 
+def cross3(v1, v2):
     """
     Calculates the cross-product of a pair of vectors in R^3
     """
