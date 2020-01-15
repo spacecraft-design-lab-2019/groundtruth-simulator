@@ -6,9 +6,10 @@ import conversions as conv
 import pyIGRF
 import sun_model
 import math
+import os
 import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
-sys.path.append('./GNC')
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
 import magnetic_field_cpp as mfcpp
 #--------------------Spacecraft Structure----------------------------
 
