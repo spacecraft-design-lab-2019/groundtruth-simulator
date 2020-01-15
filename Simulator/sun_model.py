@@ -41,11 +41,11 @@ def sun_position_ECI(dt):
     sun = get_sun(t)
 
     r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
-    r_ECI = GCRS_to_ECI(r_GCRS,MJD)
+    r_ECI = GCRS_to_ECI(r_GCRS)
     return r_ECI
 
 
-def GCRS_to_ECI(r_GCRS,MJD):
+def GCRS_to_ECI(r_GCRS):
     """
     Converts from GCRS to ECI.
 

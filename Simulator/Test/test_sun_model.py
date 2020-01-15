@@ -7,10 +7,10 @@ import julian
 
 def test_sun_position_ECI():
 
-	MJD = 54000
+	mjd = 54000
 	dt = julian.from_jd(mjd, fmt='mjd')
 
-	a = sun_model.approx_sun_position_ECI(MJD)
+	a = sun_model.approx_sun_position_ECI(mjd)
 	b = sun_model.sun_position_ECI(dt)
 	angle_diff = math.acos(np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b)))*180/math.pi
 
