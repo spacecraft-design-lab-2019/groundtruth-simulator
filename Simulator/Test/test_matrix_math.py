@@ -2,24 +2,12 @@
 import pytest
 import os, sys, inspect
 import math
+import sun_sensor_math as LA
 
 # add current folder to the path
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
 sys.path.insert(0, groundtruth_dir)
-
-import sun_sensor_math as LA
-
-
-
-def pytest_addoption(parser):
-    parser.addoption(
-        "--cmdopt", action="store", default="type1", help="my option: type1 or type2"
-    )
-
-@pytest.fixture
-def cmdopt(request):
-    return request.config.getoption("--cmdopt")
 
 # usual convention is to name the function "test_<function_to_test>"
 def test_vecTimesMat():

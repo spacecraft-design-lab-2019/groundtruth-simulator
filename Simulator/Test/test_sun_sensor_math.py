@@ -12,37 +12,25 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 groundtruth_dir = os.path.dirname(currentdir)
 sys.path.insert(0, groundtruth_dir)
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--cmdopt", action="store", default="type1", help="my option: type1 or type2"
-    )
-
-@pytest.fixture
-def cmdopt(request):
-    return request.config.getoption("--cmdopt")
-
-def test_sense2vector_error1():
+def test_sense2vector_error():
     with pytest.raises(TypeError):
         measurements = 5
         r_Earth2Sun = [1,1,1]
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
 
-def test_sense2vector_error2():
     with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = 1
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
 
-def test_sense2vector_error3():
     with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = np.array([1,1,1])
         r_sat = [1,1,1]
         assert LA.sense2vector(measurements, r_Earth2Sun, r_sat)
 
-def test_sense2vector_error4():
     with pytest.raises(TypeError):        
         measurements = [5,3,3,4,5,6]
         r_Earth2Sun = [1,1,1]
