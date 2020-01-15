@@ -21,7 +21,6 @@ class SpacecraftStructure():
         self.cD = cD
         self.mass = mass # kg
         self.faces = self.make_faces()
-        # self.surfArea = sum(f.A for f in faces)
 
     def aerodrag(self, rho, vRel):
         """
