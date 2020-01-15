@@ -5,16 +5,9 @@ class SpacecraftSensors():
     A class to initialize and store spacecraft sensors
     """
     def __init__(self, mag_params, gyro_params, sun_params):
-        self.magnetometer = withParams(mag_params)
-        self.gyroscope = withParams(gyro_params)
-        self.sunsensor = withParams(sun_params)
-
-    def withParams(self, params):
-        sensor = Sensor()
-        sensor.errormodel.T = getTmatrix(params["scalefactor"], params["crossaxis_sensitivity"])
-        sensor.errormodel.b = params["b"]
-        sensor.errormodel.cov = params["cov"]
-        return sensor
+        self.magnetometer = Sensor.withParams(mag_params)
+        self.gyroscope = Sensor.withParams(gyro_params)
+        self.sunsensor = Sensor.withParams(sun_params)
         
 
 class Sensor():
@@ -40,6 +33,12 @@ class Sensor():
             self.errormodel = errormodel
 
         self.name = name
+
+    @classmethod
+    def withParams(cls, params):
+        T = getTmatrix(params["scalefactor"], params["crossaxis_sensitivity"])
+        errormodel = LinearErrorModel(T, params["b"], params["cov"])
+        return cls(errormodel=errormodel)
 
     def measure(self, x):
         return self.errormodel.measure(x)
