@@ -19,8 +19,8 @@ tstart = datetime(2019, 12, 30, 00, 00, 00)
 tstep = .1                     # [sec] - 1 Hz
 MJDstart = time_functions_cpp.date2MJD(12, 30, 2019, 0, 0, 0)
 # Initial Spacecraft Attitude
-q_i = np.array([sqrt(3.0)/3.0, sqrt(3.0)/3.0, sqrt(3.0)/3.0, 0])    # quaternion
-w_i = np.array([.01, .05, -.03])   # radians/sec
+q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    # quaternion
+w_i = np.array([.03, .03, .03])   # radians/sec
 
 # Spacecraft Properties
 I = np.array([[17,0,0],[0,18,0],[0,0,22]])
