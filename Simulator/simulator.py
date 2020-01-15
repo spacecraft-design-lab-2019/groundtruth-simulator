@@ -24,7 +24,7 @@ class Simulator():
 		self.t = config.tstart
 
 
-	def step(self, cmd, tstep):
+	def step(self, tstep, cmd):
 		"""
 		Function: step
 			Propagates dynamics & models sensors for single step

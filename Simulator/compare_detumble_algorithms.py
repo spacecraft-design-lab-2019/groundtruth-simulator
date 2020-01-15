@@ -47,9 +47,8 @@ sim = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim.step(config.tstep, L_cmd)
+	sensors, B_ECI, B_body = sim.step(config.tstep, L_cmd)
 	states_B_dot[i, :] = sim.state
-	B_body = sim.debug_output[1]
 	B_body_history[i,:] = B_body
 
 	# command torque based on sensors (currently no noise addition 11/17)
@@ -74,9 +73,9 @@ sim2 = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim2.step(config.tstep, L_cmd)
+	sensors, B_ECI, B_body = sim2.step(config.tstep, L_cmd)
 	states_B_cross_bang_bang[i, :] = sim2.state
-	B_body = sim2.debug_output[1]
+
 
 	# command torque based on sensors (currently no noise addition 11/17)
 	gain = 1 #.0143	#4e-2
@@ -95,9 +94,8 @@ sim3 = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim3.step(config.tstep, L_cmd)
+	sensors, B_ECI, B_body = sim3.step(config.tstep, L_cmd)
 	states_B_cross_directional[i, :] = sim3.state
-	B_body = sim3.debug_output[1]
 
 	# command torque based on sensors (currently no noise addition 11/17)
 	gain = 1 #.0143	#4e-2

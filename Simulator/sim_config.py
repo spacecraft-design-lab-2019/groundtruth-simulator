@@ -16,10 +16,13 @@ tstep = .1                     # [sec] - 1 Hz
 
 # Initial Spacecraft Attitude
 q_i = np.array([1, 0, 0, 0])    # quaternion
-w_i = np.array([.01, .05, -.03])   # radians/sec
+w_i = np.array([.03, .03, .03])   # radians/sec
 
 # Spacecraft Properties
-I = np.array([[17,0,0],[0,18,0],[0,0,22]])
+Ixx = 0.34375
+Iyy = 0.34375
+Izz = 0.34375
+I = np.array([[Ixx, 0.0, 0.0],[0.0, Iyy, 0.0], [0.0, 0.0, Izz]])
 mass = 1.0 # kg
 
 # Sensor Parameters
