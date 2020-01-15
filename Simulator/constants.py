@@ -183,10 +183,10 @@ class Environment():
         Inputs:
             r_ECI: ECI position of satellite
         Output:
-            position vector (3-vector) from satellite to sun
+            position unit vector (3-vector) from satellite to sun
         """
-        jdate = julian.to_jd(self.datetime, fmt='jd')
-        earth2sun = sun_model.sun1(jdate)
+        mjd = julian.to_jd(self.datetime, fmt='mjd')
+        earth2sun = sun_model.sun_position_ECI(mjd)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
 

@@ -61,10 +61,7 @@ class Simulator():
 		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order)
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 
-		# S_ECI = sun_utils_cpp.sun_position(self.MJD) 
-		# S_ECI = sun_utils_cpp.sat_sun_vect(self.state[0:3], self.MJD) 
-		S_ECI = sun_position_ECI(self.MJD)
-		S_ECI = S_ECI / np.linalg.norm(S_ECI)
+		S_ECI = self.environment.sunVector(self.state[1:3])		
 		S_body = conv.quatrot(conv.conj(self.state[3:7]), S_ECI)
 
 
