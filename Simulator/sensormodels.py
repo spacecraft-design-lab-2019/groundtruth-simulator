@@ -120,16 +120,16 @@ def whitenoise2(mean = 0, cov = 0, dims = None):
     return np.random.multivariate_normal(mean*np.ones(dims), cov)
     
 
-def getTmatrix(scaleF, caSense):
+def getTmatrix(scalefactor, crossaxis_sensitivity):
     """
     Inputs:
-        scaleF: scale factor for a particular sensor
-        caSense: cross-axis sensitivity for particular sensor
+        scalefactor: scale factor for a particular sensor
+        crossaxis_sensitivity: cross-axis sensitivity for particular sensor
     Outputs:
         T-matrix, combined misalignment and scaling matrix for linear error model
     """
-    scaleFmat = np.eye(3) + np.diag(whitenoise(scaleF,3))
-    misalign = np.reshape(np.random.multivariate_normal(np.zeros(9),caSense*np.eye(9)),(3,3))
+    scaleFmat = np.eye(3) + np.diag(whitenoise(scalefactor,3))
+    misalign = np.reshape(np.random.multivariate_normal(np.zeros(9),crossaxis_sensitivity*np.eye(9)),(3,3))
     np.fill_diagonal(misalign, 0)
     T = np.dot(scaleFmat,misalign)
     return T

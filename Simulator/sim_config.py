@@ -29,22 +29,22 @@ mass = 1.0 # kg
 
 # Sensor Parameters
 gyro_params = {
-	"scaleF" : 0.002,
-	"caSense" : 0.02,
-	"b" : np.sqrt(.0022), # will be mulitplied to np.random.rand(3)
+	"scalefactor" : 0.002,
+	"crossaxis_sensitivity" : 0.02,
+	"b" : sqrt(.0022), # will be mulitplied to np.random.rand(3)
 	"cov" : 0.000000000694444
 }
 
 mag_params = {
-	"scaleF" : 0.02,
-	"caSense" : 0.02,
+	"scalefactor" : 0.02,
+	"crossaxis_sensitivity" : 0.02,
 	"b" : 40e3,  # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
 
 sun_params = {
-	"scaleF" : 0,
-	"caSense" : 0.02,
+	"scalefactor" : 0,
+	"crossaxis_sensitivity" : 0.02,
 	"b" : 1.0, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }

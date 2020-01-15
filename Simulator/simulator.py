@@ -2,7 +2,7 @@
 
 import numpy as np
 import conversions as conv
-from propagate_step import *
+from propagate_step import sgp4_step, rk4_step, calc_statedot
 from constants import SpacecraftStructure, Environment
 from sensormodels import SpacecraftSensors
 import sys
