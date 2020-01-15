@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 groundtruth_dir = os.path.dirname(currentdir)
 sys.path.insert(0, groundtruth_dir)
 
-import astropy_sun_position as asp
+import sun_model
 tol = 1e-6
 
 
