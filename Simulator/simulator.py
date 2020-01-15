@@ -8,7 +8,6 @@ from sensormodels import SpacecraftSensors
 import sys
 sys.path.append('/home/eleboeuf/Documents/GNC')
 import sun_utils_cpp
-from astropy_sun_position import sun_position_ECI
 
 class Simulator():
 	"""
