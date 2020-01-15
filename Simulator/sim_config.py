@@ -2,11 +2,11 @@
 
 import numpy as np
 from datetime import datetime
+import os
 import sys
+import julian
 from math import sqrt
-sys.path.append('/home/eleboeuf/Documents/GNC')
-sys.path.append('./GNC')
-import time_functions_cpp
+
 #------------------- Configuration Parameters -------------------
 
 # Seed Initial Position/Velocity with TLE - BEESAT-1
@@ -17,7 +17,8 @@ line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102'
 # Simulation Parameters
 tstart = datetime(2019, 12, 30, 00, 00, 00)
 tstep = .1                     # [sec] - 1 Hz
-MJDstart = time_functions_cpp.date2MJD(12, 30, 2019, 0, 0, 0)
+MJDstart = julian.to_jd(tstart, fmt='mjd')
+
 # Initial Spacecraft Attitude
 q_i = np.array([sqrt(3.0)/3.0, sqrt(3.0)/3.0, sqrt(3.0)/3.0, 0])    # quaternion
 w_i = np.array([.01, .05, -.03])   # radians/sec
