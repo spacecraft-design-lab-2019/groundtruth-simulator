@@ -1,7 +1,16 @@
+import pytest
+import os, sys, inspect
 import math
 import numpy as np
-import sun_model
 import julian
+
+# add current folder to the path
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+groundtruth_dir = os.path.dirname(currentdir)
+sys.path.insert(0, groundtruth_dir)
+
+import sun_model
+
 
 # angle between two vectors
 
