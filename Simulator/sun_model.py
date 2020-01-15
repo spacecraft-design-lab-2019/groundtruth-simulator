@@ -27,17 +27,17 @@ def approx_sun_position_ECI(MJD):
 
     return r_vec
 
-def sun_position_ECI(MJD):
+def sun_position_ECI(dt):
     """
     Queries astropy module for ECI sun position.
 
     Inputs:
-        t - time in MJD
+        dt - datetime object
     Outputs:
         rECI - position vector to the sun in ECI coordinates (km)
     """
     AU_km = 149597870.7
-    t = Time(MJD, scale='utc', format='mjd')
+    t = Time(dt, scale='utc', format='datetime')
     sun = get_sun(t)
 
     r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])

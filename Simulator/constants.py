@@ -185,8 +185,7 @@ class Environment():
         Output:
             position unit vector (3-vector) from satellite to sun
         """
-        mjd = julian.to_jd(self.datetime, fmt='mjd')
-        earth2sun = sun_model.sun_position_ECI(mjd)
+        earth2sun = sun_model.sun_position_ECI(self.datetime)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
 
