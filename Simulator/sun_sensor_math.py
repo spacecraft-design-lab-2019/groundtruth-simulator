@@ -100,12 +100,11 @@ def vector2sense(sat2sun, r_sat, q_eci2body, albedo = True):
         R_eci2body: rotation matrix to convert to body frame
     """
     sat2sun = normalize(sat2sun) #make sure vec is normalized
-    sat2sun_eci = conv.quatrot(conv.conj(q_eci2body),sat2sun)
     if albedo:
-        alb = scale(normalize(r_sat), 0.2) #eci
-        irrad_vec = conv.quatrot(q_eci2body, add(sat2sun_eci, alb)) 
+        alb = conv.quatrot(q_eci2body, scale(normalize(r_sat), 0.2)) #eci
+        irrad_vec = add(sat2sun, alb) 
     else: 
-        irrad_vec = conv.quatrot(q_eci2body, sat2sun_eci)
+        irrad_vec = sat2sun
         
     return deltas2measure(irrad_vec)
 
@@ -158,13 +157,5 @@ def isEclipse(r_sat, r_Earth2Sun, Re):
 #print(vec)
 
 
-mjd = 54000
-r_Earth2Sun = sun.sun_position_ECI(mjd)
-r_sat = [8000,0,0]
-q = [1,0,0,0]
-vec = [0.001,0,0]
-print(norm(vec))
-print(normalize(vec))
 
-#np.testing.assert_allclose(out_r_Earth2Sun, r_Earth2Sun, atol = 10e-5)
-#assert np.testing.assert_allclose(out_meas, in_meas, atol = 10e-5)
+
