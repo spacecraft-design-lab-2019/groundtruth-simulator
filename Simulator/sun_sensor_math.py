@@ -68,7 +68,7 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
-def sense2vector(meas, r_Earth2Sun, r_sat, q_eci2body, albedo = True):
+def sense2vector(meas, r_sat, q_eci2body, albedo = True):
     """
     Inputs:
         meas: raw measurement values from 6 sun sensors. Arranged: [x, -x, y, -y, z, -z]
@@ -102,18 +102,14 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
     r_sat_body = matTimesVec(R_eci2body, r_sat)
     albedo = scale(r_sat_body, 0.2)
     irrad_vec = add(sat2sun, albedo)
-    delta1 = irrad_vec[0]
-    delta2 = irrad_vec[1]
-    delta3 = irrad_vec[2]
-
-    return deltas2measure([delta1,delta2,delta3])
+    return deltas2measure(irrad_vec)
 
 def deltas2measure(deltas):
     """
     Helper function to arrange vector of measurements from adjusted light vector
     Can create a measurement list regardless of input list length
     """
-    measurements = np.array([])
+    measurements = []
 
     for d in deltas:
         if d < 0:
