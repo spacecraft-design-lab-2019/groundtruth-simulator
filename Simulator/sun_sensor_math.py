@@ -4,7 +4,7 @@ Created on Thu Nov 14 23:06:02 2019
 
 """
 import math
-import numpy as np 
+import numpy as np
 
 #placeholder function, need to fix
 def eci2body(vec, R):
@@ -67,27 +67,19 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
-def sense2vector(measurements, r_Earth2Sun, r_sat):
+def sense2vector(meas, r_Earth2Sun, r_sat):
     """
     Inputs:
-        measurements: raw measurement values from 6 sun sensors
+        meas: raw measurement values from 6 sun sensors. Arranged: [x, -x, y, -y, z, -z]
         r_Earth2Sun: Earth to Sun vector
         r_sat: position of satellite in ECI
     Outputs:
         sat2sun: satellite to sun 3-vector
     NOTE: This function can use numpy
     """
-        
-    #unpack measurements  
-    sun_sense1 = measurements[0] # + x
-    sun_sense2 = measurements[1] # - x
-    sun_sense3 = measurements[2] # + y
-    sun_sense4 = measurements[3] # - y
-    sun_sense5 = measurements[4] # + z
-    sun_sense6 = measurements[5] # - z
 
-    irrad_vec = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6] #create irradiance vector from sensor values
-    irrad_vec = normalize(irrad_vec) #normalize irradiance vector
+    irrad_vec = [meas[0] - meas[1],  meas[2] - meas[3], meas[4] - meas[5]] #create irradiance vector from sensor values
+    irrad_vec = normalize(irrad_vec) # normalize irradiance vector
 
     albedo = eci2body(scale(normalize(r_sat), 0.2)) #convert to body frame
     sat2sun = normalize(sub(irrad_vec, albedo)) #vector subt. irradiance vec and albedo vec, normalize
@@ -103,13 +95,14 @@ def vector2sense(sat2sun, r_sat, R_eci2body):
         R_eci2body: rotation matrix to convert to body frame
     """
 
-    r_sat_body = dot(R_eci2body, scale(r_sat, 0.2))
-    irrad_vec = add(sat2sun, r_sat_body)
+    r_sat_body = matTimesVec(R_eci2body, r_sat)
+    albedo = scale(r_sat_body, 0.2)
+    irrad_vec = add(sat2sun, albedo)
     delta1 = irrad_vec[0]
     delta2 = irrad_vec[1]
     delta3 = irrad_vec[2]
-    
-    return deltas2measure(np.array([delta1,delta2,delta3]))
+
+    return deltas2measure([delta1,delta2,delta3])
 
 def deltas2measure(deltas):
     """
@@ -118,16 +111,14 @@ def deltas2measure(deltas):
     """
     measurements = np.array([])
 
-    for i in range(len(deltas)):
-        if deltas[i] <0:
-            measurements = np.append(measurements, 0)
-            measurements = np.append(measurements, abs(deltas[i]))
+    for d in deltas:
+        if d < 0:
+            measurements += [0, abs(d)]
         else:
-            measurements = np.append(measurements, abs(deltas[i]))
-            measurements = np.append(measurements, 0)
+            measurements += [abs(d), 0]
 
-    return measurements
-    
+    return np.array(measurements)
+
 
 def isEclipse(r_sat, r_Earth2Sun, Re):
     """
