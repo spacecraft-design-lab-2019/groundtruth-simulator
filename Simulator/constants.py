@@ -8,6 +8,7 @@ import sun_model
 import math
 import sys
 sys.path.append('/home/eleboeuf/Documents/GNC')
+sys.path.append('./GNC')
 import magnetic_field_cpp as mfcpp
 #--------------------Spacecraft Structure----------------------------
 
@@ -146,7 +147,7 @@ class Environment():
 
         return rho
 
-    def magfield_lookup(self, r_ECI):
+    def magfield_lookup(self, r_ECI, order):
         """
         Function: magfield_lookup
 
@@ -170,7 +171,9 @@ class Environment():
         year = self.datetime.year
 
         # field = pyIGRF.igrf_value(lat, lon, alt, year)      # pyIGRF uses degrees!!!!
-        B_NED = mfcpp.get_magnetic_field(lat, lon, alt, year)
+
+        B_NED = mfcpp.get_magnetic_field(lat, lon, alt, year, order)
+
         # B_NED = np.array([field[3], field[4], field[5]])
         B_ECI = conv.NED_to_ECI(B_NED, glat, glon, GMST)
         return B_ECI
