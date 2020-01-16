@@ -67,22 +67,25 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
-def sense2vector(meas, r_Earth2Sun, r_sat):
+def sense2vector(meas, r_Earth2Sun, r_sat, albedo = True):
     """
     Inputs:
         meas: raw measurement values from 6 sun sensors. Arranged: [x, -x, y, -y, z, -z]
         r_Earth2Sun: Earth to Sun vector
         r_sat: position of satellite in ECI
     Outputs:
-        sat2sun: satellite to sun 3-vector
-    NOTE: This function can use numpy
+        sat2sun: satellite to sun 3-vector (in body frame)
     """
 
     irrad_vec = [meas[0] - meas[1],  meas[2] - meas[3], meas[4] - meas[5]] #create irradiance vector from sensor values
     irrad_vec = normalize(irrad_vec) # normalize irradiance vector
 
-    albedo = eci2body(scale(normalize(r_sat), 0.2)) #convert to body frame
-    sat2sun = normalize(sub(irrad_vec, albedo)) #vector subt. irradiance vec and albedo vec, normalize
+    if albedo:
+        alb = eci2body(scale(normalize(r_sat), 0.2)) #convert to body frame
+        sat2sun = normalize(sub(irrad_vec, alb)) #vector subt. irradiance vec and albedo vec, normalize
+    else:
+        sat2sun = irrad_vec
+
     return sat2sun #in body frame
 
 def vector2sense(sat2sun, r_sat, R_eci2body):
