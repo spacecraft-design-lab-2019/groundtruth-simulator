@@ -89,19 +89,22 @@ def sense2vector(meas, r_sat, q_eci2body, albedo = True):
 
     return sat2sun #in body frame
 
-def vector2sense(sat2sun, r_sat, R_eci2body):
+def vector2sense(sat2sun, r_sat, q_eci2body, albedo = True):
     """
     Convert the true sun vector to an array of voltages corresponding to sun sensor measurements
 
     Inputs:
-        sat2sun: satellite to sun vector
+        sat2sun: satellite to sun vector in body
         r_sat: position of satellite in eci
         R_eci2body: rotation matrix to convert to body frame
     """
-
-    r_sat_body = matTimesVec(R_eci2body, r_sat)
-    albedo = scale(r_sat_body, 0.2)
-    irrad_vec = add(sat2sun, albedo)
+    
+    if albedo:
+        alb = scale(r_sat, 0.2) #eci
+        irrad_vec = conv.quatrot(q_eci2body, add(sat2sun, alb)) 
+    else: 
+        irrad_vec = conv.quatrot(q_eci2body, sat2sun)
+        
     return deltas2measure(irrad_vec)
 
 def deltas2measure(deltas):
@@ -138,3 +141,18 @@ def isEclipse(r_sat, r_Earth2Sun, Re):
 
 
 
+in_meas = [2, 1, 100, 100, 0, 0]
+r_sat = [8000, 0, 0]
+q = [1, 0, 0, 0] # identity quaternion
+sat2sun = sense2vector(in_meas, r_sat, q, albedo = False)
+out_meas = vector2sense(sat2sun, r_sat, conv.conj(q), albedo = False)
+print(out_meas)
+
+meas = [1, 2, 0, 0, 0, 0]
+r_sat = [8000, 0, 0]
+q = [1, 0, 0, 0] # identity quaternion
+
+vec = sense2vector(meas, r_sat, q, albedo = False)
+print(vec)
+
+#assert np.testing.assert_allclose(out_meas, in_meas, atol = 10e-5)
