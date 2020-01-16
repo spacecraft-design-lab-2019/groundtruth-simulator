@@ -28,10 +28,17 @@ def test_sense2vector():
     # r_sat = [6371., 2123., 1061.]
     # q = quat(np.array([1,2,3,4]))
 
-    # mjd = 54000
-    # r_Earth2Sun = sun.sun_position_ECI(mjd)
-
-    # vec = sensors.sense2vector(meas, r_sat, q)
+    mjd = 54000
+    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    r_sat = [8000,0,0]
+    q = [1,1,2,1] #eci to body quaternion
+    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
+    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = False)
+    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = False) #in body frame
+    out_r_Earth2Sun = sensors.sub(conv.quatrot(conv.conj(q),sat2sun_out),r_sat) #output in eci
+    
+    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
+#    np.testing.assert_allclose(out_r_Earth2Sun, r_Earth2Sun, atol = 10e-5)
 
     in_meas = [1., 0., 0., 0., 0., 0.]
     r_sat = [8000, 0, 0]
