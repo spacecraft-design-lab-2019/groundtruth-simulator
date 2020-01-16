@@ -99,9 +99,10 @@ def vector2sense(sat2sun, r_sat, q_eci2body, albedo = True):
         r_sat: position of satellite in eci
         R_eci2body: rotation matrix to convert to body frame
     """
+    sat2sun = normalize(sat2sun) #make sure vec is normalized
     sat2sun_eci = conv.quatrot(conv.conj(q_eci2body),sat2sun)
     if albedo:
-        alb = scale(r_sat, 0.2) #eci
+        alb = scale(normalize(r_sat), 0.2) #eci
         irrad_vec = conv.quatrot(q_eci2body, add(sat2sun_eci, alb)) 
     else: 
         irrad_vec = conv.quatrot(q_eci2body, sat2sun_eci)
