@@ -5,6 +5,7 @@ from datetime import datetime
 import sys
 from math import sqrt
 sys.path.append('/home/eleboeuf/Documents/GNC')
+sys.path.append('./GNC')
 import time_functions_cpp
 #------------------- Configuration Parameters -------------------
 
@@ -36,7 +37,7 @@ gyro_params = {
 mag_params = {
 	"scaleF" : 0.02,
 	"caSense" : 0.02,
-	"b" : 40e3, # initialize with np.random and then don't change ever
+	"b" : 40e3,  # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
 
@@ -46,3 +47,5 @@ sun_params = {
 	"b" : 1.0, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
+
+mag_order = 10
