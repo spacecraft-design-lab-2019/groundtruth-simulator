@@ -23,11 +23,16 @@ def test_sense2vector():
 
     assert np.testing.assert_allclose(vec, [-1, 0, 0], atol = 10e-5)
 
-    r_Earth2Sun = [-10000, 0, 0]
+    ######### use full information to compute measurements from known sun vector and then go back and see if they match. ####
+    # r_sat = [6371., 2123., 1061.]
+    # q = quat(np.array([1,2,3,4]))
 
-    vec = sensors.sense2vector(meas, r_Earth2Sun, r_sat, albedo = True)
+    # mjd = 54000
+    # r_Earth2Sun = sun.sun_position_ECI(mjd)
 
-    assert
+    # vec = sensors.sense2vector(meas, r_sat, q)
+
+    # assert
 
 
 
