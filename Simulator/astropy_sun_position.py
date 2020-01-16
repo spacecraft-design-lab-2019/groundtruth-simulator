@@ -15,7 +15,7 @@ def sun_position_ECI(MJD):
 
 	try:
 		sun = get_sun(t)
-	except NameError, e:
+	except NameError:
 		print('Astropy not installed ya dum dum')
 
 	r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])

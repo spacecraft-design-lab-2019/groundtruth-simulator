@@ -5,6 +5,7 @@ Created on Thu Nov 14 23:06:02 2019
 """
 import math
 import numpy as np
+import conversions as conv
 
 #placeholder function, need to fix
 def eci2body(vec, R):
@@ -67,7 +68,7 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
-def sense2vector(meas, r_Earth2Sun, r_sat, albedo = True):
+def sense2vector(meas, r_Earth2Sun, r_sat, q_eci2body, albedo = True):
     """
     Inputs:
         meas: raw measurement values from 6 sun sensors. Arranged: [x, -x, y, -y, z, -z]
@@ -81,7 +82,7 @@ def sense2vector(meas, r_Earth2Sun, r_sat, albedo = True):
     irrad_vec = normalize(irrad_vec) # normalize irradiance vector
 
     if albedo:
-        alb = eci2body(scale(normalize(r_sat), 0.2)) #convert to body frame
+        alb = conv.quatrot(q_eci2body, scale(normalize(r_sat), 0.2)) #convert to body frame
         sat2sun = normalize(sub(irrad_vec, alb)) #vector subt. irradiance vec and albedo vec, normalize
     else:
         sat2sun = irrad_vec
