@@ -58,18 +58,25 @@ def test_sense2vector():
     
     np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
     
-    mjd = 54134
+    mjd = 54134.1
     r_Earth2Sun = sun.sun_position_ECI(mjd)
-    r_sat = [1073,7201,345]
-    q = [1,2,.4,1] #eci to body quaternion
+    r_sat = [1073,7000,345]
+    q = conv.quat([.2,.8,.4,.1]) #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
     meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
     sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
     
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
+    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 15e-3) #acceptable deviation
     
+    r_Earth2Sun = [1.5018e08,0,0]
+    r_sat = [0,7000,0]
+    q = conv.quat([1,.2,.8,.2]) #eci to body quaternion
+    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
+    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
+    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
     
-
+    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 50e-4)
+    
     in_meas = [1., 0., 0., 0., 0., 0.]
     r_sat = [8000, 0, 0]
     q = [1, 0, 0, 0] # identity quaternion
