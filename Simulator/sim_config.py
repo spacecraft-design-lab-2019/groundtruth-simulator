@@ -23,7 +23,7 @@ q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    
 w_i = np.array([.03, .03, .03])   # radians/sec
 
 # Spacecraft Properties
-I = np.array([[17,0,0],[0,18,0],[0,0,22]])
+I = np.array([[.3,0,0],[0,.4,0],[0,0,.5]])
 mass = 1.0 # kg
 
 # Sensor Parameters
