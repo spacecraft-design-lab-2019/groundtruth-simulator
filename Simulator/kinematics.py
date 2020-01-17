@@ -39,6 +39,6 @@ def calc_w_dot(w, torque, I):
     """
 
     # w_dot = np.linalg.solve(I, -np.dot(skew(w), np.dot(I, w)) + torque)
-    w_dot = np.linalg.inv(I) @ -(skew(w) @ (I @ w)+ torque) 
+    w_dot = np.linalg.inv(I) @ (-skew(w) @ (I @ w) + torque) 
     return w_dot
 
