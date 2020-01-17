@@ -22,8 +22,9 @@ plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 1200])    # [sec]
+tspan = np.array([0, 600])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
+max_dipoles = np.array([[8.8e-3], [1.373e-2], [8.2e-3]])
 
 
 #----------------Initialize / Setup Workspace------------------
@@ -54,8 +55,12 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	gain = .0143	#4e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
-	L_cmd = dcpp.detumble_B_cross(w_sensed, B_body, gain)
-
+	if i>0:
+		B_1 = np.transpose(B_body_history[i-1,:])
+		B_2 = np.transpose(B_body_history[i,:])
+		B_dot = dcpp.get_B_dot(B_1,B_2,config.tstep)
+		dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
+		L_cmd = np.cross(np.squeeze(dipole), np.transpose(B_body)*1e-9)
 	# print(i)
 
 elapsed = time.time() - t
