@@ -14,10 +14,14 @@ def calc_q_dot(q, w):
     Outputs:
         q_dot: rate of change of quaternion np.array[4x1][float64]
     """
-    omega = np.array([[0, w[2], -w[1], w[0]],
-                    [-w[2], 0, w[0], w[1]],
-                    [w[1], -w[0], 0, w[2]],
-                    [-w[0], -w[1], -w[2],0]])
+    # omega = np.array([[0, w[2], -w[1], w[0]],
+    #                 [-w[2], 0, w[0], w[1]],
+    #                 [w[1], -w[0], 0, w[2]],
+    #                 [-w[0], -w[1], -w[2],0]])
+    omega = np.array([[0, -w[0], -w[1], -w[2]],
+                    [w[0], 0, w[2], -w[1]],
+                    [w[1], -w[2], 0, w[0]],
+                    [w[2], w[1], -w[0],0]]) # Wertz (3.18)
     return 0.5* omega @ q
 
 
