@@ -185,7 +185,7 @@ class Environment():
         Output:
             position unit vector (3-vector) from satellite to sun
         """
-        earth2sun = sun_model.sun_position_ECI(self.datetime)
+        earth2sun = sun_model.approx_sun_position_ECI(self.datetime)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
 
