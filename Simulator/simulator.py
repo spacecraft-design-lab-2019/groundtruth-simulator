@@ -52,12 +52,12 @@ class Simulator():
 		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
 		self.state = rk4_step(update_f, self.t, self.state, tstep)
 		self.t = self.t + datetime.timedelta(seconds=tstep)
-		self.MJD = self.MJD + self.tstep / 24 / 3600
+		self.MJD = self.MJD + self.tstep / 24 / 3600	# TODO: edit this to automatically update GMST too
 
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.t)
 
-		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order)
+		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 
 		S_ECI = self.environment.sunVector(self.state[0:3])		

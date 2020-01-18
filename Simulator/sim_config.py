@@ -20,11 +20,11 @@ tstep = .1                     # [sec] - 1 Hz
 MJDstart = julian.to_jd(tstart, fmt='mjd')
 
 # Initial Spacecraft Attitude
-q_i = np.array([sqrt(3.0)/3.0, sqrt(3.0)/3.0, sqrt(3.0)/3.0, 0])    # quaternion
-w_i = np.array([.01, .05, -.03])   # radians/sec
+q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    # quaternion
+w_i = np.array([.03, .03, .03])   # radians/sec
 
 # Spacecraft Properties
-I = np.array([[17,0,0],[0,18,0],[0,0,22]])
+I = np.array([[.3,0,0],[0,.4,0],[0,0,.5]])
 mass = 1.0 # kg
 
 # Sensor Parameters
