@@ -10,8 +10,9 @@ from simulator import Simulator
 import conversions as conv
 
 # import GNC functions
-import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
+import sys, os
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
 import detumble_cpp as dcpp
 import triad_cpp as triad
 import sun_utils_cpp
