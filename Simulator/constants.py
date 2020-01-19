@@ -35,7 +35,7 @@ class SpacecraftStructure():
         for face in self.faces:
             a = vRel @ face.N
             if a > 0:
-                f = -0.5*rho*face.A*vmag * vRel   # F/m = -1/2 * ρ*A*v² * v̂
+                f = -0.5*rho*(face.A*a)*vmag * vRel   # F/m = -1/2 * ρ*A_eff*v² * v̂
                 m = conv.cross3(face.c, f)        # M/m = r x (F/m)
                 F += f
                 M += m
