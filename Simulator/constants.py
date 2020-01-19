@@ -31,12 +31,15 @@ class SpacecraftStructure():
         """
         F = np.zeros(3)
         M = np.zeros(3)
-        # vmag = np.linalg.norm(vRel)
-        vmag = (vRel.T @ vRel)**(0.5)
+        vmag = (vRel @ vRel)**(0.5)
         for face in self.faces:
-            f, m = face.aerodrag(rho, vRel, vmag)
-            F += f
-            M += m
+            a = vRel @ face.N
+            if a > 0:
+                f = -0.5*rho*face.A*vmag * vRel   # F/m = -1/2 * ρ*A*v² * v̂
+                m = conv.cross3(face.c, f)        # M/m = r x (F/m)
+                F += f
+                M += m
+
         return self.cD/self.mass*F, self.cD/self.mass*M
 
     def make_faces(self):
@@ -69,26 +72,17 @@ class Face():
         self.A = A
         self.c = c # vector from COM to CP of face.
 
-    def wetted_area(self, v_unit):
-        """
-        Compute the effective area of a face relative to a vector v where
-        v is the unit vector defined to point outwards from the face.
-        """
-        # a = (v/np.linalg.norm(v)) @ self.N
-        a = v_unit @ self.N
-        return max(a, 0) * self.A
-
     def aerodrag(self, rho, vRel, vmag):
         """
         See SpacecraftStruct.aerodrag()
         """
-        # vmag = np.linalg.norm(vRel)
-        A = self.wetted_area(vRel/vmag)
+        a = vRel @ self.N
+        if a <= 0:
+            return 0, 0
 
-        drag_acc = -0.5*rho*A*vmag * vRel
-        # drag_M = np.cross(self.c, drag_acc);
-
+        drag_acc = -0.5*rho*self.A*vmag * vRel   # F/m = -1/2 * ρ*A*v² * v̂
         drag_M = conv.cross3(self.c, drag_acc)
+
         return drag_acc, drag_M
 
 
