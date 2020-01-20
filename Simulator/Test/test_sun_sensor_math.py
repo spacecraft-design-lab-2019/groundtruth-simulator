@@ -15,7 +15,6 @@ groundtruth_dir = os.path.dirname(currentdir)
 sys.path.insert(0, groundtruth_dir)
 
 def test_sense2vector():
-
     meas = [1., 2., 0., 0., 0., 0.]
     r_sat = [8000, 0, 0]
     q = [1, 0, 0, 0] # identity quaternion
@@ -153,4 +152,40 @@ def test_deltas2measure():
     deltas = [-100]
     b = all(sensors.deltas2measure(deltas) == [0,100])
     assert b == True
+
+def test_isEclipse():
+    Re = 6371
+    r_sat = [8000,0,0]
+    r_Earth2Sun = [-1.50147817e8,  2.97758769e6, -2.55999125e4]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
+    
+    Re = 6371;
+    r_sat = [8000,0,0]
+    r_Earth2Sun = [-2e6,  1.50147817e8,  2.97758769e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
+    
+    Re = 6371;
+    r_sat = [8000,0,0]
+    r_Earth2Sun = [-95e6,  1.50147817e8,  2.97758769e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
+    
+    Re = 6371;
+    r_sat = [8000,0,0]
+    r_Earth2Sun = [-120e6,  1.50147817e8,  2e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
+    
+    Re = 6371;
+    r_sat = [-8000,0,0]
+    r_Earth2Sun = [120e6,  1.50147817e8,  2e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
+    
+    Re = 6371;
+    r_sat = [600,-7800,-500]
+    r_Earth2Sun = [1e6,  1.50147817e8,  2e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
+    
+    Re = 6371
+    r_sat = [600,7800,-500]
+    r_Earth2Sun = [1e6,  1.50147817e8,  2e6]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
 

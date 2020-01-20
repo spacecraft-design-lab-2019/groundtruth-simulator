@@ -125,19 +125,31 @@ def deltas2measure(deltas):
 
 def isEclipse(r_sat, r_Earth2Sun, Re):
     """
+    Math taken from here: http://portal.ku.edu.tr/~cbasdogan/Courses/Robotics/projects/IntersectionLineSphere.pdf
     Outputs True if satellite is in eclipse with Earth, False otherwise.
     Inputs:
         r_sat: position of satellite in ECI
         r_Earth2Sun: Earth to Sun vector
         Re: Radius of Earth
-    """
-    r_Sat2Sun = sub(r_Earth2Sun, r_sat)
-    theta = math.acos(dot(r_Sat2Sun, scale(r_sat,-1)) / (norm(r_Sat2Sun)*norm(r_sat)))
-    transit_L = norm(r_sat)*math.sin(theta)
-    if transit_L > Re:
-        return False
+    """   
+    a = (r_sat[0] - r_Earth2Sun[0])**2 + (r_sat[1] - r_Earth2Sun[1])**2 + (r_sat[2] - r_Earth2Sun[2])**2
+    b = 2*((r_sat[0] - r_Earth2Sun[0])*r_Earth2Sun[0] + (r_sat[1] - r_Earth2Sun[1])*r_Earth2Sun[1] + (r_sat[2] - r_Earth2Sun[2])*r_Earth2Sun[2])
+    c = r_Earth2Sun[0]**2 + r_Earth2Sun[1]**2 + r_Earth2Sun[2]**2 - Re**2
+    det = b*b - 4*a*c
+    print(det)
+    num = -r_Earth2Sun[0]*(r_sat[0] - r_Earth2Sun[0]) + -r_Earth2Sun[1]*(r_sat[1] - r_Earth2Sun[1]) + -r_Earth2Sun[2]*(r_sat[2] - r_Earth2Sun[2])
+    denom = (r_sat[0] - r_Earth2Sun[0])*(r_sat[0] - r_Earth2Sun[0]) + (r_sat[1] - r_Earth2Sun[1])*(r_sat[1] - r_Earth2Sun[1]) + (r_sat[2] - r_Earth2Sun[2])*(r_sat[2] - r_Earth2Sun[2])
+    u = num/denom
+    
+    if det > 0:
+        if 0<= u <=1:
+            return True
+        else:
+            return False
     else:
-        return True
+        return False
+
+
 
 
 
