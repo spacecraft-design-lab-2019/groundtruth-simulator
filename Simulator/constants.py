@@ -7,6 +7,7 @@ import pyIGRF
 import sun_model
 import math
 import sys, os
+from collections import namedtuple
 
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dir+'/GNC/')
@@ -25,22 +26,27 @@ class SpacecraftStructure():
 
     def aerodrag(self, rho, vRel):
         """
-        Return drag force (F) and moment (M) due to atmospheric drag
+        Return acceleration due to drag (F/m) and moment-per-mass (M/m) due to atmospheric drag
          - rho is the local atmospheric density.
-         - vRel is velocity relative to the atmosphere. Must be in the body frame.
+         - vRel is velocity relative to the atmosphere *in the body frame*.
         """
         F = np.zeros(3)
         M = np.zeros(3)
-        vmag = (vRel @ vRel)**(0.5)
+        vmag = conv.norm2(vRel)
         for face in self.faces:
+            # If the velocity relative to the face normal is negative,
+            # it is not acted on by drag and we can skip it.
             a = vRel @ face.N
             if a > 0:
-                f = -0.5*rho*(face.A*a)*vmag * vRel   # F/m = -1/2 * ρ*A_eff*v² * v̂
-                m = conv.cross3(face.c, f)        # M/m = r x (F/m)
+                # Drag = -1/2 * Cd * ρ*A_eff*v² * v̂
+                # constants that are the same across the faces are multiplied
+                # at the end so we have: F = A_eff*v_vec
+                f = face.A*a * vRel
                 F += f
-                M += m
+                M += conv.cross3(face.c, f)
 
-        return self.cD/self.mass*F, self.cD/self.mass*M
+        C = -0.5 * rho * vmag * self.cD / self.mass
+        return C*F, C*M
 
     def make_faces(self):
         L = 0.05 # 50 mm sidelength
@@ -51,6 +57,10 @@ class SpacecraftStructure():
         X = conv.unit('x')
         Y = conv.unit('y')
         Z = conv.unit('z')
+
+        # Named tuple to replace the Face class.
+        Face = namedtuple('Face', 'N, A, c')
+
         return [
                 Face(X,  A_main, c_len*X),
                 Face(Y,  A_main, c_len*Y),
@@ -64,26 +74,6 @@ class SpacecraftStructure():
                 Face(Y, 0.007*0.050, np.array([0, -0.025, 0.0285])),
                 Face(Y, 0.007*0.050, np.array([0, -0.025, -0.0285]))
                 ]
-
-
-class Face():
-    def __init__(self, N, A, c):
-        self.N = N/np.linalg.norm(N)
-        self.A = A
-        self.c = c # vector from COM to CP of face.
-
-    def aerodrag(self, rho, vRel, vmag):
-        """
-        See SpacecraftStruct.aerodrag()
-        """
-        a = vRel @ self.N
-        if a <= 0:
-            return 0, 0
-
-        drag_acc = -0.5*rho*self.A*vmag * vRel   # F/m = -1/2 * ρ*A*v² * v̂
-        drag_M = conv.cross3(self.c, drag_acc)
-
-        return drag_acc, drag_M
 
 
 #-------------------------Environment---------------------------------
