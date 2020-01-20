@@ -155,37 +155,47 @@ def test_deltas2measure():
 
 def test_isEclipse():
     Re = 6371
+    
     r_sat = [8000,0,0]
     r_Earth2Sun = [-1.50147817e8,  2.97758769e6, -2.55999125e4]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
     
-    Re = 6371;
     r_sat = [8000,0,0]
     r_Earth2Sun = [-2e6,  1.50147817e8,  2.97758769e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
     
-    Re = 6371;
     r_sat = [8000,0,0]
     r_Earth2Sun = [-95e6,  1.50147817e8,  2.97758769e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
     
-    Re = 6371;
     r_sat = [8000,0,0]
     r_Earth2Sun = [-120e6,  1.50147817e8,  2e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
     
-    Re = 6371;
     r_sat = [-8000,0,0]
     r_Earth2Sun = [120e6,  1.50147817e8,  2e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
     
-    Re = 6371;
     r_sat = [600,-7800,-500]
     r_Earth2Sun = [1e6,  1.50147817e8,  2e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
     
-    Re = 6371
     r_sat = [600,7800,-500]
     r_Earth2Sun = [1e6,  1.50147817e8,  2e6]
     assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
+    
+    r_sat = [7000,-7800,-500]
+    r_Earth2Sun = [1e7,  1.50147817e8,  2e8]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
+    
+    r_sat = [7000,-7800,-500]
+    r_Earth2Sun = [-1e7,  1.50147817e8,  1.4e8]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
+    
+    r_sat = [6000,-6500,-6500]
+    r_Earth2Sun = [1e7,  1.50147817e8,  1.4e8]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == False
 
+    r_sat = [5900,-6500,-6500]
+    r_Earth2Sun = [1e7,  1.50147817e8,  1.4e8]
+    assert sensors.isEclipse(r_sat, r_Earth2Sun, Re) == True
