@@ -2,12 +2,25 @@ import numpy as np
 
 class SpacecraftSensors():
     """
-    A class to initialize and store spacecraft sensors
+    A class to initialize and store spacecraft sensors from config parameter files.
     """
     def __init__(self, mag_params, gyro_params, sun_params):
-        self.magnetometer = Sensor.withParams(mag_params)
-        self.gyroscope = Sensor.withParams(gyro_params)
-        self.sunsensor = Sensor.withParams(sun_params)
+
+        self.magnetometer = Sensor()
+        self.magnetometer.errormodel.T = getTmatrix(mag_params["scalefactor"], mag_params["crossaxis_sensitivity"])
+        self.magnetometer.errormodel.b = mag_params["b"]
+        self.magnetometer.errormodel.cov = mag_params["cov"]
+
+        self.sunsensor = Sensor()
+        self.sunsensor.errormodel.T = getTmatrix(sun_params["scalefactor"], sun_params["crossaxis_sensitivity"])
+        self.sunsensor.errormodel.b = sun_params["b"]
+        self.sunsensor.errormodel.cov = sun_params["cov"]
+
+        self.gyroscope = Sensor()
+        self.gyroscope.errormodel = RandomWalk(gyro_params["random_walk_cov"])
+        self.gyroscope.errormodel.T = getTmatrix(gyro_params["scalefactor"], gyro_params["crossaxis_sensitivity"])
+        self.gyroscope.errormodel.b = gyro_params["b"]
+        self.gyroscope.errormodel.cov = gyro_params["cov"]
         
 
 class Sensor():
@@ -34,11 +47,6 @@ class Sensor():
 
         self.name = name
 
-    @classmethod
-    def withParams(cls, params):
-        T = getTmatrix(params["scalefactor"], params["crossaxis_sensitivity"])
-        errormodel = LinearErrorModel(T, params["b"], params["cov"])
-        return cls(errormodel=errormodel)
 
     def measure(self, x):
         return self.errormodel.measure(x)
@@ -82,6 +90,22 @@ class LinearErrorModel():
         n = x.shape[0]
         return (I + self.T) @ x + self.b + whitenoise(self.cov, dims = n)
 
+
+class RandomWalk(LinearErrorModel):
+    """
+    Subclass of LinearErrorModel that additionally incorporates a random walk (AWGN).
+    """
+    def __init__(self, random_walk_cov):
+        super().__init__()
+        self.random_walk_cov = random_walk_cov
+        self.current_bias = np.zeros(self.dim)
+
+    def update(self):
+        self.current_bias += whitenoise(self.random_walk_cov, dims=self.dim)
+
+    def measure(self, x):
+        self.update()
+        return super().measure(x) + self.current_bias
 
 
 def whitenoise(cov = 0, dims = None):
