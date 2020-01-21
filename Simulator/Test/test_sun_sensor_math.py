@@ -6,9 +6,10 @@ Created on Sat Nov 30 17:22:15 2019
 import pytest
 import os, sys, inspect
 import sun_sensor_math as sensors
-import astropy_sun_position as sun
+import sun_model as sun
 import numpy as np
 import conversions as conv
+import julian
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
@@ -40,7 +41,8 @@ def test_sense2vector():
     np.testing.assert_allclose(vec, sensors.normalize([-1., 1., 1.]), atol = 10e-5)
 
     mjd = 54000
-    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    dt = julian.from_jd(mjd, fmt='mjd')
+    r_Earth2Sun = sun.sun_position_ECI(dt)
     r_sat = [8000,0,0]
     q = [1,1,2,1] #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
@@ -50,7 +52,8 @@ def test_sense2vector():
     np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
     
     mjd = 54104
-    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    dt = julian.from_jd(mjd, fmt='mjd')
+    r_Earth2Sun = sun.sun_position_ECI(dt)
     r_sat = [7543,201,345]
     q = [1,1,0,1] #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
@@ -60,7 +63,8 @@ def test_sense2vector():
     np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
     
     mjd = 52124
-    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    dt = julian.from_jd(mjd, fmt='mjd')
+    r_Earth2Sun = sun.sun_position_ECI(dt)
     r_sat = [543,201,7345]
     q = [1,.1,.3,1] #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
@@ -70,7 +74,8 @@ def test_sense2vector():
     np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
     
     mjd = 54134.1
-    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    dt = julian.from_jd(mjd, fmt='mjd')
+    r_Earth2Sun = sun.sun_position_ECI(dt)
     r_sat = [1073,7000,345]
     q = conv.quat([.2,.8,.4,.1]) #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
@@ -98,7 +103,8 @@ def test_sense2vector():
     np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 1e-5)
     
     mjd = 54134.9
-    r_Earth2Sun = sun.sun_position_ECI(mjd)
+    dt = julian.from_jd(mjd, fmt='mjd')
+    r_Earth2Sun = sun.sun_position_ECI(dt)
     r_sat = [523,6201,345]
     q = conv.quat([-.6,1,3,1]) #eci to body quaternion
     sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame

@@ -6,7 +6,6 @@ Created on Thu Nov 14 23:06:02 2019
 import math
 import numpy as np
 import conversions as conv
-import astropy_sun_position as sun
 
 #placeholder function, need to fix
 def eci2body(vec, R):
