@@ -14,10 +14,14 @@ def calc_q_dot(q, w):
     Outputs:
         q_dot: rate of change of quaternion np.array[4x1][float64]
     """
-    omega = np.array([[0, w[2], -w[1], w[0]],
-                    [-w[2], 0, w[0], w[1]],
-                    [w[1], -w[0], 0, w[2]],
-                    [-w[0], -w[1], -w[2],0]])
+    # omega = np.array([[0, w[2], -w[1], w[0]],
+    #                 [-w[2], 0, w[0], w[1]],
+    #                 [w[1], -w[0], 0, w[2]],
+    #                 [-w[0], -w[1], -w[2],0]])
+    omega = np.array([[0, -w[0], -w[1], -w[2]],
+                    [w[0], 0, w[2], -w[1]],
+                    [w[1], -w[2], 0, w[0]],
+                    [w[2], w[1], -w[0],0]]) # Wertz (3.18)
     return 0.5* omega @ q
 
 
@@ -35,6 +39,6 @@ def calc_w_dot(w, torque, I):
     """
 
     # w_dot = np.linalg.solve(I, -np.dot(skew(w), np.dot(I, w)) + torque)
-    w_dot = np.linalg.inv(I) @ -(skew(w) @ (I @ w)) + torque
+    w_dot = np.linalg.inv(I) @ (-skew(w) @ (I @ w) + torque) 
     return w_dot
 

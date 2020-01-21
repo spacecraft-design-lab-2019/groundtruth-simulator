@@ -1,6 +1,6 @@
 from astropy.time import Time
 from astropy.coordinates import solar_system_ephemeris, EarthLocation
-from astropy.coordinates import get_body_barycentric, get_body, get_moon, get_sun
+from astropy.coordinates import get_sun
 import astropy
 import numpy as np
 import math
@@ -27,38 +27,37 @@ def approx_sun_position_ECI(MJD):
 
     return r_vec
 
-def sun_position_ECI(MJD):
-        # this function gets the ECI sun position
-        # INPUTS:
-        # t in MJD
-        # OUTPUTS:
-        # r_ECI (X, Y, X) in (km, km, km)
+def sun_position_ECI(dt):
+    """
+    Queries astropy module for ECI sun position.
+
+    Inputs:
+        dt - datetime object
+    Outputs:
+        rECI - position vector to the sun in ECI coordinates (km)
+    """
     AU_km = 149597870.7
-
-    t = Time(MJD, scale='utc', format='mjd')
-
-    try:
-        sun = get_sun(t)
-    except NameError:
-        print('Astropy not installed ya dum dum')
+    t = Time(dt, scale='utc', format='datetime')
+    sun = get_sun(t)
 
     r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
-
-    r_ECI = GCRS_to_ECI(r_GCRS,MJD)
-
-    return (r_ECI)
+    r_ECI = GCRS_to_ECI(r_GCRS)
+    return r_ECI
 
 
-def GCRS_to_ECI(r_GCRS,MJD):
-    # this function converts from GCRS to ECI:
-    # INPUTS:
-    # r_GCRS ( ra, dec, distance) in (deg, deg, km)
-    # OUTPUTS:
-    # r_ECI (X, Y, Z) in (km, km, km)
+def GCRS_to_ECI(r_GCRS):
+    """
+    Converts from GCRS to ECI.
 
-    ra = r_GCRS[0] * np.pi / 180
-    dec = r_GCRS[1] * np.pi / 180
-    dist = r_GCRS[2]
+    Inputs:
+        r_GCRS - (ra, dec, distance) in (deg, deg, km)
+    Outputs:
+        r_ECI - position vector in ECI (km)
+    """
+
+    ra = r_GCRS[0] * np.pi / 180 # (rad)
+    dec = r_GCRS[1] * np.pi / 180 # (rad)
+    dist = r_GCRS[2] # km
 
     r_ECI = np.array([dist * np.cos(ra),
                       dist * np.sin(ra) * np.cos(-dec),
@@ -69,18 +68,12 @@ def GCRS_to_ECI(r_GCRS,MJD):
     #    [-np.sin(theta), np.cos(theta), 0],
     #    [0,0,1]])
 
-    return (r_ECI)
+    return r_ECI
 
 
-
-MJD = 51622
-
-t = Time(MJD, scale='utc', format='mjd')
-
-AU_km = 149597870.7
-
-sun = get_sun(t)
-
-r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
-
-r_ECI = GCRS_to_ECI(r_GCRS,MJD)
+# MJD = 53005
+# t = Time(MJD, scale='utc', format='mjd')
+# AU_km = 149597870.7
+# sun = get_sun(t)
+# r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
+# r_ECI = GCRS_to_ECI(r_GCRS,MJD)

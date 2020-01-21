@@ -10,8 +10,9 @@ from simulator import Simulator
 import conversions as conv
 
 # import GNC functions
-import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
+import sys, os
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
 import detumble_cpp as dcpp
 import triad_cpp as triad
 import sun_utils_cpp
@@ -23,7 +24,7 @@ import MEKF_cpp as MEKF
 plt.close('all')
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 100])    # [sec]
+tspan = np.array([0, 500])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 
 
@@ -44,11 +45,16 @@ DCM_err = np.zeros(np.shape(T)[0])
 t = time.time()
 
 # MEKF preallocation
-xk = np.zeros(7,(np.shape(T)[0]))
-Pk = np.zeros(6,6,(np.shape(T)[0])
+xk = np.zeros((np.shape(T)[0],7))
 
-W = 0.00000001 * np.identity(6) # needs to be updated
-V = 0.0003 * np.identity(6) # needs to be updated
+
+Pk = np.zeros((np.shape(T)[0],6,6))
+Pk[0,:,:] = ((1*3.1415/180)**2)*np.identity(6)
+
+
+W_noise = 0.00000001 * np.identity(6) # needs to be updated
+V_noise = 0.0003 * np.identity(6) # needs to be updated
+
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
@@ -62,7 +68,7 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	w_sensed = sensors[3:6]
 	S_sensed = sensors[6:9]
 	B_body_history[i+1,:] = np.transpose(B_sensed)
-	M = np.array([B_sensed / np.linalg.norm(B_sensed), S_sensed])
+	M = np.array([B_sensed / np.linalg.norm(B_sensed), S_sensed/ np.linalg.norm(S_sensed)])
 
 	S_ECI_pred = sun_utils_cpp.sat_sun_vect(sim.state[0:3], sim.MJD) 
 	S_ECI_pred = S_ECI_pred / np.linalg.norm(S_ECI_pred)
@@ -76,22 +82,39 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	DCM_truth[i, :, :] = inter[1::, 1::]
 	DCM_err[i] = np.linalg.norm(DCM_history[i, :, :] - DCM_truth[i, :, :].T)
 
-    #--------------------MEKF-------------------------------
-    
-    xk[:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-    Pk[:,:,i+1] = MEKF.get_xk(xk[:,i],Pk[:,:,i],w_sensed,M,V,W,V,config.tstep)
-    
-    
-    
+	#--------------------MEKF-------------------------------
+	if i <= 5:
+		xk[i,0:4] = state_history[i,3:7]
+
+	# get M and V into a 6x1 vec instead of 2x3 (for MEKF)
+	M_vert = np.zeros(6)
+	V_vert = np.zeros(6)
+	M_vert[0:3] = M[0,0:3]
+	M_vert[3:6] = M[1,0:3]
+	V_vert[0:3] = V[0,0:3]
+	V_vert[3:6] = V[1,0:3]
+
+
+	xk[i+1,:] = MEKF.get_xk(xk[i,:],Pk[i,:,:],w_sensed,M_vert,V_vert,W_noise,V_noise,config.tstep).reshape(7)
+	Pk[i+1,:,:] = MEKF.get_Pk(xk[i,:],Pk[i,:,:],w_sensed,M_vert,V_vert,W_noise,V_noise,config.tstep)
+
 elapsed = time.time() - t
 print(elapsed)
 #------------------------Plot-----------------------------
+
 plt.figure()
 plt.plot(T/3600, state_history[:,3:7])
 plt.xlabel('time [hr]')
 plt.ylabel('quaternions')
 plt.grid()
 
+plt.figure()
+plt.plot(T/3600, xk[:,0:4])
+plt.xlabel('time [hr]')
+plt.ylabel('MEKF quaternions')
+plt.grid()
+
+'''
 plt.figure()
 plt.plot(T/3600, state_history[:,10:13])
 plt.xlabel('time [hr]')
@@ -122,6 +145,8 @@ plt.plot(T/3600, DCM_err)
 plt.xlabel('time [hr]')
 plt.title('DCM error')
 plt.grid()
+
+'''
 
 with plt.rc_context(rc={'interactive': False}):
 	plt.show()

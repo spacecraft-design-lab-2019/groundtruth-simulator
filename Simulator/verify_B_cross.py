@@ -12,8 +12,9 @@ from simulator import Simulator
 
 
 # import GNC functions
-import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
+import sys, os
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
 import detumble_cpp as dcpp
 
 #-----------------------Clear Figures----------------------------
@@ -54,7 +55,7 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	gain = .0143	#4e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
-	L_cmd = dcpp.detumble_B_cross(w_sensed, B_sensed, gain)
+	L_cmd = dcpp.detumble_B_cross(w_sensed, B_body, gain)
 
 	# print(i)
 

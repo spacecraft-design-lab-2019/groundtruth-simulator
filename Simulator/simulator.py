@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import datetime
 import conversions as conv
-from propagate_step import *
+from propagate_step import sgp4_step, rk4_step, calc_statedot
 from constants import SpacecraftStructure, Environment
 from sensormodels import SpacecraftSensors
-import sys
-sys.path.append('/home/eleboeuf/Documents/GNC')
-import sun_utils_cpp
-from astropy_sun_position import sun_position_ECI
 
 class Simulator():
 	"""
@@ -52,19 +49,15 @@ class Simulator():
 		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
 		self.state = rk4_step(update_f, self.t, self.state, tstep)
 		self.t = self.t + datetime.timedelta(seconds=tstep)
-		self.MJD = self.MJD + self.tstep / 24 / 3600
+		self.MJD = self.MJD + self.tstep / 24 / 3600	# TODO: edit this to automatically update GMST too
 
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.t)
-		self.sensors.gyroscope.update_bias()
 
-		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order)
+		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 
-		# S_ECI = sun_utils_cpp.sun_position(self.MJD) 
-		# S_ECI = sun_utils_cpp.sat_sun_vect(self.state[0:3], self.MJD) 
-		S_ECI = sun_position_ECI(self.MJD)
-		S_ECI = S_ECI / np.linalg.norm(S_ECI)
+		S_ECI = self.environment.sunVector(self.state[0:3])		
 		S_body = conv.quatrot(conv.conj(self.state[3:7]), S_ECI)
 
 
