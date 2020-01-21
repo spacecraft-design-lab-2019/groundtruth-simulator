@@ -38,7 +38,7 @@ class Simulator():
 			Propagates dynamics & models sensors for single step
 
 		Inputs:
-			cmd:	commanded torque, [Nm]
+			cmd:	commanded magnetic moment, [Am^2 or Nm/T]
 		Outputs:
 			meas: 	spoofed sensor measurements
 
