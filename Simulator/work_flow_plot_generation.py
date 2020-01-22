@@ -9,8 +9,10 @@ Verify detumble algorithms
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import sys
-sys.path.append('./GNC')
+import sys, os
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
+sys.path.append('./GNC')  # this line is specifically for the GitHub validation check that runs on their servers
 import detumble_cpp as dcpp
 import sim_config as config
 from simulator import Simulator

@@ -12,9 +12,9 @@ from simulator import Simulator
 from mpl_toolkits.mplot3d import Axes3D
 
 # import GNC functions
-import sys
-
-sys.path.append('/home/eleboeuf/Documents/GNC')
+import sys, os
+dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, dir+'/GNC/')
 import detumble_cpp as dcpp
 
 
