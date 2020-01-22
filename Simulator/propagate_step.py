@@ -82,11 +82,11 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     torque = np.zeros(3)
     accel = np.zeros(3)
 
-    adrag, mdrag = dragCalc(state, environment, structure)
+    # adrag, mdrag = dragCalc(state, environment, structure)
 
     accel = accel + gravityPointMass(r, environment.earth.GM)
-    accel = accel + gravityEarthJ2(r, environment.earth)
-    accel = accel + adrag
+    # accel = accel + gravityEarthJ2(r, environment.earth)
+    # accel = accel + adrag
 
     # torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
     # torque = torque + mdrag

@@ -1,6 +1,7 @@
 import pytest
 import os, sys, inspect, pdb
 import numpy as np
+import matplotlib.pyplot as plt
 
 # add current folder to the path
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -41,10 +42,13 @@ def test_euler():
 	state_history = np.zeros((np.shape(T)[0], np.shape(sim.state)[0]))
 	state_history[0, :] = sim.state
 
+	bECI_history = np.zeros((np.shape(T)[0], 3))
+
 	# RUN SIM
 	for i, elapsed_t in enumerate(T[0:-1]):
 		sim.step(config.tstep, L_cmd)
 		state_history[i+1, :] = sim.state
+		bECI_history[i+1, :] = sim.debug_output[0]/1e9
 
 	# ANSWER - from Andrew's sim
 	w_ans = np.array([0.10192649869210156, 0.09085024017514931, 0.10722326113274933]) # rad/s
@@ -69,8 +73,22 @@ def test_euler():
 	print(v_sim)
 	print(v_ans)
 
+	# np.testing.assert_allclose(w_sim, w_ans, atol=1e-2)
+	# np.testing.assert_allclose(q_sim, q_ans, atol=1e-1)
+	# np.testing.assert_allclose(r_sim, r_ans, atol=1e0)
+	# np.testing.assert_allclose(v_sim, v_ans, atol=1e-2)
 
-	np.testing.assert_allclose(w_sim, w_ans, atol=1e-2)
-	np.testing.assert_allclose(q_sim, q_ans, atol=1e-1)
-	np.testing.assert_allclose(r_sim, r_ans, atol=1e0)
-	np.testing.assert_allclose(v_sim, v_ans, atol=1e-2)
+	plt.figure()
+	plt.plot(T[1:], bECI_history[1:, 0])
+	plt.plot(T[1:], bECI_history[1:, 1])
+	plt.plot(T[1:], bECI_history[1:, 2])
+	plt.legend(['X', 'Y', 'Z'])
+	plt.xlabel('time [sec]')
+	plt.ylabel('b_ECI')
+	plt.yscale('log')
+	plt.grid()
+	plt.show()
+
+
+
+test_euler()
