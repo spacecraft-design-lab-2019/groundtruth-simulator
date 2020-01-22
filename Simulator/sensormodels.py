@@ -16,7 +16,7 @@ class SpacecraftSensors():
         self.sunsensor.errormodel.cov = sun_params["cov"]
 
         self.gyroscope = Sensor()
-        self.gyroscope.errormodel = RandomWalk(gyro_params["random_walk_cov"])
+        self.gyroscope.errormodel = DriftingErrorModel(gyro_params["random_walk_cov"])
         self.gyroscope.errormodel.T = getTmatrix(gyro_params["scalefactor"], gyro_params["crossaxis_sensitivity"])
         self.gyroscope.errormodel.b = gyro_params["b"]
         self.gyroscope.errormodel.cov = gyro_params["cov"]
@@ -89,7 +89,7 @@ class LinearErrorModel():
         return (I + self.T) @ x + self.b + whitenoise(self.cov, dims = n)
 
 
-class RandomWalk(LinearErrorModel):
+class DriftingErrorModel(LinearErrorModel):
     """
     Subclass of LinearErrorModel that additionally incorporates a random walk (AWGN).
     """
