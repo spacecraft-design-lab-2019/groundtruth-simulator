@@ -5,7 +5,6 @@ class SpacecraftSensors():
     A class to initialize and store spacecraft sensors from config parameter files.
     """
     def __init__(self, mag_params, gyro_params, sun_params):
-
         self.magnetometer = Sensor()
         self.magnetometer.errormodel.T = getTmatrix(mag_params["scalefactor"], mag_params["crossaxis_sensitivity"])
         self.magnetometer.errormodel.b = mag_params["b"]
@@ -21,7 +20,6 @@ class SpacecraftSensors():
         self.gyroscope.errormodel.T = getTmatrix(gyro_params["scalefactor"], gyro_params["crossaxis_sensitivity"])
         self.gyroscope.errormodel.b = gyro_params["b"]
         self.gyroscope.errormodel.cov = gyro_params["cov"]
-        
 
 class Sensor():
     """
@@ -121,19 +119,6 @@ def whitenoise(cov = 0, dims = None):
 
     return np.random.multivariate_normal(np.zeros(dims), cov)
 
-def whitenoise2(mean = 0, cov = 0, dims = None):
-    """
-    Basically just a wrapper for np.random.multivariate_normal that returns nonzero mean noise.
-    """
-    if isinstance(cov, int) or isinstance(cov, float):
-        if dims == None:
-            raise(Exception("Bad inputs to whitenoise, cov = {}, dims = {}".format(cov, dims)))
-        cov = cov * np.eye(dims)
-    else:
-        dims = cov.shape[0]
-
-    return np.random.multivariate_normal(mean*np.ones(dims), cov)
-    
 
 def getTmatrix(scalefactor, crossaxis_sensitivity):
     """

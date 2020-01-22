@@ -38,43 +38,7 @@ def sun_position_ECI(dt):
     """
     AU_km = 149597870.7
     t = Time(dt, scale='utc', format='datetime')
-    sun = get_sun(t)
-
-    r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
-    r_ECI = GCRS_to_ECI(r_GCRS)
+    sun = get_sun(t).cartesian
+    
+    r_ECI = AU_km * np.array([sun.x.value, sun.y.value, sun.z.value])
     return r_ECI
-
-
-def GCRS_to_ECI(r_GCRS):
-    """
-    Converts from GCRS to ECI.
-
-    Inputs:
-        r_GCRS - (ra, dec, distance) in (deg, deg, km)
-    Outputs:
-        r_ECI - position vector in ECI (km)
-    """
-
-    ra = r_GCRS[0] * np.pi / 180 # (rad)
-    dec = r_GCRS[1] * np.pi / 180 # (rad)
-    dist = r_GCRS[2] # km
-
-    r_ECI = np.array([dist * np.cos(ra),
-                      dist * np.sin(ra) * np.cos(-dec),
-                      dist * np.sin(ra) * np.sin(-dec)])
-
-    #theta = (280.4606 + 360.9856473 * (MJD - 51544.5))/180 * np.pi
-    #Rz = np.array([[np.cos(theta), np.sin(theta),0],
-    #    [-np.sin(theta), np.cos(theta), 0],
-    #    [0,0,1]])
-
-    return r_ECI
-
-
-
-# MJD = 53005
-# t = Time(MJD, scale='utc', format='mjd')
-# AU_km = 149597870.7
-# sun = get_sun(t)
-# r_GCRS = np.array([sun.ra.value, sun.dec.value, sun.distance.value * AU_km])
-# r_ECI = GCRS_to_ECI(r_GCRS,MJD)
