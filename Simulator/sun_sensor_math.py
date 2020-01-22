@@ -68,6 +68,9 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
+def elementwise_times(v1, v2):
+    return [x*y for x, y in zip(v1, v2)]
+
 def sense2vector(meas, r_sat, q_eci2body, albedo = True):
     """
     Inputs:
@@ -101,9 +104,9 @@ def vector2sense(sat2sun, r_sat, q_eci2body, albedo = True):
     if albedo:
         alb = conv.quatrot(q_eci2body, scale(normalize(r_sat), 0.2)) #body frame
         irrad_vec = normalize(add(sat2sun, alb) )
-    else: 
+    else:
         irrad_vec = sat2sun
-        
+
     return deltas2measure(irrad_vec)
 
 def deltas2measure(deltas):
@@ -130,26 +133,25 @@ def isEclipse(r_sat, r_Earth2Sun, Re):
         r_sat: position of satellite in ECI
         r_Earth2Sun: Earth to Sun vector
         Re: Radius of Earth
-    """   
-    a = (r_sat[0] - r_Earth2Sun[0])**2 + (r_sat[1] - r_Earth2Sun[1])**2 + (r_sat[2] - r_Earth2Sun[2])**2
-    b = 2*((r_sat[0] - r_Earth2Sun[0])*r_Earth2Sun[0] + (r_sat[1] - r_Earth2Sun[1])*r_Earth2Sun[1] + (r_sat[2] - r_Earth2Sun[2])*r_Earth2Sun[2])
-    c = r_Earth2Sun[0]**2 + r_Earth2Sun[1]**2 + r_Earth2Sun[2]**2 - Re**2
-    det = b*b - 4*a*c
-    print(det)
-    num = -r_Earth2Sun[0]*(r_sat[0] - r_Earth2Sun[0]) + -r_Earth2Sun[1]*(r_sat[1] - r_Earth2Sun[1]) + -r_Earth2Sun[2]*(r_sat[2] - r_Earth2Sun[2])
-    denom = (r_sat[0] - r_Earth2Sun[0])*(r_sat[0] - r_Earth2Sun[0]) + (r_sat[1] - r_Earth2Sun[1])*(r_sat[1] - r_Earth2Sun[1]) + (r_sat[2] - r_Earth2Sun[2])*(r_sat[2] - r_Earth2Sun[2])
-    u = num/denom
-    
-    if det > 0:
-        if 0<= u <=1:
-            return True
-        else:
-            return False
+    """
+    # Intersection of a line defined by (P1, P2) with at the origin with radius (r = Re):
+
+    P1 = r_sat
+    P2 = r_Earth2Sun
+
+    diff = sub(r_sat, r_Earth2Sun)
+
+    a = sum(x*x for x in diff) # norm squared
+    b = 2*dot(diff, P1)
+    c = sum(x*x for x in P1) - Re^2
+
+    det = b*b - 4*a*c  # the determinant of the solutions to the quadratic equation
+
+    if det > 0: # intersection true if the roots are real
+        return True
     else:
+        # We consider a tangent intersection to not be eclipse
         return False
-
-
-
 
 
 #in_meas = [1, 0, 0, 0, 0, 0]
