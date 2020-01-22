@@ -2,9 +2,11 @@
 
 import numpy as np
 from datetime import datetime
+import os
 import sys
-from math import sqrt
 import julian
+from math import sqrt
+
 #------------------- Configuration Parameters -------------------
 
 # Seed Initial Position/Velocity with TLE - BEESAT-1
@@ -16,6 +18,7 @@ line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102'
 tstart = datetime(2019, 12, 30, 00, 00, 00)
 tstep = .1                     # [sec] - 1 Hz
 MJDstart = julian.to_jd(tstart, fmt='mjd')
+
 # Initial Spacecraft Attitude
 q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    # quaternion
 w_i = np.array([.03, .03, .03])   # radians/sec
@@ -26,22 +29,22 @@ mass = 1.0 # kg
 
 # Sensor Parameters
 gyro_params = {
-	"scaleF" : 0.002,
-	"caSense" : 0.02,
-	"b" : np.sqrt(.0022), # will be mulitplied to np.random.rand(3)
+	"scalefactor" : 0.002,
+	"crossaxis_sensitivity" : 0.02,
+	"b" : sqrt(.0022), # will be mulitplied to np.random.rand(3)
 	"cov" : 0.000000000694444
 }
 
 mag_params = {
-	"scaleF" : 0.02,
-	"caSense" : 0.02,
+	"scalefactor" : 0.02,
+	"crossaxis_sensitivity" : 0.02,
 	"b" : 40e3,  # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }
 
 sun_params = {
-	"scaleF" : 0,
-	"caSense" : 0.02,
+	"scalefactor" : 0,
+	"crossaxis_sensitivity" : 0.02,
 	"b" : 1.0, # initialize with np.random and then don't change ever
 	"cov" : 0.0005
 }

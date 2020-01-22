@@ -7,6 +7,7 @@ import pyIGRF
 import sun_model
 import math
 import sys, os
+
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dir+'/GNC/')
 import magnetic_field_cpp as mfcpp
@@ -21,7 +22,6 @@ class SpacecraftStructure():
         self.cD = cD
         self.mass = mass # kg
         self.faces = self.make_faces()
-        # self.surfArea = sum(f.A for f in faces)
 
     def aerodrag(self, rho, vRel):
         """
@@ -183,10 +183,9 @@ class Environment():
         Inputs:
             r_ECI: ECI position of satellite
         Output:
-            position vector (3-vector) from satellite to sun
+            position unit vector (3-vector) from satellite to sun
         """
-        jdate = julian.to_jd(self.datetime, fmt='jd')
-        earth2sun = sun_model.sun1(jdate)
+        earth2sun = sun_model.sun_position_ECI(self.datetime)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
 

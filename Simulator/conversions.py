@@ -227,4 +227,5 @@ def norm2(v):
     """
     Caluclates the 2-norm of a vector
     """
-    return (v.T @ v) ** (0.5)
+    # return (v.T @ v) ** (0.5)
+    return math.sqrt(sum(x*x for x in v))
