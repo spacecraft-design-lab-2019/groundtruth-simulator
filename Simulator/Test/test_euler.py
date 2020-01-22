@@ -22,8 +22,8 @@ def test_euler():
 	q_i = np.array([1, 0, 0, 0])
 	w_i = np.array([.1, .1, .1]) # rad/s
 	mjd_start = 58865.5
-	I = np.eye(3)
-	mass = 1.0 # kg
+	I = np.array([[.15, .015, .015],[.015, .15, .015],[.015, .015, .15]])
+	mass = 10.0 # kg
 	L_cmd = np.ones(3) # [Am^2 or Nm/T]
 
 	# SETUP SIM - note we have to re-do work from the __init__ function to avoid editing sim_config just for a unit_test
@@ -56,6 +56,19 @@ def test_euler():
 	q_sim = state_history[-1, 3:7]
 	r_sim = state_history[-1, 0:3]
 	v_sim = state_history[-1, 7:10]
+
+	print(w_ans)
+	print(w_sim)
+
+	print(q_sim)
+	print(q_ans)
+
+	print(r_sim)
+	print(r_ans)
+
+	print(v_sim)
+	print(v_ans)
+
 
 	np.testing.assert_allclose(w_sim, w_ans, atol=1e-2)
 	np.testing.assert_allclose(q_sim, q_ans, atol=1e-1)

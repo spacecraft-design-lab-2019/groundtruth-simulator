@@ -88,8 +88,8 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     accel = accel + gravityEarthJ2(r, environment.earth)
     accel = accel + adrag
 
-    torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
-    torque = torque + mdrag
+    # torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
+    # torque = torque + mdrag
 
     #------------------Look up magnetic field------------------------
     B = environment.magfield_lookup(r, mag_order) # in nano-teslas
