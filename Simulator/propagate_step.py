@@ -96,7 +96,7 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
 
     #-------------------Implement Control Law-------------------------
-    torque = torque + np.cross(cmd, B/1e9);
+    torque += np.cross(cmd, B/1e9);
 
 
     #---------------------Kinematics----------------------------------
