@@ -28,7 +28,8 @@ def test_calc_q_dot():
 	np.testing.assert_allclose(calc_q_dot(q,w), np.zeros(4), atol=tol)
 
 	# against pyquaternion
-	q = quat(np.random.rand(4))
-	w = np.random.rand(3)
-	qd = pyquaternion.Quaternion(q).derivative(w).elements
-	np.testing.assert_allclose(qd, calc_q_dot(q,w), atol=tol)
+	for i in range(100):
+		q = quat(np.random.rand(4))
+		w = np.random.rand(3)
+		qd = pyquaternion.Quaternion(q).derivative(w).elements
+		np.testing.assert_allclose(qd, calc_q_dot(q,w), atol=tol)
