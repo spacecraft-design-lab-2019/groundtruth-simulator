@@ -2,51 +2,27 @@ import numpy as np
 
 class SpacecraftSensors():
     """
-    A class to initialize and store spacecraft sensors
+    A class to initialize and store spacecraft sensors from config parameter files.
     """
     def __init__(self, mag_params, gyro_params, sun_params):
-        self.magnetometer = Sensor.withParams(mag_params)
-        self.gyroscope = Sensor.withParams(gyro_params)
-        self.sunsensor = Sensor.withParams(sun_params)
 
+        self.magnetometer = LinearErrorModel(T = getTmatrix(mag_params["scalefactor"], mag_params["crossaxis_sensitivity"]),
+                                             b = mag_params["b"],
+                                             cov = mag_params["cov"])
 
-class Sensor():
-    """
-    Generic sensor. Implements measure(x), which returns the
-    measured value associated with ground-truth value x.
-    Defaults to returning ground truth measurements unless an error model is specified.
-    To specify the error model, see the parameter `errormodel` and the LinearErrorModel class.
-    NOTE, we may have to implement other error models to account for temp-dependence and whatever else.
+        self.sunsensor = LinearErrorModel(T = getTmatrix(sun_params["scalefactor"], sun_params["crossaxis_sensitivity"]),
+                                          b = sun_params["b"],
+                                          cov = sun_params["cov"])
 
-    - dim = dimension of values the sensor returns
-    - errormodel - the actual model used to "jitter" the measurement. Defaults to identity via the default LinearErrorModel.
-    - name - optional name for the sensor
-
-    Example Usage:
-        S = Sensor(errormodel = LinearErrorModel.withDim(3, b = np.ones(3), cov = 0.0005))
-        S.measure(np.zeros(3)) -> returns e.g.: array([0.99649388, 0.9849549 , 1.04930531])
-    """
-    def __init__(self, dim = 3, errormodel = None, name = None):
-        if errormodel == None:
-            self.errormodel = LinearErrorModel.withDim(N = dim)
-        else:
-            self.errormodel = errormodel
-
-        self.name = name
-
-    @classmethod
-    def withParams(cls, params):
-        T = getTmatrix(params["scalefactor"], params["crossaxis_sensitivity"])
-        errormodel = LinearErrorModel(T, params["b"], params["cov"])
-        return cls(errormodel=errormodel)
-
-    def measure(self, x):
-        return self.errormodel.measure(x)
+        self.gyroscope = LinearErrorModel(T = getTmatrix(gyro_params["scalefactor"], gyro_params["crossaxis_sensitivity"]),
+                                          b = gyro_params["b"],
+                                          cov = gyro_params["cov"],
+                                          random_walk_cov = gyro_params["random_walk_cov"])
 
 
 class LinearErrorModel():
     """
-    Class that handles a linear error model of the form: (I+T)x + b + W
+    Class that handles a sensor with linear error model of the form: (I+T)x + b + W
 
     T - the "T" matrix in the error model (i.e. the combined misalignment + scale factor matrices)
     b - bias vector
@@ -55,11 +31,13 @@ class LinearErrorModel():
     In addition to the regular constructor, may also be initialized with:
     LinearErrorModel.withDim(dim = N, [optional_args])
     """
-    def __init__(self, T=np.zeros((3,3)), b=0, cov=0, dim=3):
+    def __init__(self, T=np.zeros((3, 3)), b=0, cov=0, random_walk_cov = 0):
         self.T = T
         self.b = b
         self.cov = cov
-        self.dim = dim
+
+        self.random_walk_cov = random_walk_cov
+        self.b_original = b
 
     @classmethod
     def withDim(cls, N = 3, T = None, b = None, cov = None):
@@ -82,6 +60,8 @@ class LinearErrorModel():
         n = x.shape[0]
         return (I + self.T) @ x + self.b + whitenoise(self.cov, dims = n)
 
+    def update(self):
+        self.b += whitenoise(self.random_walk_cov, dims=self.T.shape[0])
 
 
 def whitenoise(cov = 0, dims = None):
