@@ -25,3 +25,17 @@ def test_init():
     # and this too...
     S.gyroscope.update()
     S.gyroscope.measure(x)
+
+    # identity sensor:
+    lme = LinearErrorModel.withDim(3)
+    np.testing.assert_allclose(lme.measure(x), x,  atol = 1e-10)
+
+    # bias only sensor
+    lme.b = 1
+    np.testing.assert_allclose(lme.measure(x), x+1,  atol = 1e-10)
+
+    lme.b = np.ones(3)
+    np.testing.assert_allclose(lme.measure(x), x+1,  atol = 1e-10)
+
+    lme.T = np.eye(3)
+    np.testing.assert_allclose(lme.measure(x), (2*x)+1,  atol = 1e-10)
