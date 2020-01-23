@@ -13,8 +13,8 @@ import julian
 import sim_config as config
 
 
-def test_euler():
-	# test euler equations + magnetic dipole for 60 second run against Andrew's sim
+def test_dynamics():
+	# test orbit + attitude dynamics for 60 second run against Andrew's sim
 
 	# STARTING CONDITIONS
 	r_i = np.array([0.5006827813414019, 1.009305151157764, 0.0]) * 6378.1378366 # km
