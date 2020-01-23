@@ -31,8 +31,9 @@ mass = 1.0 # kg
 gyro_params = {
 	"scalefactor" : 0.002,
 	"crossaxis_sensitivity" : 0.02,
-	"b" : sqrt(.0022), # will be mulitplied to np.random.rand(3)
-	"cov" : 0.000000000694444
+	"b" : sqrt(.0022),  # initialize with np.random and then don't change ever
+	"cov" : 0.000000000694444,
+	"random_walk_cov" : 0.00 	# will be mulitplied to np.random.rand(3)
 }
 
 mag_params = {
