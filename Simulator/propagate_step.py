@@ -64,7 +64,7 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     Inputs:
         t:      current time, seconds?
         state:  current state object,
-        cmd:    controller input
+        cmd:    commanded magnetic moment (Am^2 or Nm/T)
     Outputs:
         state_dot: the derivative of the state vector
     """
@@ -92,12 +92,11 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     torque = torque + mdrag
 
     #------------------Look up magnetic field------------------------
-    B = environment.magfield_lookup(r, mag_order)
-    # TO-DO: if control is off, add torque due to magnetic moment
+    B = environment.magfield_lookup(r, mag_order) # in nano-teslas
 
 
     #-------------------Implement Control Law-------------------------
-    torque = torque + cmd  # np.cross(cmd, B);
+    torque = torque + np.cross(cmd, B/1e9);
 
 
     #---------------------Kinematics----------------------------------
