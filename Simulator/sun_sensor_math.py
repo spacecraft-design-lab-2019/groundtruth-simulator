@@ -135,24 +135,23 @@ def isEclipse(r_sat, r_Earth2Sun, Re):
         Re: Radius of Earth
     """
     # Intersection of a line defined by (P1, P2) with at the origin with radius (r = Re):
-
     P1 = r_sat
     P2 = r_Earth2Sun
-
-    diff = sub(r_sat, r_Earth2Sun)
+    diff = sub(r_sat, r_Earth2Sun)  # P1 - P2
 
     a = sum(x*x for x in diff) # norm squared
-    b = 2*dot(diff, P1)
-    c = sum(x*x for x in P1) - Re^2
+    b = 2*dot(diff, P2)
+    u = -0.5*b/a
 
-    det = b*b - 4*a*c  # the determinant of the solutions to the quadratic equation
-
-    if det > 0: # intersection true if the roots are real
-        return True
-    else:
-        # We consider a tangent intersection to not be eclipse
+    # u determines if the intersection is on the correct side of the line segment (inner or outer)
+    if u >= 1 or u <= 0:
         return False
 
+    c = sum(x*x for x in P2) - Re**2
+    det = b*b - 4*a*c  # the determinant of the solutions to the quadratic equation
+
+    # intersection true if the roots are real
+    return det > 0
 
 #in_meas = [1, 0, 0, 0, 0, 0]
 #r_sat = [8000, 0, 0]
