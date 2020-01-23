@@ -6,6 +6,7 @@ import numpy as np
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 groundtruth_dir = os.path.dirname(currentdir)
 sys.path.insert(0, groundtruth_dir)
+sys.path.append('./GNC')  # this line is specifically for the GitHub validation check that runs on their servers
 
 import simulator
 from constants import SpacecraftStructure, Environment
