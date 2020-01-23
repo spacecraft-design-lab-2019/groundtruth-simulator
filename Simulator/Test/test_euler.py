@@ -1,7 +1,6 @@
 import pytest
 import os, sys, inspect, pdb
 import numpy as np
-import matplotlib.pyplot as plt
 
 # add current folder to the path
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -18,8 +17,8 @@ def test_euler():
 	# test euler equations + magnetic dipole for 60 second run against Andrew's sim
 
 	# STARTING CONDITIONS
-	r_i = np.array([0.5001945144886031, 1.0083208747495578, 0.0]) * 6378.1378366 # km
-	v_i = np.array([-3.588574367865696, 1.780172620235258, 6.287934046067301]) # km/s
+	r_i = np.array([0.5006827813414019, 1.009305151157764, 0.0]) * 6378.1378366 # km
+	v_i = np.array([-3.5868241485959342, 1.7793043945545146, 6.284867295261474]) # km/s
 	q_i = np.array([1, 0, 0, 0])
 	w_i = np.array([.1, .1, .1]) # rad/s
 	mjd_start = 58865.5
@@ -51,44 +50,20 @@ def test_euler():
 		bECI_history[i+1, :] = sim.debug_output[0]/1e9
 
 	# ANSWER - from Andrew's sim
-	w_ans = np.array([0.10192649869210156, 0.09085024017514931, 0.10722326113274933]) # rad/s
-	q_ans = np.array([0.47006180334049474, -0.5230023039391511, -0.4832166552830285, -0.5215478455215423])
-	r_ans = np.array([0.46544750473390517, 1.0231138587560542, 0.05917931343363079]) * 6378.1378366 # km
-	v_ans = np.array([-3.7881391987173676, 1.3603452712714288, 6.275703727336128]) # km/s
+	w_ans = np.array([0.103473377474831, 0.10351893953023031, 0.0930076829949389]) # rad/s
+	q_ans = np.array([0.46758555857559125, -0.5129972392025514, -0.5249064223617074, -0.49261630681699486])
+	r_ans = np.array([0.4659942472475783, 1.024081911258644, 0.05908576934024495]) * 6378.1378366 # km
+	v_ans = np.array([-3.785581159645769, 1.3612227557429792, 6.272718772389778]) # km/s
 
 	w_sim = state_history[-1, 10:13]
 	q_sim = state_history[-1, 3:7]
 	r_sim = state_history[-1, 0:3]
 	v_sim = state_history[-1, 7:10]
 
-	print(w_ans)
-	print(w_sim)
+	np.testing.assert_allclose(w_sim, w_ans, atol=1e-3)
+	np.testing.assert_allclose(q_sim, q_ans, atol=1e-3)
+	np.testing.assert_allclose(r_sim, r_ans, atol=1e-1)
+	np.testing.assert_allclose(v_sim, v_ans, atol=1e-2)
 
-	print(q_sim)
-	print(q_ans)
-
-	print(r_sim)
-	print(r_ans)
-
-	print(v_sim)
-	print(v_ans)
-
-	# np.testing.assert_allclose(w_sim, w_ans, atol=1e-2)
-	# np.testing.assert_allclose(q_sim, q_ans, atol=1e-1)
-	# np.testing.assert_allclose(r_sim, r_ans, atol=1e0)
-	# np.testing.assert_allclose(v_sim, v_ans, atol=1e-2)
-
-	plt.figure()
-	plt.plot(T[1:], bECI_history[1:, 0])
-	plt.plot(T[1:], bECI_history[1:, 1])
-	plt.plot(T[1:], bECI_history[1:, 2])
-	plt.legend(['X', 'Y', 'Z'])
-	plt.xlabel('time [sec]')
-	plt.ylabel('b_ECI')
-	plt.yscale('log')
-	plt.grid()
-	plt.show()
-
-
-
-test_euler()
+	# note that andrew's sim did not account for aero drag/torque or gravity gradient torques
+	# so, these tolerances are reasonably chosen

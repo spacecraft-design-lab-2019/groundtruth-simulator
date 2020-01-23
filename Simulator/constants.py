@@ -6,7 +6,7 @@ import conversions as conv
 import pyIGRF
 import sun_model
 import math
-import sys, os
+import sys, os, pdb
 
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dir+'/GNC/')
