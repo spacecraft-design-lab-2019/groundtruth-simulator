@@ -40,87 +40,35 @@ def test_sense2vector():
 
     np.testing.assert_allclose(vec, sensors.normalize([-1., 1., 1.]), atol = 10e-5)
 
-    mjd = 54000
-    dt = julian.from_jd(mjd, fmt='mjd')
-    r_Earth2Sun = sun.sun_position_ECI(dt)
-    r_sat = [8000,0,0]
-    q = [1,1,2,1] #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = False)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = False) #in body frame
 
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
-
-    mjd = 54104
-    dt = julian.from_jd(mjd, fmt='mjd')
-    r_Earth2Sun = sun.sun_position_ECI(dt)
-    r_sat = [7543,201,345]
-    q = [1,1,0,1] #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = False)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = False) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
-
-    mjd = 52124
-    dt = julian.from_jd(mjd, fmt='mjd')
-    r_Earth2Sun = sun.sun_position_ECI(dt)
-    r_sat = [543,201,7345]
-    q = [1,.1,.3,1] #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = False)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = False) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 10e-5)
-
-    mjd = 54134.1
-    dt = julian.from_jd(mjd, fmt='mjd')
-    r_Earth2Sun = sun.sun_position_ECI(dt)
-    r_sat = [1073,7000,345]
-    q = conv.quat([.2,.8,.4,.1]) #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 15e-3) #acceptable deviation
-
-    r_Earth2Sun = [1.5018e08,0,0]
-    r_sat = [0,7000,0]
-    q = conv.quat([1,.2,.8,.2]) #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 50e-4)
-
-    r_Earth2Sun = [0,1.5018e08,0]
-    r_sat = [0,7000,0]
-    q = conv.quat([1,.2,.8,.2]) #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 1e-5)
-
-    mjd = 54134.9
-    dt = julian.from_jd(mjd, fmt='mjd')
-    r_Earth2Sun = sun.sun_position_ECI(dt)
-    r_sat = [523,6201,345]
-    q = conv.quat([-.6,1,3,1]) #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 15e-3)
-
-    r_Earth2Sun = [1.5018e08,0,0]
-    r_sat = [0,7000,0]
-    q = conv.quat([1,1,1,1]) #eci to body quaternion
-    sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
-    meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo = True)
-    sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo = True) #in body frame
-
-    np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol = 5e-3)
+    def helper_test(mjd, r_sat, q, albedo, atol):
+        dt = julian.from_jd(mjd, fmt='mjd')
+        q = conv.quat(q)
+        rtol = atol
+        r_Earth2Sun = sun.sun_position_ECI(dt)
+        sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
+        meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo)
+        sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo)
+        return np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol, rtol)
+    
+    def helper_test2(r_Earth2Sun, r_sat, q, albedo, atol):
+        rtol = atol
+        q = conv.quat(q)
+        sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
+        meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo)
+        sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo)
+        return np.testing.assert_allclose(sat2sun_out, sensors.normalize(sat2sun_input), atol, rtol)
+        
+        
+    helper_test(54000, [8000,0,0], [1,1,2,1], False, 1e-5)
+    helper_test(54104, [7543,201,345], [1,1,0,1], False, 1e-5)
+    helper_test(52124, [543,201,7345],  conv.quat([1,.1,.3,1]), False, 1e-5)
+    helper_test(54134.1, [1073,7000,345], [.2,.8,.4,.1], True, 15e-3) #some scceptable deviation allowed
+    helper_test(54134.9, [523,6201,345], [-.6,1,3,1], True, 15e-3)
+    
+    helper_test2([1.5018e08,0,0], [0,7000,0], [1,.2,.8,.2], True, 50e-4) #some scceptable deviation allowed
+    helper_test2([0,1.5018e08,0], [0,7000,0], [1,.2,.8,.2], True, 1e-5)
+    helper_test2([1.5018e08,0,0], [0,7000,0], [1,1,1,1], True, 5e-3)
 
     in_meas = [1., 0., 0., 0., 0., 0.]
     r_sat = [8000, 0, 0]
