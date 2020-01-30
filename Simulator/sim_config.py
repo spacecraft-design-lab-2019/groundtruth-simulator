@@ -24,8 +24,8 @@ q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    
 w_i = np.array([.03, .03, .03])   # radians/sec
 
 # Spacecraft Properties
-I = np.array([[.3,0,0],[0,.4,0],[0,0,.5]])
-mass = 1.0 # kg
+I = np.array([[1.959e-4, 2016.333e-9, 269.176e-9],[2016.333e-9, 1.999e-4, 2318.659e-9],[269.176e-9, 2318.659e-9, 1.064e-4]]) # kg*m^2
+mass = 177.808e-3 # kg
 
 # Sensor Parameters
 gyro_params = {
