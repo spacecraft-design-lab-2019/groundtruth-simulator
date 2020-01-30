@@ -64,6 +64,23 @@ class SpacecraftStructure():
                 Face(Y, 0.007*0.050, np.array([0, -0.025, -0.0285]))
                 ]
 
+    def calc_Tdot(self, T, eclipse):
+        alpha = self.thermal_properties["absorptivity"]
+        eps = self.thermal_properties["emmisivity"]
+        A = self.faces[0].A
+        Js = 1368 # W / m^2
+        Ja = Js * self.thermal_properties["albedo"]
+        Je = 231 # W / m^2
+
+        if eclipse:
+            Q_in = alpha * A * Je
+        else:
+            Q_in = alpha * A * (Js + Ja + Je)
+
+        Tdot = (Q_in - eps*sigma*(T**4)*6*A) / (self.mass * self.thermal_properties["heat_capacitance"])
+        return Tdot
+
+
 
 class Face():
     def __init__(self, N, A, c):

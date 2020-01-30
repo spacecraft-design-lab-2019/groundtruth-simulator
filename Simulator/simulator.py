@@ -20,7 +20,7 @@ class Simulator():
 
 		# initial state
 		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
-		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
+		self.state = np.r_[r_i, config.q_i, v_i, config.w_i, T_i]
 		self.t = config.tstart
 		self.MJD = config.MJDstart
 		self.tstep = config.tstep
