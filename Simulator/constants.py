@@ -17,10 +17,11 @@ class SpacecraftStructure():
     """
     A class to store spacecraft structural poperties
     """
-    def __init__(self, I, cD=2.3, mass=1.0):
+    def __init__(self, I, mass, thermal_properties, cD=2.3):
         self.I = I
         self.cD = cD
-        self.mass = mass # kg
+        self.mass = mass
+        self.thermal_properties = thermal_properties
         self.faces = self.make_faces()
 
     def aerodrag(self, rho, vRel):
