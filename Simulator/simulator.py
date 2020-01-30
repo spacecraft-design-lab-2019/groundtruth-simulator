@@ -14,7 +14,7 @@ class Simulator():
 	def __init__(self, config):
 
 		# initialize classes
-		self.structure = SpacecraftStructure(config.I, mass=config.mass)
+		self.structure = SpacecraftStructure(config.I, config.mass, config.thermal_properties)
 		self.environment = Environment(config.tstart)
 		self.sensors = SpacecraftSensors(config.mag_params, config.gyro_params, config.sun_params);
 
