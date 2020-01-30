@@ -7,6 +7,7 @@ import pyIGRF
 import sun_model
 import math
 import sys, os
+import sun_sensor_math
 
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dir+'/GNC/')
@@ -189,6 +190,18 @@ class Environment():
         earth2sun = sun_model.sun_position_ECI(self.datetime)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
+
+    def isEclipse(self, r_ECI):
+        """
+        Determines if the satellite is in eclipse
+
+        Inputs:
+            r_ECI: ECI position of the satellite
+        Output:
+            boolean: (true if in eclipse)
+        """
+        rsun = sunVector(r_ECI)
+        return sun_sensor_math.isEclipse(r_ECI, rsun, self.earth.radius)
 
 
 class Earth():
