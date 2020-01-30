@@ -5,6 +5,7 @@ Created on Thu Nov 14 23:06:02 2019
 """
 import math
 import numpy as np
+import conversions as conv
 
 #placeholder function, need to fix
 def eci2body(vec, R):
@@ -34,7 +35,10 @@ def normalize(vec):
     Outputs: normalized vector
     """
     mag = norm(vec)
-    return [x/mag for x in vec]
+    if all([v == 0 for v in vec]): #returns 0 vector if vec = [0,0,0]
+        return vec
+    else:
+        return [x/mag for x in vec]
 
 def transpose(M):
     I = range(len(M))
@@ -42,7 +46,7 @@ def transpose(M):
     return [[M[i][j] for i in I] for j in J]
 
 def norm(vec):
-    return dot(vec, vec)
+    return math.sqrt(dot(vec, vec))
 
 def dot(v1, v2):
     return sum(x*y for x,y in zip(v1,v2))
@@ -64,136 +68,104 @@ def add(vec1, vec2):
     """
     return [x + y for x, y in zip(vec1, vec2)]
 
-def sense2vector(measurements, r_Earth2Sun, r_sat):
+def elementwise_times(v1, v2):
+    return [x*y for x, y in zip(v1, v2)]
+
+def sense2vector(meas, r_sat, q_eci2body, albedo = True):
     """
     Inputs:
-        measurements: raw measurement values from 6 sun sensors
+        meas: raw measurement values from 6 sun sensors. Arranged: [x, -x, y, -y, z, -z]
         r_Earth2Sun: Earth to Sun vector
         r_sat: position of satellite in ECI
     Outputs:
-        sat2sun: satellite to sun 3-vector
-    NOTE: This function can use numpy
+        sat2sun: satellite to sun 3-vector (in body frame)
     """
-    
-    #unpack measurements  
-    sun_sense1 = measurements[0] # + x
-    sun_sense2 = measurements[1] # - x
-    sun_sense3 = measurements[2] # + y
-    sun_sense4 = measurements[3] # - y
-    sun_sense5 = measurements[4] # + z
-    sun_sense6 = measurements[5] # - z
 
-    irrad_vec = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6] #create irradiance vector from sensor values
-    irrad_vec = normalize(irrad_vec) #normalize irradiance vector
+    irrad_vec = [meas[0] - meas[1],  meas[2] - meas[3], meas[4] - meas[5]] #create irradiance vector from sensor values
+    irrad_vec = normalize(irrad_vec) # normalize irradiance vector
 
-    albedo = eci2body(scale(normalize(r_sat), 0.2)) #convert to body frame
-    sat2sun = normalize(sub(irrad_vec, albedo)) #vector subt. irradiance vec and albedo vec, normalize
+    if albedo:
+        alb = conv.quatrot(q_eci2body, scale(normalize(r_sat), 0.2)) #convert to body frame
+        sat2sun = normalize(sub(irrad_vec, alb)) #vector subt. irradiance vec and albedo vec, normalize
+    else:
+        sat2sun = irrad_vec
+
     return sat2sun #in body frame
 
-def vector2sense(sat2sun, r_sat, R_eci2body):
+def vector2sense(sat2sun, r_sat, q_eci2body, albedo = True):
     """
     Convert the true sun vector to an array of voltages corresponding to sun sensor measurements
 
     Inputs:
-        sat2sun: satellite to sun vector
+        sat2sun: satellite to sun vector in body
         r_sat: position of satellite in eci
-        R_eci2body: rotation matrix to convert to body frame
     """
+    sat2sun = normalize(sat2sun) #make sure vec is normalized
+    if albedo:
+        alb = conv.quatrot(q_eci2body, scale(normalize(r_sat), 0.2)) #body frame
+        irrad_vec = normalize(add(sat2sun, alb) )
+    else:
+        irrad_vec = sat2sun
 
-    r_sat_body = dot(R_eci2body, scale(r_sat, 0.2))
-    irrad_vec = add(sat2sun, r_sat_body)
-    delta1 = irrad_vec[0]
-    delta2 = irrad_vec[1]
-    delta3 = irrad_vec[2]
+    return deltas2measure(irrad_vec)
 
-    deltas = np.array([delta1,delta2,delta3])
-    measurements = np.array([])
+def deltas2measure(deltas):
+    """
+    Helper function to arrange vector of measurements from adjusted light vector
+    Can create a measurement list regardless of input list length
+    """
+    measurements = []
 
-    for i in range(len(deltas)):
-        if deltas[i] <0:
-            measurements = np.append(measurements, 0)
-            measurements = np.append(measurements, abs(deltas[i]))
+    for d in deltas:
+        if d < 0:
+            measurements += [0, abs(d)]
         else:
-            measurements = np.append(measurements, abs(deltas[i]))
-            measurements = np.append(measurements, 0)
+            measurements += [abs(d), 0]
 
-    return measurements
+    return np.array(measurements)
+
 
 def isEclipse(r_sat, r_Earth2Sun, Re):
     """
+    Math taken from here: http://portal.ku.edu.tr/~cbasdogan/Courses/Robotics/projects/IntersectionLineSphere.pdf
     Outputs True if satellite is in eclipse with Earth, False otherwise.
     Inputs:
         r_sat: position of satellite in ECI
         r_Earth2Sun: Earth to Sun vector
         Re: Radius of Earth
     """
-    r_Sat2Sun = sub(r_Earth2Sun, r_sat)
-    theta = math.acos(dot(r_Sat2Sun, scale(r_sat,-1)) / (norm(r_Sat2Sun)*norm(r_sat)))
-    transit_L = norm(r_sat)*math.sin(theta)
-    if transit_L > Re:
+    # Intersection of a line defined by (P1, P2) with at the origin with radius (r = Re):
+    # P1 = r_sat, P2 = r_Earth2Sun
+    diff = sub(r_sat, r_Earth2Sun)  # P1 - P2
+
+    a = sum(x*x for x in diff) # norm squared
+    b = 2*dot(diff, r_Earth2Sun)
+    u = -0.5*b/a
+
+    # u determines if the intersection is on the correct side of the line segment (inner or outer)
+    if u >= 1 or u <= 0:
         return False
-    else:
-        return True
 
-def isEclipse2(measurements, thresh):
-    """
-    Test measurements determines if sat is in eclipse
-    returns True if there is eclipse (all values are below a threshold)
-    returns False if NOT in eclipse with earth
-    Inputs: 
-        measurements: list of values from sun sensors
-        thresh: all sun sensor values need to be below this to be in eclipse
-    Outputs:
-        True if satellite is in eclipse with Earth
-        False if satellite is NOT in eclipse with Earth
-    """
-    for x in measurements:
-        if thresh>=x:
-            return False
-    return True
-"""
-Test Code Under here:
-"""
-a = isEclipse2([6,5,6,5,6,7],4)
-print(a)
-"""
+    c = sum(x*x for x in r_Earth2Sun) - Re**2
+    det = b*b - 4*a*c  # the determinant of the solutions to the quadratic equation
 
-deltas = np.array([200,-190,300])
-measurements = np.array([])
-for i in range(len(deltas)):
-    if deltas[i] <0:
-        measurements = np.append(measurements,0)
-        measurements = np.append(measurements,abs(deltas[i]))
-    else:
-        measurements = np.append(measurements,abs(deltas[i]))
-        measurements = np.append(measurements,0)
+    # intersection true if the roots are real
+    return det > 0
 
-print(measurements)
-vec = [1,2,3]
-Mat = [[1,2,3],[1,2,3],[1,2,3]]
-print(rightMultVecMat(vec, Mat))
+#in_meas = [1, 0, 0, 0, 0, 0]
+#r_sat = [8000, 0, 0]
+#q = [1, 0, 0, 0] # identity quaternion
+#sat2sun = sense2vector(in_meas, r_sat, q, albedo = True)
+#out_meas = vector2sense(sat2sun, r_sat, conv.conj(q), albedo = True)
+#print(out_meas)
+#
+#meas = [1, 2, 0, 0, 0, 0]
+#r_sat = [8000, 0, 0]
+#q = [1, 0, 0, 0] # identity quaternion
+#
+#vec = sense2vector(meas, r_sat, q, albedo = False)
+#print(vec)
 
-a = dot([1,2,3], [4,5,6])
-b = normalize([1,2,3])
-
-
-
-sun_sense1 = 123
-sun_sense2 = 231
-sun_sense3 = 421
-sun_sense4 = 546
-sun_sense5 = 345
-sun_sense6 = 112
-
-gain = 1
-sensors = [sun_sense1, sun_sense2, sun_sense3, sun_sense4, sun_sense5, sun_sense6];
-for i in range(len(sensors)):
-    sensors[i] = gain*sensors[i]
-
-vector1 = [sun_sense1 - sun_sense2,  sun_sense3 - sun_sense4, sun_sense5 - sun_sense6]
-vector2 = normalize(vector1)
-
-"""
 
 
 
