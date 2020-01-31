@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import datetime
+import datetime, pdb
 import conversions as conv
 from scipy.integrate import solve_ivp
 from propagate_step import sgp4_step, rk4_step, calc_statedot
@@ -46,8 +46,13 @@ class Simulator():
 
 		"""
 		#------------------------ Propagate Dynamics --------------------
-		update_f = lambda t, state: calc_statedot(mjd, state, cmd, self.structure, self.environment, self.mag_order)
-		self.mjd, self.state = solve_ivp(update_f, (self.mjd, self.mjd+self.tstep), self.state, teval=self.mjd+self.tstep)
+		update_f = lambda mjd, state: calc_statedot(mjd, state, cmd, self.structure, self.environment, self.mag_order)
+		# sol = solve_ivp(update_f, (self.mjd, self.mjd+self.tstep), self.state, teval=[self.mjd+self.tstep])
+		# self.t = sol.t[-1]
+		# self.state = sol.y[:,-1]
+
+		self.mjd, self.state = rk4_step(update_f, self.mjd, self.state, self.tstep)
+		self.state[3:7] = self.state[3:7] / np.linalg.norm(self.state[3:7]) # normalize the quaternion vector
 
 		#------------------------ Calculate Environment -------------------
 		self.environment.update(self.mjd)

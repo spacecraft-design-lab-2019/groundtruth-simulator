@@ -8,7 +8,7 @@ from math import sqrt
 #------------------- Configuration Parameters -------------------
 
 # Simulation Parameters
-tstart = julian.to_jd(datetime(2020, 01, 30, 00, 00, 00), fmt='mjd')
+tstart = julian.to_jd(datetime(2020, 1, 30, 00, 00, 00), fmt='mjd')
 tstep = 0.1 / (60*60*24)  # 10 Hz
 
 

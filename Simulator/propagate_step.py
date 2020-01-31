@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import datetime
+import datetime, julian
 from kinematics import *
 from dynamics import *
 from constants import Environment
@@ -9,7 +9,7 @@ from sgp4.io import twoline2rv
 
 #-------------------------Simulator-------------------------------
 
-def sgp4_step(line1, line2, dt, model=wgs84):
+def sgp4_step(line1, line2, mjd, model=wgs84):
     """
     Function: sgp4_step
         Returns position and velocity in ECI from SGP4 propagation.
@@ -17,13 +17,14 @@ def sgp4_step(line1, line2, dt, model=wgs84):
     Inputs:
         line1:  first line of TLE (string)
         line2:  second line of TLE (string)
-        dt:     time to propagate to (datetime)
+        mjd     time to propagate to (mjd)
         model:  Earth gravity model to use (default=wgs84)
     Outputs:
         rECI:   position in ECI
         vECI:   velocity in ECI
     """
     sgp4 = twoline2rv(line1, line2, model)
+    dt = julian.from_jd(mjd, fmt='mjd')
     sec = dt.second + dt.microsecond/1e6
     return sgp4.propagate(dt.year, dt.month, dt.day, dt.hour, dt.minute, sec)
 
@@ -37,13 +38,13 @@ def rk4_step(f, t, state, h):
         f:      function that differentiates state vector
         t:      current time
         state:  initial state object
-        h:      step size (in seconds)
+        h:      step size
     Outputs:
         x1: updated state object
     """
 
-    t1 = t + datetime.timedelta(seconds=h/2.0)
-    t2 = t + datetime.timedelta(seconds=h)
+    t1 = t + h/2.0
+    t2 = t + h
 
     k1 = h * f(t,  state)
     k2 = h * f(t1, state + k1/2.0)
@@ -51,18 +52,17 @@ def rk4_step(f, t, state, h):
     k4 = h * f(t2, state + k3)
 
     x1 = state + (k1 + 2.0*k2 + 2.0*k3 + k4)/6.0
-    x1[3:7] = x1[3:7] / np.linalg.norm(x1[3:7]) # normalize the quaternion vector
 
-    return x1
+    return t2, x1
 
 
-def calc_statedot(t, state, cmd, structure, environment, mag_order):
+def calc_statedot(mjd, state, cmd, structure, environment, mag_order):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
 
     Inputs:
-        t:      current time, seconds?
+        mjd:    current time
         state:  current state object,
         cmd:    commanded magnetic moment (Am^2 or Nm/T)
     Outputs:
@@ -76,7 +76,8 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
 
     #-----------------Calculate Environment --------------------------
-    environment.update(t)
+    environment.update(mjd)
+
 
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)
@@ -91,12 +92,10 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     torque += gravityGradientTorque(r, structure.I, environment.earth.GM)
     torque += mdrag
 
-    #------------------Look up magnetic field------------------------
-    B = environment.magfield_lookup(r, mag_order) # in nano-teslas
-
 
     #-------------------Implement Control Law-------------------------
-    torque += np.cross(cmd, B/1e9);
+    B = environment.magfield_lookup(r, mag_order)
+    torque += np.cross(cmd, B);
 
 
     #---------------------Kinematics----------------------------------

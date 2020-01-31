@@ -46,7 +46,7 @@ def test_dynamics():
 
 	# RUN SIM
 	for i, elapsed_t in enumerate(T[0:-1]):
-		sim.step(config.tstep, L_cmd)
+		sim.step(L_cmd)
 		state_history[i+1, :] = sim.state
 		bECI_history[i+1, :] = sim.debug_output[0]/1e9
 
@@ -60,6 +60,7 @@ def test_dynamics():
 	q_sim = state_history[-1, 3:7]
 	r_sim = state_history[-1, 0:3]
 	v_sim = state_history[-1, 7:10]
+	pdb.set_trace()
 
 	np.testing.assert_allclose(w_sim, w_ans, atol=1e-3)
 	np.testing.assert_allclose(q_sim, q_ans, atol=1e-3)

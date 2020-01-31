@@ -144,7 +144,7 @@ class Environment():
             glat: geodetic latitude
             glon: geodetic longitude
         Ouputs:
-            B_NED: magnetic field vector in North/East/Down
+            B_NED: magnetic field vector in North/East/Down in units of Teslas
         """
         GMST = conv.mjd_2_GMST(self.mjd)
         r_ECEF = conv.ECI_to_ECEF(r_ECI, GMST)
@@ -155,7 +155,7 @@ class Environment():
 
         # field = pyIGRF.igrf_value(lat, lon, alt, year)      # pyIGRF uses degrees!!!!
 
-        B_NED = mfcpp.get_magnetic_field(lat, lon, alt, year, order)
+        B_NED = mfcpp.get_magnetic_field(lat, lon, alt, year, order)/1e9
 
         # B_NED = np.array([field[3], field[4], field[5]])
         B_ECI = conv.NED_to_ECI(B_NED, glat, glon, GMST)
