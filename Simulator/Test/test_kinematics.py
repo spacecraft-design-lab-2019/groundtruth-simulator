@@ -18,7 +18,7 @@ def test_calc_q_dot():
 	# test against formula from notes
 	q = quat(np.random.rand(4))
 	w = np.random.rand(3)
-	test1 = .5 * L(q) @ np.concatenate((np.array([0]), w))
+	test1 = .5 * L(q) @ np.append(0, w)
 	test2 = calc_q_dot(q, w)
 	np.testing.assert_allclose(test1, test2, atol=tol)
 

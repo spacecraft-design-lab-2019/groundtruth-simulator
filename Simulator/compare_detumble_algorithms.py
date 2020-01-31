@@ -48,7 +48,7 @@ sim = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim.step(config.tstep, L_cmd)
+	sensors = sim.step(config.tstep, dipole)
 	states_B_dot[i, :] = sim.state
 	B_body = sim.debug_output[1]
 	B_body_history[i,:] = B_body
@@ -76,7 +76,7 @@ sim2 = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim2.step(config.tstep, L_cmd)
+	sensors = sim2.step(config.tstep, dipole)
 	states_B_cross_bang_bang[i, :] = sim2.state
 	B_body = sim2.debug_output[1]
 
@@ -97,7 +97,7 @@ sim3 = Simulator(config)
 
 for i in range(len(T)):
 	# Simulator
-	sensors = sim3.step(config.tstep, L_cmd)
+	sensors = sim3.step(config.tstep, dipole)
 	states_B_cross_directional[i, :] = sim3.state
 	B_body = sim3.debug_output[1]
 
@@ -125,6 +125,7 @@ plt.legend(('B_dot','B_cross_directional','B_cross_bang_bang'))
 plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
 plt.grid()
+plt.savefig('./detumble_plots/norm_w.png')
 
 plt.figure()
 plt.plot(T/3600, states_B_dot[:,10])
@@ -133,6 +134,7 @@ plt.plot(T/3600, states_B_dot[:,12])
 plt.legend(('w_x', 'w_y', 'w_z'))
 plt.xlabel('time [hr]')
 plt.title('angular velocity [rad/s]')
+plt.savefig('./detumble_plots/components_w.png')
 
 plt.figure()
 plt.plot(T/3600, states_B_dot[:,3])
@@ -142,6 +144,7 @@ plt.plot(T/3600, states_B_dot[:,6])
 plt.legend(('q_1', 'q_2', 'q_3', 'q_4'))
 plt.xlabel('time [hr]')
 plt.title('Quaternion components')
+plt.savefig('./detumble_plots/quat.png')
 
 plt.figure()
 plt.plot(T/3600, B_body_history[:,0])
@@ -150,6 +153,7 @@ plt.plot(T/3600, B_body_history[:,2])
 plt.legend(('B_x', 'B_y', 'B_z'))
 plt.xlabel('time [hr]')
 plt.title('Body magnetic field [uT]')
+plt.savefig('./detumble_plots/mag_field.png')
 
 plt.figure()
 plt.plot(T/3600, command_history[:,0])
@@ -158,6 +162,8 @@ plt.plot(T/3600, command_history[:,2])
 plt.legend(('m_x', 'm_y', 'm_z'))
 plt.xlabel('time [hr]')
 plt.title('Commanded dipole')
+plt.savefig('./detumble_plots/command.png')
 
-with plt.rc_context(rc={'interactive': False}):
-	plt.show()
+
+# with plt.rc_context(rc={'interactive': False}):
+# 	plt.show()
