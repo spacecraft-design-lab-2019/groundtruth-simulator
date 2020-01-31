@@ -90,12 +90,12 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
     adrag, mdrag = dragCalc(state, environment, structure)
 
-    accel = accel + gravityPointMass(r, environment.earth.GM)
-    accel = accel + gravityEarthJ2(r, environment.earth)
-    accel = accel + adrag
+    accel += gravityPointMass(r, environment.earth.GM)
+    accel += gravityEarthJ2(r, environment.earth)
+    accel += adrag
 
-    torque = torque + gravityGradientTorque(r, structure.I, environment.earth.GM)
-    torque = torque + mdrag
+    torque += gravityGradientTorque(r, structure.I, environment.earth.GM)
+    torque += mdrag
 
 
     #------------------Look up magnetic field------------------------
@@ -103,7 +103,7 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
 
     #-------------------Implement Control Law-------------------------
-    torque = torque + np.cross(cmd, B/1e9);
+    torque += np.cross(cmd, B/1e9);
 
 
     #---------------------Kinematics----------------------------------

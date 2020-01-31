@@ -8,6 +8,7 @@ import sun_model
 import math
 import sys, os
 import sun_sensor_math
+from collections import namedtuple
 
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dir+'/GNC/')
@@ -27,19 +28,27 @@ class SpacecraftStructure():
 
     def aerodrag(self, rho, vRel):
         """
-        Return drag force (F) and moment (M) due to atmospheric drag
+        Return acceleration due to drag (F/m) and moment-per-mass (M/m) due to atmospheric drag
          - rho is the local atmospheric density.
-         - vRel is velocity relative to the atmosphere. Must be in the body frame.
+         - vRel is velocity relative to the atmosphere *in the body frame*.
         """
         F = np.zeros(3)
         M = np.zeros(3)
-        # vmag = np.linalg.norm(vRel)
-        vmag = (vRel.T @ vRel)**(0.5)
+        vmag = conv.norm2(vRel)
         for face in self.faces:
-            f, m = face.aerodrag(rho, vRel, vmag)
-            F += f
-            M += m
-        return self.cD/self.mass*F, self.cD/self.mass*M
+            # If the velocity relative to the face normal is negative,
+            # it is not acted on by drag and we can skip it.
+            a = vRel @ face.N
+            if a > 0:
+                # Drag = -1/2 * Cd * ρ*A_eff*v² * v̂
+                # constants that are the same across the faces are multiplied
+                # at the end so we have: F = A_eff*v_vec
+                f = face.A*a * vRel
+                F += f
+                M += conv.cross3(face.c, f)
+
+        C = -0.5 * rho * vmag * self.cD / self.mass
+        return C*F, C*M
 
     def make_faces(self):
         L = 0.05 # 50 mm sidelength
@@ -50,6 +59,10 @@ class SpacecraftStructure():
         X = conv.unit('x')
         Y = conv.unit('y')
         Z = conv.unit('z')
+
+        # Named tuple to replace the Face class.
+        Face = namedtuple('Face', 'N, A, c')
+
         return [
                 Face(X,  A_main, c_len*X),
                 Face(Y,  A_main, c_len*Y),
@@ -81,35 +94,6 @@ class SpacecraftStructure():
         Tdot = (Q_in - eps*sigma*(T**4)*6*A) / (self.mass * self.thermal_properties["heat_capacitance"])
         return Tdot
 
-
-
-class Face():
-    def __init__(self, N, A, c):
-        self.N = N/np.linalg.norm(N)
-        self.A = A
-        self.c = c # vector from COM to CP of face.
-
-    def wetted_area(self, v_unit):
-        """
-        Compute the effective area of a face relative to a vector v where
-        v is the unit vector defined to point outwards from the face.
-        """
-        # a = (v/np.linalg.norm(v)) @ self.N
-        a = v_unit @ self.N
-        return max(a, 0) * self.A
-
-    def aerodrag(self, rho, vRel, vmag):
-        """
-        See SpacecraftStruct.aerodrag()
-        """
-        # vmag = np.linalg.norm(vRel)
-        A = self.wetted_area(vRel/vmag)
-
-        drag_acc = -0.5*rho*A*vmag * vRel
-        # drag_M = np.cross(self.c, drag_acc);
-
-        drag_M = conv.cross3(self.c, drag_acc)
-        return drag_acc, drag_M
 
 
 #-------------------------Environment---------------------------------
@@ -205,7 +189,7 @@ class Environment():
         Output:
             position unit vector (3-vector) from satellite to sun
         """
-        earth2sun = sun_model.sun_position_ECI(self.datetime)
+        earth2sun = sun_model.approx_sun_position_ECI(self.datetime)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
 
