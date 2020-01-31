@@ -74,6 +74,6 @@ class Simulator():
 
 		#------------------------ Export Data -------------------------
 		# TO-DO: output desired variables to text file for later plotting/analysis
-		self.debug_output = [B_ECI, B_body]
+		self.debug_output = [B_ECI, B_body, self.environment.isEclipse(self.state[0:3])]
 
 		return meas
