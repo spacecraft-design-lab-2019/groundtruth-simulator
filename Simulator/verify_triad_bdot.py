@@ -48,7 +48,7 @@ t = time.time()
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors = sim.step(config.tstep, L_cmd)
+	sensors = sim.step(L_cmd)
 	state_history[i+1, :] = sim.state
 	
 	command_history[i+1,:] = np.transpose(L_cmd)
