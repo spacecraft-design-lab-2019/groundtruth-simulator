@@ -43,10 +43,9 @@ def test_sense2vector():
 
     def helper_test(mjd, r_sat, q, albedo, atol):
         '''mjd version'''
-        dt = julian.from_jd(mjd, fmt='mjd')
         q = conv.quat(q)
         rtol = atol
-        r_Earth2Sun = sun.sun_position_ECI(dt)
+        r_Earth2Sun = sun.sun_position_ECI(mjd)
         sat2sun_input = conv.quatrot(q,sensors.add(r_Earth2Sun,r_sat)) #in body frame
         meas = sensors.vector2sense(sat2sun_input, r_sat, q, albedo)
         sat2sun_out = sensors.sense2vector(meas, r_sat, q, albedo)
