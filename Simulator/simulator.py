@@ -3,6 +3,7 @@
 import numpy as np
 import datetime
 import conversions as conv
+from scipy.integrate import solve_ivp
 from propagate_step import sgp4_step, rk4_step, calc_statedot
 from constants import SpacecraftStructure, Environment
 from sensormodels import SpacecraftSensors
@@ -21,15 +22,14 @@ class Simulator():
 		# initial state
 		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
 		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
-		self.t = config.tstart
-		self.MJD = config.MJDstart
+		self.mjd = config.tstart
 		self.tstep = config.tstep
 
 		# magnetic field order (for IGRF)
 		self.mag_order = config.mag_order
 
 
-	def step(self, tstep, cmd=np.zeros(3)):
+	def step(self, cmd=np.zeros(3)):
 		"""
 		Function: step
 			Propagates dynamics & models sensors for single step
@@ -46,13 +46,11 @@ class Simulator():
 
 		"""
 		#------------------------ Propagate Dynamics --------------------
-		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
-		self.state = rk4_step(update_f, self.t, self.state, tstep)
-		self.t = self.t + datetime.timedelta(seconds=tstep)
-		self.MJD = self.MJD + self.tstep / 24 / 3600	# TODO: edit this to automatically update GMST too
+		update_f = lambda t, state: calc_statedot(mjd, state, cmd, self.structure, self.environment, self.mag_order)
+		self.mjd, self.state = solve_ivp(update_f, (self.mjd, self.mjd+self.tstep), self.state, teval=self.mjd+self.tstep)
 
 		#------------------------ Calculate Environment -------------------
-		self.environment.update(self.t)
+		self.environment.update(self.mjd)
 
 		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
