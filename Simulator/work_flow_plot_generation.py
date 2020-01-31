@@ -48,7 +48,7 @@ t = time.time()
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors = sim.step(config.tstep, L_cmd)
+	sensors = sim.step(L_cmd)
 	state_history[i+1, :] = sim.state
 	B_ECI = sim.debug_output[0]
 	B_body = sim.debug_output[1]

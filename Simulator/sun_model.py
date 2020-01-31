@@ -6,16 +6,15 @@ import numpy as np
 import math
 import julian
 
-def approx_sun_position_ECI(dt):
+def approx_sun_position_ECI(mjd):
     """
     This is using the equations given in Motenbruck and Gill's Satellite Orbits book
     Inputs:
-    MJD - Modified Julian Day (J2000) as a Real Number
+    mjd - Modified Julian Day (J2000) as a Real Number
     Outputs:
     r_vec - numpy array with x, y, z of Sun position in ECI at input time
     """
-    MJD = julian.to_jd(dt, fmt='mjd')
-    JD = MJD + 2400000.5
+    JD = mjd + 2400000.5
     OplusW = 282.94
     T = (JD - 2451545.0) / 36525
 
@@ -29,17 +28,17 @@ def approx_sun_position_ECI(dt):
 
     return r_vec
 
-def sun_position_ECI(dt):
+def sun_position_ECI(mjd):
     """
     Queries astropy module for ECI sun position.
 
     Inputs:
-        dt - datetime object
+        mjd - modified julian day
     Outputs:
         rECI - position vector to the sun in ECI coordinates (km)
     """
     AU_km = 149597870.7
-    t = Time(dt, scale='utc', format='datetime')
+    t = Time(mjd, format='mjd')
     sun = get_sun(t).cartesian
     
     r_ECI = AU_km * np.array([sun.x.value, sun.y.value, sun.z.value])
