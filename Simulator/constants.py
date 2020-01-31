@@ -7,6 +7,7 @@ import pyIGRF
 import sun_model
 import math
 import sys, os
+import sun_sensor_math
 from collections import namedtuple
 
 dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,10 +19,11 @@ class SpacecraftStructure():
     """
     A class to store spacecraft structural poperties
     """
-    def __init__(self, I, cD=2.3, mass=1.0):
+    def __init__(self, I, mass, thermal_properties, cD=2.3):
         self.I = I
         self.cD = cD
-        self.mass = mass # kg
+        self.mass = mass
+        self.thermal_properties = thermal_properties
         self.faces = self.make_faces()
 
     def aerodrag(self, rho, vRel):
@@ -74,6 +76,24 @@ class SpacecraftStructure():
                 Face(Y, 0.007*0.050, np.array([0, -0.025, 0.0285])),
                 Face(Y, 0.007*0.050, np.array([0, -0.025, -0.0285]))
                 ]
+
+    def calc_Tdot(self, T, eclipse):
+        alpha = self.thermal_properties["absorptivity"]
+        eps = self.thermal_properties["emmisivity"]
+        A = self.faces[0].A
+        Js = 1368 # W / m^2
+        Ja = Js * self.thermal_properties["albedo"]
+        Je = 231 # W / m^2
+        sigma = 5.67e-8; # Stefan Bolzmann constant
+
+        if eclipse:
+            Q_in = alpha * A * Je
+        else:
+            Q_in = alpha * A * (Js + Ja + Je)
+
+        Tdot = (Q_in - eps*sigma*(T**4)*6*A) / (self.mass * self.thermal_properties["heat_capacitance"])
+        return Tdot
+
 
 
 #-------------------------Environment---------------------------------
@@ -172,6 +192,18 @@ class Environment():
         earth2sun = sun_model.approx_sun_position_ECI(self.mjd)
         rsun = (earth2sun - r_ECI)/np.linalg.norm(earth2sun - r_ECI)
         return rsun
+
+    def isEclipse(self, r_ECI):
+        """
+        Determines if the satellite is in eclipse
+
+        Inputs:
+            r_ECI: ECI position of the satellite
+        Output:
+            boolean: (true if in eclipse)
+        """
+        rsun = self.sunVector(r_ECI)
+        return sun_sensor_math.isEclipse(r_ECI, rsun, self.earth.radius)
 
 
 class Earth():

@@ -73,12 +73,17 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     q = state[3:7]
     v = state[7:10]
     w = state[10:13]
+    T = state[13]
 
 
     #-----------------Calculate Environment --------------------------
     environment.update(t)
 
+    
+    #------------------Thermal Modelling------------------------------
+    T_dot = structure.calc_Tdot(T, environment.isEclipse(r))
 
+    
     #----------------Calculate Accelerations/Torques------------------
     torque = np.zeros(3)
     accel = np.zeros(3)
@@ -104,6 +109,6 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
 
     #---------------------Build Statedot------------------------------
-    statedot = np.r_[v, q_dot, accel, w_dot]
+    statedot = np.r_[v, q_dot, accel, w_dot, T_dot]
 
     return statedot

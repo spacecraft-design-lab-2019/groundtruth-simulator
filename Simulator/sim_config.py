@@ -18,14 +18,21 @@ line1 = ('1 35933U 09051C   19315.45643387  .00000096  00000-0  32767-4 0  9991'
 line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102')
 
 
-# Initial Spacecraft Attitude
+# Initial Spacecraft State
 q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    # quaternion
-w_i = np.zeros(3) #np.array([.03, .03, .03])   # radians/sec
+w_i = np.array([.03, .03, .03])   # radians/sec
+T_i = 283 # Kelvin
 
 
 # Spacecraft Properties
-I = np.array([[.3,0,0],[0,.4,0],[0,0,.5]])
-mass = 1.0 # kg
+I = np.array([[1.959e-4, 2016.333e-9, 269.176e-9],[2016.333e-9, 1.999e-4, 2318.659e-9],[269.176e-9, 2318.659e-9, 1.064e-4]]) # kg*m^2
+mass = 177.808e-3 # kg
+thermal_properties = {
+	"heat_capacitance" : 1000, # J/kgK
+	"absorptivity" : 0.95,
+	"emmisivity" : 0.89,
+	"albedo" : 0.37
+}
 
 
 # Sensor Parameters
