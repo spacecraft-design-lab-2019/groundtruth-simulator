@@ -20,7 +20,7 @@ line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102'
 
 # Initial Spacecraft Attitude
 q_i = np.array([sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0, sqrt(4.0)/4.0])    # quaternion
-w_i = np.array([.03, .03, .03])   # radians/sec
+w_i = np.zeros(3) #np.array([.03, .03, .03])   # radians/sec
 
 
 # Spacecraft Properties
