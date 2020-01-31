@@ -56,14 +56,14 @@ def rk4_step(f, t, state, h):
     return t2, x1
 
 
-def calc_statedot(mjd, state, cmd, structure, environment, mag_order):
+def calc_statedot(t, state, cmd, structure, environment, mag_order):
     """
     Function: state_dot
         Calculates the derivative of the state vector.
 
     Inputs:
-        mjd:    current time
-        state:  current state object,
+        t:      current (simulation) time in seconds
+        state:  current state object
         cmd:    commanded magnetic moment (Am^2 or Nm/T)
     Outputs:
         state_dot: the derivative of the state vector
@@ -76,7 +76,7 @@ def calc_statedot(mjd, state, cmd, structure, environment, mag_order):
 
 
     #-----------------Calculate Environment --------------------------
-    environment.update(mjd)
+    environment.update(t)
 
 
     #----------------Calculate Accelerations/Torques------------------

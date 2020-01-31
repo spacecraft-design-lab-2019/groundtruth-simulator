@@ -82,12 +82,13 @@ class Environment():
     """
     A class to store environment constants / lookup functions.
     """
-    def __init__(self, mjd):
-        self.mjd = mjd
+    def __init__(self, mjd_start):
+        self.mjd = mjd_start
+        self.mjd_start = mjd_start
         self.earth = Earth()
 
-    def update(self, mjd_new):
-        self.mjd = mjd_new
+    def update(self, t):
+        self.mjd = self.mjd_start + t/(60*60*24)
 
     def density_lookup(self, r_ECI, model="exponential_2"):
         """

@@ -16,14 +16,16 @@ class Simulator():
 
 		# initialize classes
 		self.structure = SpacecraftStructure(config.I, mass=config.mass)
-		self.environment = Environment(config.tstart)
+		self.environment = Environment(config.mjd_start)
 		self.sensors = SpacecraftSensors(config.mag_params, config.gyro_params, config.sun_params);
 
-		# initial state
-		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
-		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
-		self.mjd = config.tstart
+		# simulation time [sec]
+		self.t = 0
 		self.tstep = config.tstep
+
+		# initial state
+		r_i, v_i = sgp4_step(config.line1, config.line2, config.mjd_start)
+		self.state = np.r_[r_i, config.q_i, v_i, config.w_i]
 
 		# magnetic field order (for IGRF)
 		self.mag_order = config.mag_order
@@ -46,17 +48,15 @@ class Simulator():
 
 		"""
 		#------------------------ Propagate Dynamics --------------------
-		update_f = lambda mjd, state: calc_statedot(mjd, state, cmd, self.structure, self.environment, self.mag_order)
-		# sol = solve_ivp(update_f, (self.mjd, self.mjd+self.tstep), self.state, teval=[self.mjd+self.tstep])
+		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
+		# sol = solve_ivp(update_f, (self.t, self.t+self.tstep), self.state, teval=[self.t+self.tstep])
 		# self.t = sol.t[-1]
 		# self.state = sol.y[:,-1]
 
-		self.mjd, self.state = rk4_step(update_f, self.mjd, self.state, self.tstep)
+		self.t, self.state = rk4_step(update_f, self.t, self.state, self.tstep)
 		self.state[3:7] = self.state[3:7] / np.linalg.norm(self.state[3:7]) # normalize the quaternion vector
 
 		#------------------------ Calculate Environment -------------------
-		self.environment.update(self.mjd)
-
 		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 

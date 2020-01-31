@@ -30,14 +30,12 @@ def test_dynamics():
 	# SETUP SIM - note we have to re-do work from the __init__ function to avoid editing sim_config just for a unit_test
 	sim = simulator.Simulator(config)
 	sim.state = np.r_[r_i, q_i, v_i, w_i]
-	sim.t = julian.from_jd(mjd_start, fmt='mjd')
-	sim.MJD = mjd_start
 	sim.tstep = .1
-	sim.environment = Environment(sim.t)
+	sim.environment = Environment(config.mjd_start)
 	sim.structure = SpacecraftStructure(I, mass=mass)
 
 	# PREALLOCATE MEMORY
-	tspan = np.array([0, 60])    # [sec]
+	tspan = np.array([0, 60])
 	T = np.arange(0, tspan[1]+sim.tstep, sim.tstep)
 	state_history = np.zeros((np.shape(T)[0], np.shape(sim.state)[0]))
 	state_history[0, :] = sim.state
@@ -48,7 +46,7 @@ def test_dynamics():
 	for i, elapsed_t in enumerate(T[0:-1]):
 		sim.step(L_cmd)
 		state_history[i+1, :] = sim.state
-		bECI_history[i+1, :] = sim.debug_output[0]/1e9
+		bECI_history[i+1, :] = sim.debug_output[0]
 
 	# ANSWER - from Andrew's sim
 	w_ans = np.array([0.103473377474831, 0.10351893953023031, 0.0930076829949389]) # rad/s

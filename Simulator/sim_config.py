@@ -8,8 +8,8 @@ from math import sqrt
 #------------------- Configuration Parameters -------------------
 
 # Simulation Parameters
-tstart = julian.to_jd(datetime(2020, 1, 30, 00, 00, 00), fmt='mjd')
-tstep = 0.1 / (60*60*24)  # 10 Hz
+mjd_start = julian.to_jd(datetime(2020, 1, 30, 00, 00, 00), fmt='mjd')
+tstep = 0.1  # seconds - 10 Hz
 
 
 # Seed Initial Position/Velocity with TLE - BEESAT-1
