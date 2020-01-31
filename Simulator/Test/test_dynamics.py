@@ -29,12 +29,12 @@ def test_dynamics():
 
 	# SETUP SIM - note we have to re-do work from the __init__ function to avoid editing sim_config just for a unit_test
 	sim = simulator.Simulator(config)
-	sim.state = np.r_[r_i, q_i, v_i, w_i]
+	sim.state = np.r_[r_i, q_i, v_i, w_i, config.T_i]
 	sim.t = julian.from_jd(mjd_start, fmt='mjd')
 	sim.MJD = mjd_start
 	sim.tstep = .1
 	sim.environment = Environment(sim.t)
-	sim.structure = SpacecraftStructure(I, mass=mass)
+	sim.structure = SpacecraftStructure(I, mass, config.thermal_properties)
 
 	# PREALLOCATE MEMORY
 	tspan = np.array([0, 60])    # [sec]

@@ -71,6 +71,7 @@ class SpacecraftStructure():
         Js = 1368 # W / m^2
         Ja = Js * self.thermal_properties["albedo"]
         Je = 231 # W / m^2
+        sigma = 5.67e-8; # Stefan Bolzmann constant
 
         if eclipse:
             Q_in = alpha * A * Je
@@ -217,7 +218,7 @@ class Environment():
         Output:
             boolean: (true if in eclipse)
         """
-        rsun = sunVector(r_ECI)
+        rsun = self.sunVector(r_ECI)
         return sun_sensor_math.isEclipse(r_ECI, rsun, self.earth.radius)
 
 
