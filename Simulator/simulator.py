@@ -49,11 +49,11 @@ class Simulator():
 		"""
 		#------------------------ Propagate Dynamics --------------------
 		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
-		# sol = solve_ivp(update_f, (self.t, self.t+self.tstep), self.state, teval=[self.t+self.tstep])
-		# self.t = sol.t[-1]
-		# self.state = sol.y[:,-1]
+		sol = solve_ivp(update_f, (self.t, self.t+self.tstep), self.state)
+		self.t = sol.t[-1]
+		self.state = sol.y[:,-1]
 
-		self.t, self.state = rk4_step(update_f, self.t, self.state, self.tstep)
+		# self.t, self.state = rk4_step(update_f, self.t, self.state, self.tstep)
 		self.state[3:7] = self.state[3:7] / np.linalg.norm(self.state[3:7]) # normalize the quaternion vector
 
 		#------------------------ Calculate Environment -------------------

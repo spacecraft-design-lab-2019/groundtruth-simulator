@@ -31,7 +31,7 @@ def test_dynamics():
 	sim = simulator.Simulator(config)
 	sim.state = np.r_[r_i, q_i, v_i, w_i]
 	sim.tstep = .1
-	sim.environment = Environment(config.mjd_start)
+	sim.environment = Environment(mjd_start)
 	sim.structure = SpacecraftStructure(I, mass=mass)
 
 	# PREALLOCATE MEMORY
@@ -58,7 +58,6 @@ def test_dynamics():
 	q_sim = state_history[-1, 3:7]
 	r_sim = state_history[-1, 0:3]
 	v_sim = state_history[-1, 7:10]
-	pdb.set_trace()
 
 	np.testing.assert_allclose(w_sim, w_ans, atol=1e-3)
 	np.testing.assert_allclose(q_sim, q_ans, atol=1e-3)
