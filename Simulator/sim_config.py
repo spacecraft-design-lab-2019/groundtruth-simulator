@@ -16,7 +16,7 @@ line2 = ('2 35933  98.6009 127.6424 0006914  92.0098 268.1890 14.56411486538102'
 
 # Simulation Parameters
 tstart = datetime(2019, 12, 30, 00, 00, 00)
-tstep = .1                     # [sec] - 1 Hz
+tstep = .1  # [sec] - 1 Hz
 MJDstart = julian.to_jd(tstart, fmt='mjd')
 
 # Initial Spacecraft Attitude
