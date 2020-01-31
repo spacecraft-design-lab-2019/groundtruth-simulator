@@ -39,7 +39,7 @@ B_body_history = np.zeros((np.shape(T)[0], 3))
 t = time.time()
 for i in range(len(T)):
     # Simulator
-    sensors = sim.step(config.tstep, L_cmd)
+    sensors = sim.step(L_cmd)
 
     # command torque based on sensors (currently no noise addition 11/17)
     B_sensed = sensors[0:3]

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import datetime
+import datetime, pdb
 import conversions as conv
+from scipy.integrate import solve_ivp
 from propagate_step import sgp4_step, rk4_step, calc_statedot
 from constants import SpacecraftStructure, Environment
 from sensormodels import SpacecraftSensors
@@ -15,21 +16,22 @@ class Simulator():
 
 		# initialize classes
 		self.structure = SpacecraftStructure(config.I, config.mass, config.thermal_properties)
-		self.environment = Environment(config.tstart)
+		self.environment = Environment(config.mjd_start)
 		self.sensors = SpacecraftSensors(config.mag_params, config.gyro_params, config.sun_params);
 
-		# initial state
-		r_i, v_i = sgp4_step(config.line1, config.line2, config.tstart)
-		self.state = np.r_[r_i, config.q_i, v_i, config.w_i, config.T_i]
-		self.t = config.tstart
-		self.MJD = config.MJDstart
+		# simulation time [sec]
+		self.t = 0
 		self.tstep = config.tstep
+
+		# initial state
+		r_i, v_i = sgp4_step(config.line1, config.line2, config.mjd_start)
+		self.state = np.r_[r_i, config.q_i, v_i, config.w_i, config.T_i]
 
 		# magnetic field order (for IGRF)
 		self.mag_order = config.mag_order
 
 
-	def step(self, tstep, cmd=np.zeros(3)):
+	def step(self, cmd=np.zeros(3)):
 		"""
 		Function: step
 			Propagates dynamics & models sensors for single step
@@ -47,13 +49,14 @@ class Simulator():
 		"""
 		#------------------------ Propagate Dynamics --------------------
 		update_f = lambda t, state: calc_statedot(t, state, cmd, self.structure, self.environment, self.mag_order)
-		self.state = rk4_step(update_f, self.t, self.state, tstep)
-		self.t = self.t + datetime.timedelta(seconds=tstep)
-		self.MJD = self.MJD + self.tstep / 24 / 3600	# TODO: edit this to automatically update GMST too
+		# sol = solve_ivp(update_f, (self.t, self.t+self.tstep), self.state)
+		# self.t = sol.t[-1]
+		# self.state = sol.y[:,-1]
+		self.t, self.state = rk4_step(update_f, self.t, self.state, self.tstep)
+		
+		self.state[3:7] = self.state[3:7] / np.linalg.norm(self.state[3:7]) # normalize the quaternion vector
 
 		#------------------------ Calculate Environment -------------------
-		self.environment.update(self.t)
-
 		B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
 		B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
 

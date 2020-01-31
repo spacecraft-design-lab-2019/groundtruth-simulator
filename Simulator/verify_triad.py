@@ -48,7 +48,7 @@ V = [[-0.84639796, 0.39004599], [0.06513016, -0.47183533], [0.52855326, -0.79071
 
 for i, elapsed_t in enumerate(T[0:-1]):
 	# Simulator
-	sensors = sim.step(L_cmd,config.tstep)
+	sensors = sim.step(L_cmd)
 	state_history[i+1, :] = sim.state
 	B_ECI = sim.debug_output[0]
     
