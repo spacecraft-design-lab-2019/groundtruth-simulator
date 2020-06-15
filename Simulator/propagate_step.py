@@ -98,13 +98,10 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
     torque += mdrag
 
 
-    #------------------------ Calculate Environment -------------------
-    B_ECI = self.environment.magfield_lookup(self.state[0:3], self.mag_order) # Earth's magnetic field isn't fixed in ECI space, it's fixed in ECEF space!!!!
-    B_body = conv.quatrot(conv.conj(self.state[3:7]), B_ECI)
-
-    S_ECI = self.environment.sunVector(self.state[0:3])     
-    S_body = conv.quatrot(conv.conj(self.state[3:7]), S_ECI)
-
+    #-------------------Implement Control Law-------------------------
+    B_ECI = environment.magfield_lookup(r, mag_order)
+    B_body = conv.quatrot(conv.conj(q),B_ECI)
+    torque += np.cross(cmd, B_body);
 
 
     #---------------------Kinematics----------------------------------

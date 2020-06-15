@@ -78,5 +78,8 @@ class Simulator():
         #------------------------ Export Data -------------------------
         # TO-DO: output desired variables to text file for later plotting/analysis
         self.debug_output = [B_ECI, B_body, self.environment.isEclipse(self.state[0:3])]
+        File_object = open("./results.txt", "a")
+        File_object.write(str(self.debug_output) + "\n")
+        File_object.close()
 
         return meas
