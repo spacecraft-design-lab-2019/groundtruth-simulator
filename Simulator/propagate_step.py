@@ -99,8 +99,9 @@ def calc_statedot(t, state, cmd, structure, environment, mag_order):
 
 
     #-------------------Implement Control Law-------------------------
-    B = environment.magfield_lookup(r, mag_order)
-    torque += np.cross(cmd, B);
+    B_ECI = environment.magfield_lookup(r, mag_order)
+    B_body = conv.quatrot(conv.conj(q),B_ECI)
+    torque += np.cross(cmd, B_body);
 
 
     #---------------------Kinematics----------------------------------

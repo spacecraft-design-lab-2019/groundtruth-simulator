@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import sim_config as config
+import math
 from simulator import Simulator
 
 
@@ -17,13 +18,47 @@ dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, dir+'/GNC/')
 import detumble_cpp as dcpp
 
+#----------------- Detumble alg ----------------------
+
+def detumble_B_dot(B, B_dot, k=10000, max_dipoles = [8.8e-3,1.373e-2,8.2e-3]):
+    '''
+    Takes in magnetic field, magnetic field rate (as 3x1 vectors, in principal frame), and control gain (scalar)
+    and returns a 3x1 control moment
+
+    TODO: find optimal k for our system
+    '''
+
+    m = [0,0,0]
+    if B_dot is not None:
+        # if B_dot_norm > 0.349:
+        #     # if spinning fast, then use bang-bang
+        #     m[0] = math.copysign(max_dipoles[0],B_dot[0])
+        #     m[1] = math.copysign(max_dipoles[1],B_dot[1])
+        #     m[2] = math.copysign(max_dipoles[2],B_dot[2])
+        #     return m
+
+        # otherwise do proportional
+        m[0] = -k * B_dot[0] 
+        m[1] = -k * B_dot[1]
+        m[2] = -k * B_dot[2]
+
+        for i in range(3):
+            if m[i] > max_dipoles[i]:
+                m[i] = max_dipoles[i]
+
+            if m[i] < -max_dipoles[i]:
+                m[i] = -max_dipoles[i]
+
+        return m
+
+
 #-----------------------Clear Figures----------------------------
 # clear figures
 plt.close('all')
 
 
 #-----------------Configuration / Parameters--------------------
-tspan = np.array([0, 600])    # [sec]
+tspan = np.array([0, 60])    # [sec]
 L_cmd = np.zeros(3)			# initially command 0 torque
 max_dipoles = np.array([[8.8e-3], [1.373e-2], [8.2e-3]])
 
@@ -53,15 +88,13 @@ for i, elapsed_t in enumerate(T[0:-1]):
 	command_history[i+1,:] = np.transpose(L_cmd)
 
 	# command torque based on sensors (currently no noise addition 11/17)
-	gain = .0143	#4e-2
 	B_sensed = sensors[0:3]
 	w_sensed = sensors[3:6]
-	if i>0:
+	if i>1:
 		B_1 = np.transpose(B_body_history[i-1,:])
 		B_2 = np.transpose(B_body_history[i,:])
-		B_dot = dcpp.get_B_dot(B_1,B_2,config.tstep)
-		dipole = dcpp.detumble_B_dot_bang_bang(B_dot, max_dipoles)
-		L_cmd = np.cross(np.squeeze(dipole), np.transpose(B_body)*1e-9)
+		B_dot = (B_2 - B_1)/ config.tstep
+		L_cmd = detumble_B_dot(B_2, B_dot)
 	# print(i)
 
 elapsed = time.time() - t
